@@ -1,0 +1,25 @@
+{
+	"name":        "MotionJS",
+	"author":      "Joe Kelk",
+	"version":     "0.1-a",
+	"keywords":    ["2d", "game", "development", "library", "framework"],
+	"description": "Woo!",
+	
+	"licenses": [{
+		"url":  "http://github.com/xavura/MotionJS/raw/master/LICENSE"
+		"type": "MIT",
+	}],
+	
+	"engines": {
+		"node": ">=0.2.5"
+	},
+	
+	"directories" : {
+		"lib": "./lib"
+	},
+	
+	"bin": {
+		"coffee": "./bin/motion"
+    },
+	"main" : "./lib/motion"
+}
