@@ -11,12 +11,17 @@ Array::map = Array::map ? () ->
 Array::zip = () ->	
 
 Array::unique = () ->
+	uniq = []
+	for i in @
+		uniq.push i if not i in @
+	uniq
+
 Array::each = Array::forEach ? (func, bind = null) -> func.call bind, i, _i, @ for i in @
 
 Array::empty = -> @length is 0
 
 Array::first  = -> @[0]
-Array::random = -> @[rand @length]
+Array::random = -> @[Math.rand @length]
 Array::last   = -> @[@length - 1]
 
 Array::count = (obj) ->

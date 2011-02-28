@@ -1,49 +1,59 @@
-camera = (Motion, Entity) ->
-	class Camera extends Entity
-		drawAABB:    off
-		drawCorners: off
-	
-		constructor: ->
-			@super()
+define [
+	'math/vector'
+	'physics/aabb'
+], (Vector, AABB) ->
+	class Camera
+		entity: null
 		
-			@position.set 0, 0
-			@setDimensions 1024, 768
-	
-		getAABB: ->
-			{
+		constructor: (bounds = [1024, 768]) ->
+			@w = bounds[0]
+			@h = bounds[1]
 			
-			}
-	
-		getCorners: ->
-			{
-			
-			}
-	
-		render:        noop
-		renderAABB:    noop
-		renderCorners: noop
-	
-		update: (Game, t, dt) ->
-			speed = if Game.Input.keyboard.shift then 256 else 64
+			@aabb     = new AABB null, [bounds[0] / 2, bounds[1] / 2]
+			@position = new Vector
 		
+		update: (delta) ->
+			if @entity
+				@position.i = @entity.body.x - (@w / 2)
+				@position.j = @entity.body.y - (@h / 2)
+				@aabb.set @entity.body.position.clone()
+			
+			#@position.i = @aabb.hW if @position.i < @aabb.hW
+			#@position.i = 10000 - @aabb.hW if @position.i > 10000 - @aabb.hW
+			
+			#@position.j = @aabb.hH if @position.j < @aabb.hH
+			#@position.j = 10000 - @aabb.hH if @position.j > 10000 - @aabb.hH
+			
+			#speed = if Game.Input.keyboard.shift then 32 else 16
+			
+			###
 			if Game.Input.isKeyDown 'left'
-				@velocity.i = -speed
+				@velocity.i += speed
 			else if Game.Input.isKeyDown 'right'
-				@velocity.i = speed
+				@velocity.i -= speed
 			else
-				@velocity.i = 0
+				if @velocity.i.abs() > 0.00005
+					@velocity.i *= 0.8
+				else
+					@velocity.i = 0
 		
 			if Game.Input.isKeyDown 'up'
-				@velocity.j = -speed
+				@velocity.j += speed
 			else if Game.Input.isKeyDown 'down'
-				@veocity.j = speed
+				@velocity.j -= speed
 			else
-				@velocity.j = 0
+				if @velocity.j.abs() > 0.00005
+					@velocity.j *= 0.8
+				else
+					@velocity.j = 0
 		
 			@updateVectors dt
+			###
+		
+		render: (canvas) ->
+			canvas.rectangle @aabb.center.clone(), [@aabb.hW * 2, @aabb.hH * 2], mode: 'center', stroke: 'red', width: 5
+		
+		attach: (entity) ->
+			@entity = entity
 	
-		centerOn: (vector) ->
-			@position.i = vector.i = @radius[0]
-			@position.j = vector.j = @radius[1]
-
-define ['motion', 'entity'], camera
+	Camera

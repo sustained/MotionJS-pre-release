@@ -1,8 +1,9 @@
 define [
-	'motion',
+	'class'
 	'eventful'
-], (Motion, Eventful) ->
-	class Screen extends Motion.Class
+], (Class, Eventful) ->
+	class Screen extends Class
+		
 		tick: 0
 		zIndex = 0
 		
@@ -11,6 +12,9 @@ define [
 		
 		#fadeIn:  1000
 		#fadeOut: 1000
+		
+		blur:  noop
+		focus: noop
 		
 		constructor: (@name, @Game) ->
 			super()

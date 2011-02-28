@@ -1,6 +1,8 @@
-define ['motion', 'geometry/shape'], (Motion, Shape) ->
-	Vector = Motion.Vector
-	
+define [
+	'geometry/shape'
+	'math/vector'
+	'physics/aabb'
+], (Shape, Vector, AABB) ->
 	class Polygon extends Shape
 		@createShape: (sides, radius = 100, position = new Vector) ->
 			return false if sides < 3
@@ -11,21 +13,23 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 			
 			i = 0; while i < sides
 				angle = (i * rotation) + ((Math.PI - rotation) * 0.5)
-				vertices.push new Vector Math.cos(angle) * radius, Math.sin(angle) * radius
+				vertices.push new Vector(Math.cos(angle), Math.sin(angle)).multiply radius
 				i++
 			
-			new @ vertices, position
+			new @ vertices, position, [radius, radius]
 		
 		@createRectangle: (width, height, position) ->
 			hW = width  / 2
 			hH = height / 2
 			
-			new @ [
+			rect = new @ [
 				new Vector -hW, -hH
 				new Vector  hW, -hH
 				new Vector  hW,  hH
 				new Vector -hW,  hH
-			], position
+			], position, [width, height]
+			
+			rect
 		
 		@createSquare: (width, position) ->
 			@createRectangle width, width, position
@@ -35,17 +39,19 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 		center:   null
 		offset:   null
 		
-		constructor: (@_vertices = [], position = new Vector) ->
+		constructor: (@_vertices = [], position = new Vector, size = [0, 0]) ->
 			super position
 			
-			@_axes      = []
-			@_verticesT = []
-			
+			@size = size
+			@_axes       = []
+			@_verticesT  = []
+			@projections = []
 			#@area   = 0
 			#@center = new Vector
 			#@offset = new Vector
 			
 			@defineAxes()
+			@defineProjections()
 			#@defineArea()
 			#@defineCenter()
 		
@@ -63,19 +69,24 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 
 			@_verticesT
 		
-		draw: (graphics) ->
-			if @fill   then graphics.fillStyle   = @fill
-			if @stroke then graphics.strokeStyle = @stroke
-			
+		draw: (g) ->
 			#graphics.translate @position.i, @position.j
 			
 			verts = @verticesT
 			
-			graphics.beginPath()
-			graphics.moveTo verts[0].i, verts[0].j
-			graphics.lineTo vec.i, vec.j for vec in verts
-			graphics.lineTo verts[0].i, verts[0].j
-			graphics.closePath()
+			g.beginPath()
+			g.moveTo verts[0].i, verts[0].j
+			g.lineTo vec.i, vec.j for vec in verts
+			g.lineTo verts[0].i, verts[0].j
+			g.closePath()
+			
+			if @fill
+				g.fillStyle = @fill
+				g.fill()
+			
+			if @stroke
+				g.strokeStyle = @stroke
+				g.stroke()
 			
 			#graphics.translate -@position.i, -@position.j
 		
@@ -109,14 +120,18 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 		#	
 		#	new Vector( -(b.j - a.j), (b.i - a.i)).normalize()
 		
-		project: (axis) ->
-			min = axis.dot @vertices[0]
-			max = min
+		collide: (polygon) ->
 			
-			i = 1; while i < vertsALen
-				num = axis.dot @vertices[i]
-				min = testNum if testNum < min1
-				max = testNum if testNum > max1
+		
+		project: (axis) ->
+			min = max = axis.dot @verticesT[0]
+			
+			i = 1; l = @verticesT.length
+			
+			while i < l
+				dot = axis.dot @verticesT[i]
+				min = dot if dot < min
+				max = dot if dot > max
 				i++
 			
 			[min, max]
@@ -128,6 +143,12 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 				b = @vertices[++i % l]
 				@_axes.push Vector.subtract(b, a).rightNormal().normalize()
 			#@removeDuplicateAxes()
+		
+		defineProjections: ->
+			i = 0; l = @axes.length
+			while i < l
+				@projections.push @project @axes[i]
+				i++
 		
 		removeDuplicateAxes: ->
 			i = j = 0

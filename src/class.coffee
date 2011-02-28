@@ -1,4 +1,4 @@
-define ['core', 'classutils'], (Core, ClassUtils) ->
+define ['classutils'], (ClassUtils) ->
 	class BaseClass
 		classId = 0
 		
@@ -12,8 +12,9 @@ define ['core', 'classutils'], (Core, ClassUtils) ->
 
 		@extend ClassUtils.Ext.Accessors
 
-		bind: (name, args...) ->
-			@[name] = @[name].bind @, args...
+		bind: (name, bind = @, args = []) ->
+			@[name] = @[name].bind bind, args...
+			@[name]
 
 		# return the instance's class
 		class: ->

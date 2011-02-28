@@ -1,4 +1,6 @@
-define ['motion'], (Motion) ->
+define [
+	'motion'
+], (Motion) ->
 	class Loop
 		time:  0 # current time
 		tick:  0 # game tick
@@ -35,12 +37,11 @@ define ['motion'], (Motion) ->
 					padding: '3px'
 					height: '16px'
 					lineHeight: '16px'
-					'webkit-border-radius': '5px'
+					#'webkit-border-radius': '5px'
 				
 				@fpsUpdate.css(css).css(top:'10px', left:'10px').attr 'id', 'fpsUpdate'
 				@fpsRender.css(css).css(top:'45px', left:'10px').attr 'id', 'fpsRender'
-				@fpsUpdate.appendTo 'body'
-				@fpsRender.appendTo 'body'
+				@fpsUpdate.add(@fpsRender).appendTo 'body'
 			else
 				@frameRate = noop
 			
@@ -54,7 +55,7 @@ define ['motion'], (Motion) ->
 		start: ->
 			@currentTime = Date.now()
 			
-			@gameLoop  = window.setInterval (=> @loop()), 1
+			@gameLoop  = window.setInterval (=> @loop()), 10
 			#@frameLoop = window.setInterval (=> @frameRate()), 1000 if Motion.env is 'client'
 		play: @::start
 		
@@ -66,7 +67,17 @@ define ['motion'], (Motion) ->
 		reset: ->
 			@time = @tick = @tock = @accum = @update = @render = 0
 		
+		showFPS: ->
+			@showFPS = true
+			@fpsUpdate.add(@fpsRender).show()
+		
+		hideFPS: ->
+			@showFPS = false
+			@fpsUpdate.add(@fpsRender).hide()
+		
 		frameRate: ->
+			return if @showFPS is false
+			
 			length  = @deltas.length
 			average = @deltas.sum()
 			@fpsUpdate.text 'Update @ ' + (@update - @lastUpdate) + ' FPS'
@@ -87,7 +98,7 @@ define ['motion'], (Motion) ->
 				@update += 1
 				@tick   += @delta
 				
-				@onUpdate @Game, @tick, @delta
+				@onUpdate @tick
 				
 			if @tick - @tock > 1
 				@tock = @tick
@@ -97,6 +108,6 @@ define ['motion'], (Motion) ->
 			@alpha   = @accum / @delta
 			@render += 1
 			
-			@onRender @Game, @alpha, @context
+			@onRender()
 	
 	Loop

@@ -1,5 +1,8 @@
-define ['motion', 'screen'], (Motion, Screen) ->
-	class ScreenManager extends Motion.Class
+define [
+	'class'
+	'screen'
+], (Class, Screen) ->
+	class ScreenManager extends Class
 		constructor: (@Game) ->
 			super()
 			
@@ -11,21 +14,25 @@ define ['motion', 'screen'], (Motion, Screen) ->
 			screen = new screen name, @Game
 			return false if not screen instanceof Screen
 			
-			screen.bind 'update', @Game, @Game.Loop.delta
-			screen.bind 'render', @Game, @Game.Loop.context
+			screen.bind 'update', null, [@Game.Loop.delta]
+			screen.bind 'render', null, [@Game.Loop.context]
 			
 			@screens[name] = screen
 			
-			if enable
-				@enabled.push name
+			if enable then @enable name
 			
 			@
+		
+		toggle: (disable, enable) ->
+			@disable disable
+			@enable  enable
 		
 		enable: (name) ->
 			if isArray name
 				@enable i for i in name
 				return
 			
+			@screens[name].focus()
 			@enabled.push name
 			
 			@
@@ -35,9 +42,12 @@ define ['motion', 'screen'], (Motion, Screen) ->
 				@disable i for i in name
 				return
 			
-			return false if @screens[name].persistent is true
+			screen = @screens[name]
 			
-			@screens[name].tick = 0
+			return false if screen.persistent
+			
+			screen.tick = 0
+			screen.blur()
 			@enabled = @enabled.remove name
 			
 			@
@@ -54,7 +64,7 @@ define ['motion', 'screen'], (Motion, Screen) ->
 		
 		render: ->
 			for name in @enabled
-				@screens[name].render @Game.Loop.alpha
+				@screens[name].render.call()
 			null
 	
 	ScreenManager

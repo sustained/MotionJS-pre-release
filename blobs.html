@@ -1,9 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="http://localhost/Shared/Javascript/MotionJS/lib/vendor/jquery.js"></script>
+	<style>
+html > * {
+	cursor: none !important;
+}
+	</style>
 	
-	<script data-main="./lib/examples/blobs/blobs" src="lib/vendor/require.js"></script>
+	<script>
+var require = {
+	priority: [
+		'lib/natives/math.js'
+	,	'lib/natives/array.js'
+	,	'lib/natives/number.js'
+	,	'lib/natives/string.js'
+	]
+,	deps: ['core']
+,	baseUrl: 'http://localhost/Shared/Javascript/MotionJS/lib/'
+,	urlArgs: "nocache=" +  (new Date()).getTime()
+};
+	</script>
+	
+	<script src="vendor/jquery.js"></script>
+	<script src="vendor/require.js" data-main="./lib/examples/blobs/blobs"></script>
 </head>
 <body>
 </body>

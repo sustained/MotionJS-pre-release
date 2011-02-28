@@ -1,4 +1,4 @@
-define ['classutils'], (ClassUtils) ->
+define ->
 	class Vector
 		constructor: (i, j) ->
 			@set i, j
@@ -140,8 +140,8 @@ define ['classutils'], (ClassUtils) ->
 
 		normalize: ->
 			length = @length()
-			if length is 0
-				@i = 1
+			if length < 0.01
+				@i = @j = 0
 				@
 			else
 				@divide length
@@ -149,10 +149,14 @@ define ['classutils'], (ClassUtils) ->
 		truncate: (max) ->
 			@length = Math.min max, @length()
 			@
-
-		invert: ->
+		
+		abs: ->
+			@set Math.abs(@i), Math.abs(@j)
+		
+		inv: ->
 			@set -@i, -@j
-
+		invert: @::inv
+		
 		isZero: ->
 			@i is 0 and @j is 0
 

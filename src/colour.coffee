@@ -1,13 +1,13 @@
-define ['motion'], (Motion) ->
+define ->
 	class Colour
 		@ALPHA: [.0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 		@DEFAULT_ALPHA: 1.0
 		
 		@random: (rgba = true)->
 			random = new Colour(
-				rand 0, 255
-				rand 0, 255
-				rand 0, 255
+				Math.rand 0, 255
+				Math.rand 0, 255
+				Math.rand 0, 255
 				Colour.ALPHA.random()
 			)
 			return if rgba is true then random.rgba() else random

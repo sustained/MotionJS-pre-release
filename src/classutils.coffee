@@ -1,4 +1,4 @@
-define ['core'], ->
+define ->
 	ClassUtils =
 		Inc: {}
 		

@@ -9,24 +9,25 @@ enableStdin = (onData) ->
 	process.stdin.setEncoding 'utf8'
 	process.stdin.on 'data', onData
 
-watchAndCompile = ->
-	options = ["--compile", "--bare", "--watch", "--output", "lib/", "src/"]
-	watch   = spawn "coffee", options, cwd: __dirname, setsid: yes
-	watch.stdout.setEncoding 'utf8'
-	watch.stderr.setEncoding 'utf8'
-	watch.stdout.on 'data', (io) -> puts io.trim()
-	watch.stderr.on 'data', (io) -> puts io.trim()
-	watch.on 'exit', (code, signal) -> puts "Exit #{code} #{signal}"
-	watch
-
-task 'watch', 'Auto-compile files when they are modified.', ->
-	puts "Auto-compiling enabled!"
+spawnCoffee = (options) ->
+	coffee  = spawn "coffee", options.split(' '), cwd: __dirname
 	
-	watcher = watchAndCompile()
+	coffee.stdout.setEncoding 'utf8'
+	coffee.stderr.setEncoding 'utf8'
+	coffee.stdout.on 'data', (data) -> puts data.trim()
+	coffee.stderr.on 'data', (data) -> puts data.trim()
+	
+	coffee
+
+task 'compile', '...', ->
+	spawnCoffee '--compile --bare --output lib/ src/'
+	
+task 'watch', 'Auto-compile files when they are modified.', ->
+	coffee = spawnCoffee '--compile --bare --watch --output lib/ src/'
 	
 	enableStdin (io) ->
 		if io.trim() in ['update', 'restart']
 			puts 'Auto-compiling restarting...'
-			watcher.kill 'SIGKILL'
-			watcher = watchAndCompile()
+			coffee.kill 'SIGKILL'
+			coffee = watchAndCompile()
 		true

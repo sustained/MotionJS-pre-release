@@ -1,4 +1,6 @@
-define ['motion', 'geometry/shape'], (Motion, Shape) ->
+define [
+	'geometry/shape'
+], (Shape) ->
 	class Circle extends Shape
 		radius: 0
 		
@@ -7,11 +9,17 @@ define ['motion', 'geometry/shape'], (Motion, Shape) ->
 		
 		@get 'radiusT', -> @radius * @_scaleX
 		
-		draw: (graphics) ->
-			graphics.fillStyle   = @fill   if @fill
-			graphics.strokeStyle = @stroke if @stroke
-			graphics.beginPath()
-			graphics.arc @position.i, @position.j, @radiusT, 0, Math.TAU, false
-			graphics.closePath()
+		draw: (g) ->
+			g.beginPath()
+			g.arc @position.i, @position.j, @radiusT, 0, Math.TAU, false
+			g.closePath()
+			
+			if @fill
+				g.fillStyle = @fill
+				g.fill()
+			
+			if @stroke
+				g.strokeStyle = @stroke
+				g.stroke()
 	
 	Circle

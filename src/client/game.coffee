@@ -1,34 +1,29 @@
 define [
 	'motion'
+	'class'
 	'eventful'
 	'stateful'
 	'loop'
 	'input'
 	'screenmanager'
-	'screen'
-	'canvas'
-	'colour'
-], (Motion, Eventful, Stateful, Loop, Input, MScreen, Screen, Canvas, Colour) ->
-	Motion = extend Motion, {
-		Eventful
-		Stateful
-		Loop
-		Input
-		MScreen
-		Screen
-		Canvas
-		Colour
-	}
-	
-	class Game extends Motion.Class
+], (Motion, Class, Eventful, Stateful, Loop, Input, MScreen) ->
+	class Game extends Class
+		_instance = null
+		
 		constructor: ->
+			#if _instance isnt null then return _instance
+			
 			super()
+			
+			#@test = Math.random()
 			
 			if Motion.env is 'client'
 				@Input  = new Input
 				@Screen = new MScreen @
 			
-			@Loop = new Loop @
-			@E = @Event = new Eventful
+			@Loop  = new Loop @
+			@Event = new Eventful
+			
+			#_instance = @
 	
 	Game

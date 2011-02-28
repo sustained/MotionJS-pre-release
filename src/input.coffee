@@ -103,10 +103,10 @@ input = (Vector, Eventful) ->
 				@Event.fire 'mouse_up', [but, e]
 	
 		_onMouseMove: (e) ->
-			x = e.pageX
-			y = e.pageY
-			@mouse.position.page.set x, y
-			@Event.fire 'mouse_move', [x, y]
+			if e.timeStamp - @lastMUpdate > 25
+				@lastMUpdate = e.timeStamp
+				@mouse.position.page.set e.pageX, e.pageY
+				#@Event.fire 'mouse_move', [x, y]
 	
 		isMouseDown: (button) -> @mouse[button] is on
 		isMouseUp:   (button) -> @mouse[button] is off
@@ -117,8 +117,11 @@ input = (Vector, Eventful) ->
 		altKey:   false
 		metaKey:  false
 		shiftKey: false
-	
-		constructor: (Game) ->
+		
+		update: (camera) ->
+			@mouse.position.game = Vector.add camera.position, @mouse.position.page
+		
+		constructor: (@Game) ->
 			@Event = new Eventful 'key_up', 'key_down', 'mouse_up', 'mouse_down', 'mouse_move'
 			
 			@mouse = 
@@ -129,20 +132,33 @@ input = (Vector, Eventful) ->
 				position:
 					page: new Vector
 					game: new Vector
-		
+			
+			@lastMUpdate = 0
+			@lastKUpdate = 0
+			
 			@keyboard  = {}
 			@keyEvents = {}
 		
 			@keyboard[char] = off for code, char of Input.CHARMAP
 			
-			doc = $(document)
-			doc.bind 'oncontextmenu', (e) -> e.preventDefault()
-			doc.keyup     @_onKeyUp.bind     @
-			doc.keydown   @_onKeyDown.bind   @
-			doc.mouseup   @_onMouseUp.bind   @
-			doc.mousedown @_onMouseDown.bind @
-			doc.mousemove @_onMouseMove.bind @
-	
+			#doc = $(document)
+			#doc.bind 'oncontextmenu', (e) -> e.preventDefault()
+			#doc.keyup     @_onKeyUp.bind     @
+			#doc.keydown   @_onKeyDown.bind   @
+			#doc.mouseup   @_onMouseUp.bind   @
+			#doc.mousedown @_onMouseDown.bind @
+			#doc.mousemove @_onMouseMove.bind @
+		
+		setup: ($el) ->
+			$doc = $(document)
+			
+			$doc.keyup   @_onKeyUp.bind   @
+			$doc.keydown @_onKeyDown.bind @
+			
+			$el.mouseup   @_onMouseUp.bind   @
+			$el.mousedown @_onMouseDown.bind @
+			$el.mousemove @_onMouseMove.bind @
+		
 	Input.CODEMAP[char] = code for code, char of Input.CHARMAP
 	
 	Input

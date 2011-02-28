@@ -1,4 +1,0 @@
-define ->
-	class World
-	
-	World

@@ -1,9 +1,8 @@
 define [
-	'../../core'
 	'../../math/vector'
 	'../../geometry/circle'
 	'../../geometry/polygon'
-], (Core, Vector, Circle, Polygon) ->
+], (Vector, Circle, Polygon) ->
 	class SeperatingAxisTheorem
 		@test: (a, b) ->
 			aIsPoly = a instanceof Polygon
@@ -37,10 +36,10 @@ define [
 				separation: Vector.multiply distance, difference
 				shapeAContained: a.radiusT <= b.radiusT && dist <= b.radiusT - a.radiusT
 				shapeBContained: b.radiusT <= a.radiusT && dist <= a.radiusT - b.radiusT
-				vector: aSubB.normalize()
+				vector: aSubtractB.normalize()
 			
 			collision.overlap = collision.separation.length()
-				
+			
 			collision
 		
 		@checkPolygons: (a, b) ->
@@ -67,8 +66,8 @@ define [
 			vertsALen = vertsA.length
 			vertsBLen = vertsB.length
 			
-			axesA = a.axes.concat()
-			axesB = a.axes.concat()
+			#axesA = a.axes.concat()
+			#axesB = a.axes.concat()
 			
 			collision = {}
 			shortestDistance = Number.MAX_VALUE
@@ -89,21 +88,49 @@ define [
 			
 			while i < vertsALen
 				###
-				axis = axesA[i]
-				
-				projA = a.project axis
-				projB = b.project axis
-				
-				return false if projA[0] - projB[1] > 0 or projB[0] - projA[1]
-				
-				distance = -(projB[1] - projA[0])
-				
-				if Math.abs distance < shortestDistance
+				@findNormalAxis: (vertices, index) ->
+					a = vertices[index]
+					b = if index >= vertices.length - 1 then vertices[0] else vertices[index + 1]
+					
+					new Vector( -(b.j - a.j), (b.i - a.i)).normalize()
 				###
 				
 				axis = @findNormalAxis vertsA, i
+				#axis = a.axes[i]
 				
+				###
+				project: (axis) ->
+					min = max = axis.dot @verticesT[0]
+
+					i = 1; l = @verticesT.length
+
+					while i < l
+						dot = axis.dot @verticesT[i]
+						min = dot if dot < min
+						max = dot if dot > max
+						i++
+
+					[min, max]
+				###
+				
+				pA = a.project axis
+				#pA = a.projections[i]
+				pB = b.project axis
+				
+				#console.log axis
+				#console.log pA, pB
+				
+				return false if pA[0] - pB[1] > 0 or pB[0] - pA[1] > 0
+				
+				distance = -(pB[1] - pA[0])
+				
+				if Math.abs(distance) < shortestDistance
+					collision.vector  = axis
+					collision.overlap = distance
+					shortestDistance  = Math.abs distance
+				###
 				min1 = max1 = axis.dot vertsA[0]
+				
 				j = 1; while j < vertsALen
 					testNum = axis.dot vertsA[j]
 					
@@ -129,19 +156,20 @@ define [
 				distance = -(max2 - min1)
 				
 				if Math.abs(distance) < shortestDistance
-					collision.overlap    = distance
-					collision.unitVector = axis
-					shortestDistance     = Math.abs distance
-				
+					collision.vector  = axis
+					collision.overlap = distance
+					shortestDistance  = Math.abs distance
+				###
 				i++
 			
 			collision.shapeA = a
 			collision.shapeB = b
 			
-			collision.separation = Vector.multiply collision.unitVector, collision.overlap
+			collision.separation = Vector.multiply collision.vector, collision.overlap
 			collision
 				
 		@checkCircleVersusPolygon: (circ, poly) ->
+			
 			# vectors
 			a = circ.position
 			b = poly.position
@@ -185,7 +213,6 @@ define [
 			
 			normalAxis = Vector.subtract(closestVector, a).normalize()
 			
-			console.log normalAxis.isZero()
 			
 			min1 = max1 = normalAxis.dot verts[0]
 			

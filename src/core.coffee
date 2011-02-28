@@ -1,15 +1,8 @@
-define [
-	'lib/natives/math.js'
-	'lib/natives/array.js'
-	'lib/natives/number.js'
-	'lib/natives/string.js'
-], ->
+define ->
 	toString  = Object::toString
 	isBrowser = window? and document? and navigator?
 	
 	root = if isBrowser then window else global
-	return if root._motionified is true
-	
 	root.noop = -> null
 	
 	# Some useful functions for checking types
@@ -41,7 +34,5 @@ define [
 			profileEnd time timeEnd trace warn
 		'''.split /\s+/
 			root.console[method] = noop
-
-	root._motionified = true
 	
 	42

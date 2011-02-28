@@ -1,12 +1,9 @@
-define ['motion'], (Motion) ->
-	Vector = Motion.Vector
-	
+define [
+	'classutils'
+], (ClassUtils) ->
 	class BaseShape
-		@Types:
-			STATIC:  0 << 0
-			DYNAMIC: 0 << 1
-		
-		type: null
+		area:      0
+		perimiter: 0
 		
 		_scaleX: 1
 		_scaleY: 1
@@ -14,19 +11,28 @@ define ['motion'], (Motion) ->
 		_position: null
 		_rotation: 0
 		
-		transform: null
-		
+		transform:   null
 		transformed: false
 		
 		fill:   ''
 		stroke: ''
 		
+		isNormal:  ->
+		isRegular: ->
+		
 		constructor: (position = new Vector) ->
-			@transform = a: 1; b: 0; c: 0; d: 1; tx: 0; ty: 0
+			#@transform = Matrix.Identity
+			@transform =
+				a: 1
+				b: 0
+				c: 0
+				d: 1
+				tx: 0
+				ty: 0
 			
 			@position = position
 		
-		extend BaseShape, Motion.ClassUtils.Ext.Accessors
+		extend BaseShape, ClassUtils.Ext.Accessors
 		
 		@set 'position', (@_position) ->
 			@transform.tx = @_position.i

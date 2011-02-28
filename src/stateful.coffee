@@ -1,5 +1,5 @@
-stateful = (Motion, Eventful) ->
-	class Stateful extends Motion.Class
+define ['class', 'eventful'], (Class, Eventful) ->
+	class Stateful extends Class
 		constructor: (@Game) ->
 			super()
 			@Event   = new Eventful 'beforeUpdate', 'afterUpdate', 'beforeRender', 'afterRender'
@@ -59,5 +59,3 @@ stateful = (Motion, Eventful) ->
 			@
 	
 	Stateful
-
-define ['motion', 'eventful'], stateful

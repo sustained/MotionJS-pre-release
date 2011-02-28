@@ -1,4 +1,4 @@
-define [
+###define [
 	'motion',
 	'../math/vector'
 ], (Motion, Vector) ->
@@ -36,4 +36,4 @@ define [
 			super size, size
 		
 		define: (size) ->
-			super size, size
+			super size, size###
