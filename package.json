@@ -1,6 +1,6 @@
 {
 	"name":        "MotionJS",
-	"author":      "Joe Kelk",
+	"author":      "Xavura",
 	"version":     "0.1-a",
 	"keywords":    ["2d", "game", "development", "library", "framework"],
 	"description": "Woo!",
@@ -11,7 +11,7 @@
 	}],
 	
 	"engines": {
-		"node": ">=0.2.5"
+		"node": ">=0.4.0"
 	},
 	
 	"directories" : {

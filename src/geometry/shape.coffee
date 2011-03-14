@@ -32,7 +32,7 @@ define [
 			
 			@position = position
 		
-		extend BaseShape, ClassUtils.Ext.Accessors
+		Motion.ext BaseShape, ClassUtils.Ext.Accessors
 		
 		@set 'position', (@_position) ->
 			@transform.tx = @_position.i
@@ -70,6 +70,6 @@ define [
 		@get 'x', -> @_position.i
 		@get 'y', -> @_position.j
 		
-		draw: noop
+		draw: -> null
 	
 	BaseShape

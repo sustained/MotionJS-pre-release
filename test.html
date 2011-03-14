@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="http://localhost/Shared/Javascript/MotionJS/lib/vendor/jquery.js"></script>
+	<script>
+var require = {
+	priority: ['core']
+,	baseUrl: 'http://localhost/Shared/Javascript/MotionJS/lib/'
+,	urlArgs: "nocache=" +  (new Date()).getTime()
+};
+	</script>
 	
-	<script data-main="./lib/test" src="http://localhost/Shared/Javascript/MotionJS/lib/vendor/require.js"></script>
+	<script src="vendor/jquery.js"></script>
+	<script src="vendor/require.js" data-main="./lib/tests/collision/rectangle.coffee"></script>
 </head>
 <body>
 </body>

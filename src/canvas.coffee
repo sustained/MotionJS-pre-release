@@ -1,4 +1,6 @@
-define ->
+define [
+	'math/vector'
+], (Vector) ->
 	class Canvas
 		DIMENSIONS = [
 			[800,   600]
@@ -15,8 +17,9 @@ define ->
 		size: Canvas.DefaultDimensions
 		show: true
 		
-		fill:   false
-		stroke: false
+		fill:   'white'
+		width:  1.0
+		stroke: 'white'
 		
 		canvas:  null # DOM Object
 		$canvas: null # jQuery Object
@@ -62,7 +65,7 @@ define ->
 				false
 			###
 			
-		draw: (style) ->
+		draw: (style = {}) ->
 			if style.fill
 				@context.fillStyle = style.fill
 				@context.fill()
@@ -71,6 +74,12 @@ define ->
 				@context.lineWidth   = style.width or 1.0
 				@context.strokeStyle = style.stroke
 				@context.stroke()
+		
+		lineV: (position, direction, style) ->
+			@line position, directioin, style
+		
+		lineA: (position, direction, style) ->
+			@line new Vector(position), new Vector(direction), style
 		
 		line: (position, direction, style) ->
 			@context.beginPath()

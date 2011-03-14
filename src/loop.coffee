@@ -1,6 +1,4 @@
-define [
-	'motion'
-], (Motion) ->
+define ->
 	class Loop
 		time:  0 # current time
 		tick:  0 # game tick
@@ -48,14 +46,15 @@ define [
 			@time   = Date.now()
 			@deltas = [];
 			
-			haveGame  = isObject(@Game) #and @Game.class() is 'Game'
-			@onUpdate = @Game.Screen.method 'update' if haveGame
-			@onRender = @Game.Screen.method 'render' if haveGame
+			if Motion.env is 'client'
+				haveGame  = isObject(@Game) #and @Game.class() is 'Game'
+				@onUpdate = @Game.Screen.method 'update' if haveGame
+				@onRender = @Game.Screen.method 'render' if haveGame
 		
 		start: ->
 			@currentTime = Date.now()
 			
-			@gameLoop  = window.setInterval (=> @loop()), 10
+			@gameLoop  = window.setInterval (=> @loop()), 1
 			#@frameLoop = window.setInterval (=> @frameRate()), 1000 if Motion.env is 'client'
 		play: @::start
 		

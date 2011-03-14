@@ -5,7 +5,7 @@ define [
 	class World
 		gravity: new Vector 0, 0
 		
-		constructor: (@bounds = [10000, 10000]) ->
+		constructor: (@bounds = [Number.MAX_VALUE, Number.MAX_VALUE]) ->
 			@w = @bounds[0]
 			@h = @bounds[1]
 			
@@ -14,42 +14,70 @@ define [
 				static:  {}
 				dynamic: {}
 			
+			@bodies = {
+				static:  {}
+				dynamic: {}
+			}
+			
 			@cameras  = {}
 			@entities = {}
+			
 		
 		addEntity: (entity) ->
 			@entities[entity.id] = entity
 			
 			if entity.body.static
-				@groups.static[entity.id] = entity
+				@bodies.static[entity.id] = entity.body
 			else
-				@groups.dynamic[entity.id] = entity
+				@bodies.dynamic[entity.id] = entity.body
+		
+		removeEntity: (id) ->
+			if id of @entities
+				delete @entities[id]
+				delete @bodies.static[id]  if id of @bodies.static
+				delete @bodies.dynamic[id] if id of @bodies.dynamic
+				
+				true
+			
+			false
 		
 		step: (delta) ->
-			for n, i of @groups.player
-				i.input @game.Input
+			for n, entity of @groups.player
+				entity.input @game.Input
 			
-			for n, i of @groups.dynamic
-				continue if i.body.isAsleep()
+			###
+				Broad phase
+			###
 				
-				i.body.applyForce @gravity
+			
+			###
+				Narrow phase
+			###
+			
+			for i, a of @bodies.dynamic
+				continue if a.isAsleep()
+				
+				A = @entities[i]
+				#A.input(@game.Input)
+				
+				a.applyForce @gravity
 				
 				# for damping etc.
-				i.damping()
+				#i.damping()
 				
 				# broad phase
 				# ...
 				
 				# narrow phase
+				# ...
 				
 				skips      = 0
 				collisions = 0
 				
-				for m, j of @groups.static
-					a = i.body
-					b = j.body
-					
+				for j, b of @bodies.static
 					continue if not a.caabb.intersects b.aabb
+					
+					B = @entities[j]
 					
 					collision = SAT.test b.shape, a.shape
 					
@@ -63,7 +91,7 @@ define [
 						#		@lastPortalUse = tick
 						#	break
 						
-						a.position  = a.position.add collision.separation
+						a.position = a.position.add collision.separation
 						
 						#Vn = (V . N) * N;
 						#Vt = V – Vn;
@@ -77,27 +105,34 @@ define [
 							Vector.multiply(vn,    -b.coe)
 						)
 						
-						b.colliding = true
-						i.event.fire 'collision', [collision, j]
+						B.colliding = true
+						A.event.fire 'collision', [collision, b]
 					else
-						b.colliding = false
+						B.colliding = false
 				
-				a.colliding = collisions > 0
+				###
+				for m, j of @bodies.dynamic
+					continue if not i.caabb.intersects j.aabb
+					
+					collision = SAT.test i.shape, j.shape
+					
+					if collision
+						i.event.fire 'collision', [collision, j]
+						j.event.fire 'collision', [collision, i]
+				###
+				
+				A.colliding = collisions > 0
 				
 				# integrate
-				i.body.linIntegrate delta
+				a.linIntegrate delta
+				#a.angIntegrate delta
 				
-				i.update @game.Loop.tick
+				A.update @game.Loop.tick
 			
 			return
 		
 		render: (context, camera) ->
-			for id, entity of @groups.static
-				continue if not camera.aabb.intersects entity.body.aabb
-				
-				entity.render context
-			
-			for id, entity of @groups.dynamic
+			for id, entity of @entities
 				continue if not camera.aabb.intersects entity.body.aabb
 				
 				entity.render context

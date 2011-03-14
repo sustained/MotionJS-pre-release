@@ -12,11 +12,11 @@ define [
 		maxForce: 1
 		maxSpeed: 10000
 		
-		_mass:        1
-		_massInverse: 1
+		_mass:    1
+		_invMass: 1
 		
-		_inertia:        1
-		_inertiaInverse: 1
+		_inertia:    1
+		_invInertia: 1
 		
 		asleep: false
 		
@@ -32,20 +32,25 @@ define [
 			@_position    = new Vector
 			@acceleration = new Vector
 		
-		extend Body, ClassUtils.Ext.Accessors
+		Motion.ext Body, ClassUtils.Ext.Accessors
 		
 		@get 'position', -> @_position
 		@get 'x',        -> @_position.i
 		@get 'y',        -> @_position.j
 		
 		@get 'mass',    -> @_mass
-		@get 'massInv', -> @_massInverse
+		@get 'invMass', -> @_invMass
 		
 		@get 'inertia',    -> @_inertia
-		@get 'inertiaInv', -> @_inertiaInverse
+		@get 'invInertia', -> @_invInertia
 		
-		@set 'mass',    (mass)    -> @_massInverse    = 1.0 / (@_mass    = mass)
-		@set 'inertia', (inertia) -> @_inertiaInverse = 1.0 / (@_inertia = inertia)
+		@set 'mass', (mass) ->
+			@_mass    = mass
+			@_invMass = if mass > 0 then 1.0 / mass else 0
+		
+		@set 'inertia', (inertia) ->
+			@_inertia    = inertia
+			@_invInertia = if inertia > 0 then 1.0 / inertia else 0
 		
 		@set 'position', (@_position) ->
 			@aabb.center    = @_position
@@ -65,13 +70,13 @@ define [
 			null
 		
 		linIntegrate: (delta) ->
-			@acceleration = @force.multiply @massInv
+			@acceleration = @force.multiply @invMass
 			@velocity.add(Vector.multiply(@acceleration, delta)).limit @maxSpeed
 			@position = @position.add(Vector.multiply(@velocity, delta))
 			@force.set()
 		
 		angIntegrate: (delta) ->
-			@angularAcceleration = @torque * @inertiaInv
+			@angularAcceleration = @torque * @invInertia
 			@angularVelocity    += @angularAcceleration * delta
 			@orientation        += @angularVelocity     * delta
 			@torque = 0

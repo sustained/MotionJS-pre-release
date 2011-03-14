@@ -12,30 +12,27 @@ require [
 	'physics/aabb'
 	'screen'
 ], (Game, Entity, Camera, Canvas, Colour, Vector, Polygon, Circle, SAT, World, AABB, Screen) ->
-	game = new Game
+	game = new Game {
+		size:  [1024, 768]
+		delta: 1.0 / 60
+	}
+	
+	world  = game.world
+	canvas = game.canvas
+	
+	world.w = world.h = 25000
+	world.gravity = new Vector 0, 250
 	
 	rand = Math.rand
 	
 	$hW = ($W = 1024) / 2
 	$hH = ($H =  768) / 2
 
-	world = new World [5000, 5000]
-	world.game = game
-	world.gravity = new Vector 0, 300
-
-	canvas = new Canvas [$W, $H]
-	canvas.create()
-	
-	# make this shit automatic
-	game.Loop.context = canvas.context
-	game.Input.setup canvas.$canvas
-
-	extend window, {game, world, canvas}
-
 	class Wall extends Entity.Static
 		constructor: (size = [rand(100, 400), rand(20, 40)]) ->
 			super
 			
+			#@body.shape    = Polygon.createShape rand(3, 6), size[1]
 			@body.shape    = Polygon.createRectangle size[0], size[1]
 			@body.position = new Vector rand(50, world.w - 50), rand(50, world.h - 50)
 			@body.aabb     = new AABB @body.position, [size[0] / 2, size[1] / 2]
@@ -79,7 +76,7 @@ require [
 		constructor: ->
 			super
 			
-			@body.maxSpeed = 1000
+			@body.maxSpeed = 100000
 			@body.shape = Polygon.createSquare 26
 			@body.caabb = new AABB @body.position, [250, 250]
 			
@@ -107,43 +104,39 @@ require [
 		jumpTicker: 0
 		
 		input: (input) ->
-			#change = if @body.colliding then 8 else 4
-			change = 2
-			
-			
-			#if input.isKeyDown 'jump'
-			#	
-			#else if @groundBelow
-			#	hop impulse
-			#
-			
+			change    = 2
 			hMovement = false
 			
 			if input.isKeyDown 'a'
 				hMovement         = true
 				@facingLeft       = not (@facingRight = false)
-				@body.velocity.i -= change
+				#@body.velocity.i -= change
+				@body.applyForce new Vector -150, 0
 			else if input.isKeyDown 'd'
 				hMovement         = true
 				@facingRight      = not (@facingLeft = false)
-				@body.velocity.i += change
-			
-			if input.isKeyDown 'w'
-				@jumpTicker += 0.5 if @jumpTicker <= 20
+				#@body.velocity.i += change
+				@body.applyForce new Vector 150, 0
 			else
 				if @groundBelow
-					if @jumpTicker > 0
-						@body.applyForce new Vector 0, -(1000 * @jumpTicker)
-						@jumpTicker = 0
+					if @body.velocity.i.abs() > 0.0001
+						@body.velocity.i *= 0.98
 					else
-						# hoppety hop
-						@body.applyForce new Vector 0, -4000#(Math.max(150, @body.velocity.i.abs()) * 30)
+						@body.velocity.i = 0
 			
-			if not hMovement
-				if @body.velocity.i.abs() > 0.005
-					@body.velocity.i *= 0.97
+			if not @groundBelow
+				if @body.velocity.i.abs() > 0.0001
+					@body.velocity.i *= 0.98
 				else
 					@body.velocity.i = 0
+			
+			if input.isKeyDown('w') and @groundBelow
+				@body.applyForce new Vector 0, -4000
+					#@jumpTicker = 0
+				#else
+					# hoppety hop
+					#@body.applyForce new Vector 0, -4000
+					# -(Math.max(150, @body.velocity.i.abs()) * 30)
 			
 			#if @jump is false #and @body.colliding is true
 				#@jumpStart = game.Loop.tick if not @jumpStart
@@ -166,12 +159,25 @@ require [
 				if game.Loop.tick - @jumpEnd > 2.0 then @jumpAllowed = true
 		
 		update: (tick) ->
-			vel = @body.velocity.clone().abs()
+			vel = @body.velocity.clone().abs().multiply 2#.divide 2
+			
 			if vel.i < 50 then vel.i = 50
 			if vel.j < 50 then vel.j = 50
 			
 			@body.caabb.set @body.position.clone(), [vel.i, vel.j]
+			###
+			@body.caabb.hW = 25
+			@body.caabb.hH = 25
 			
+			pos  = @body.position.clone()
+			@body.caabb.center = pos
+			
+			@body.caabb.setR Math.max 25, vel.i
+			@body.caabb.setL Math.max 25, Math.abs vel.i
+			
+			@body.caabb.setB Math.max 25, vel.j
+			@body.caabb.setT Math.max 25, Math.abs vel.j
+			###
 			if @blink is false
 				if tick - @endBlink > 4
 					@blink      = true
@@ -185,19 +191,24 @@ require [
 			canvas.circle @body.position.clone(), 16, fill: 'rgb(180, 180, 0)'
 			
 			if @jumpTicker > 0
-				canvas.rectangle Vector.add(@body.position, new Vector(50,  0)), [4, 20], stroke: 'gray'
-				canvas.rectangle Vector.add(@body.position, new Vector(50, 20)), [4, -@jumpTicker], fill: 'red'
+				canvas.rectangle Vector.add(@body.position, new Vector(50,  0)), [4, 20],
+					stroke: 'gray'
+				canvas.rectangle Vector.add(@body.position, new Vector(50, 20)), [4, -@jumpTicker],
+					fill: 'red'
 			
-			canvas.text Vector.add(@body.position, new Vector(50, 50)), @body.velocity.length().toFixed(0), font: '12px Helvetica Neue', fill: 'white'
+			canvas.text Vector.add(@body.position, new Vector(50, 50)), @body.velocity.length().toFixed(0),
+				font: '12px Helvetica Neue', fill: 'white'
 		
 		drawEyes: ->
 			if @blink
 				j = @body.y - 4
 				
 				if @facingLeft
-					canvas.line new Vector(@body.x - 14, j), new Vector(@body.x - 4, j), stroke: 'black', width: 0.5
+					canvas.line new Vector(@body.x - 14, j), new Vector(@body.x - 4, j),
+						stroke: 'black', width: 0.5
 				else if @facingRight
-					canvas.line new Vector(@body.x + 14, j), new Vector(@body.x + 4, j), stroke: 'black', width: 0.5
+					canvas.line new Vector(@body.x + 14, j), new Vector(@body.x + 4, j),
+						stroke: 'black', width: 0.5
 			else
 				if @facingLeft
 					canvas.circle new Vector(@body.x -  8, @body.y - 4), 7, fill: 'white'
@@ -210,9 +221,11 @@ require [
 			j = @body.y + 10
 			
 			if @facingLeft
-				canvas.line new Vector(@body.x - 12, j), new Vector(@body.x - 2, j), stroke: 'black', width: 0.5
+				canvas.line new Vector(@body.x - 12, j), new Vector(@body.x - 2, j),
+					stroke: 'black', width: 0.5
 			else if @facingRight
-				canvas.line new Vector(@body.x + 12, j), new Vector(@body.x + 2, j), stroke: 'black', width: 0.5
+				canvas.line new Vector(@body.x + 12, j), new Vector(@body.x + 2, j),
+					stroke: 'black', width: 0.5
 		
 		drawAABB: ->
 			#if @body.colliding
@@ -226,7 +239,8 @@ require [
 				@body.position.clone(),
 				[@body.caabb.hW * 2, @body.caabb.hH * 2],
 				mode: 'center', stroke: 'rgba(0, 200, 0, 0.3)'
-			#canvas.rectangle @body.position.clone().round(), [250, 250], stroke: 'green', mode: 'center', width: 2.0
+			#canvas.rectangle @body.position.clone().round(), [250, 250],
+			#	stroke: 'green', mode: 'center', width: 2.0
 		
 		render: (context) ->
 			@drawBlob()
@@ -235,21 +249,24 @@ require [
 			#@drawAABB()
 
 	player = new Blob
-	player.body.position = new Vector $hW, 5
+	player.body.position = new Vector $hW, 100
 	world.groups.player[player.id] = player
 	world.addEntity player
 	
-	walls = for i in [0..100]
+	walls = for i in [0..10000]
 		wall = new Wall
 		#wall.body.cof = Math.random()
-		coe = Math.random()
-		coe = 0.3 if coe < 0.3
-		coe = 0.7 if coe > 0.7
-		wall.body.coe = 0.1
-		wall.body.cof = 0.0
+		coe = 0.25#Math.random()
+		cof = 0#.01
 		
-		wall.body.shape.fill = Colour.random()
-		#wall.body.shape.stroke = new Colour(200, 0, 0, wall.body.cof).rgba()
+		#coe = 0.1 if coe < 0.1
+		#coe = 0.5 if coe > 0.5
+		
+		wall.body.coe = coe
+		wall.body.cof = cof
+		
+		wall.body.shape.fill   = new Colour(0, 200, 0, wall.body.coe).rgb()
+		wall.body.shape.stroke = new Colour(200, 0, 0, wall.body.cof).rgb()
 		wall
 
 	boundaries = [
@@ -259,19 +276,14 @@ require [
 		new Wall [20, world.h]
 	]
 	for wall in boundaries
-		#wall.body.cof = 0.0
-		wall.body.coe = 5.0
+		wall.body.coe = 1
+		wall.body.cof = 0
 		wall.body.shape.fill = new Colour(0, 0, 200, 0.8).rgba()
 	
 	boundaries[0].body.position = new Vector world.w / 2, 0
 	boundaries[1].body.position = new Vector world.w / 2, world.w
 	boundaries[2].body.position = new Vector 0, world.h / 2
 	boundaries[3].body.position = new Vector world.w, world.h / 2
-	
-	#boundaries[0].body.position = new Vector $hW, 0
-	#boundaries[1].body.position = new Vector $hW, $H
-	#boundaries[2].body.position = new Vector 0,   $hH
-	#boundaries[3].body.position = new Vector $W,  $hH
 
 	walls = walls.concat boundaries
 
@@ -301,14 +313,6 @@ require [
 	#mid = new Vector $hW, $hH
 	#top = new Vector $hW, 50
 
-	logTime = 0
-	log = window.log = (me) ->
-		now = Date.now()
-	
-		if now - logTime > 250
-			logTime = now
-			console.log me
-	
 	class GameScreen extends Screen
 		constructor: ->
 			super
@@ -317,7 +321,7 @@ require [
 			@camera.attach world.groups.player[1]
 		
 		update: (delta, tick) ->
-			world.step     delta
+			world.step delta
 			@camera.update delta
 			
 			game.Input.update @camera
@@ -422,7 +426,6 @@ require [
 	window.world = world
 	
 	$ ->
-		game.Loop.delta = 1.0 / 60
 		game.Loop.start()
 		
 		#setTimeout (-> game.Loop.stop()), 100

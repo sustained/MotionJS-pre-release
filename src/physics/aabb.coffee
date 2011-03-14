@@ -3,8 +3,6 @@ define [
 	'math/vector'
 ], (ClassUtils, Vector) ->
 	class AABB
-		extend AABB, ClassUtils.Ext.Accessors
-		
 		# top, bottom, left, right
 		t: 0
 		b: 0
@@ -13,7 +11,14 @@ define [
 		
 		constructor: (center = new Vector, size = [0, 0]) ->
 		 	@set center, size
-				
+		
+		Motion.ext AABB, ClassUtils.Ext.Accessors
+		
+		setT: (@t) ->
+		setB: (@b) ->
+		setL: (@l) ->
+		setR: (@r) ->
+		
 		set: (@center, size) ->
 			if size
 				@hW = size[0] or 0

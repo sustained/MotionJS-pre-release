@@ -1,6 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<style>
+div#leftPane {
+	position:absolute; z-index:1000; top:0; left:0; width:150px; height:100%;
+	background:rgba(50, 50, 50, 0.9);
+	border-right:2px solid black;
+}
+div#rightPane {
+	position:absolute; z-index:1000; top:0; right:0; width:150px; height:100%;
+	background:rgba(50, 50, 50, 0.9);
+	border-left:2px solid black;
+}
+	</style>
+
+	<script>
+var require = {
+	priority: [
+		'lib/natives/math.js'
+	,	'lib/natives/array.js'
+	,	'lib/natives/number.js'
+	,	'lib/natives/string.js'
+	]
+,	deps: ['core']
+,	baseUrl: 'http://localhost/Shared/JavaScript/MotionJS/lib/'
+,	urlArgs: "nocache=" +  (new Date()).getTime()
+};
+	</script>
+	
+	<script src="vendor/jquery.js"></script>
+	
+	<script src="vendor/require.js" data-main="./lib/editor/client.js"></script>
+</head>
+<body>
+<!--
+	<div id="leftPane">
+		
+	</div>
+	
+	<div id="rightPane">
+		
+	</div>
+-->
+</body>
+</html>
+<!--
+<!DOCTYPE html>
+<html>
+<head>
 	<script src="./lib/vendor/jquery.js"></script>
 	<script src="./lib/vendor/jquery.tmpl.js"></script>
 	<script src="./lib/vendor/jquery.datalink.js"></script>
@@ -133,3 +180,4 @@
 	
 </body>
 </html>
+-->

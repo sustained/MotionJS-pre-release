@@ -1,29 +1,20 @@
-require [
+define [
 	'motion'
-	#'eventful'
-	#'stateful'
+	'class'
+	'eventful'
 	'loop'
 	'input'
 	'screenmanager'
-	'screen'
-	'canvas'
-	'colour'
-], (Motion, Loop, Input, MScreen, Screen, Canvas, Colour) ->
-	class App extends Motion.Class
+], (Motion, Class, Eventful, Loop, Input, MScreen) ->
+	class Application extends Class
 		constructor: ->
-			super
+			super()
 			
 			if Motion.env is 'client'
-				@Input    = new Input
-				#@Graphics = new MGraphics
-				@Screen   = new MScreen @
+				@Input  = new Input
+				@Screen = new MScreen @
 			
-			@Loop = new Loop @
-			
-		update: ->
-			
-		
-		render: ->
-			
-		
-	App
+			@Loop  = new Loop @
+			@Event = new Eventful
+	
+	Application

@@ -15,8 +15,8 @@ define [
 			@body = new Body
 			@body.static = true
 		
-		update: noop
-		render: noop
+		update: -> null
+		render: -> null
 	
 	class Dynamic
 		body: null
@@ -33,9 +33,9 @@ define [
 			@behaviours       = {}
 			@activeBehaviours = []
 		
-		input:   noop
-		damping: noop
-		update:  noop
-		render:  noop
+		input:   -> null
+		damping: -> null
+		update:  -> null
+		render:  -> null
 	
 	{Static, Dynamic}

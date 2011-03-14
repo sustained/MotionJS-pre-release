@@ -1,2 +1,5 @@
-String::ord = ->
-	@.charCodeAt 0
+define ->
+	String::ord = ->
+		@.charCodeAt 0
+	
+	true

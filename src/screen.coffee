@@ -13,8 +13,8 @@ define [
 		#fadeIn:  1000
 		#fadeOut: 1000
 		
-		blur:  noop
-		focus: noop
+		blur:  -> null
+		focus: -> null
 		
 		constructor: (@name, @Game) ->
 			super()
@@ -55,7 +55,7 @@ define [
 		render: (Game, alpha, context) ->
 			
 		
-		load:   noop
-		unload: noop
+		load:   -> null
+		unload: -> null
 	
 	Screen

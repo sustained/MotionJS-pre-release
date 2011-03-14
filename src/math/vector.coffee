@@ -1,11 +1,10 @@
 define ->
 	class Vector
 		constructor: (i, j) ->
-			@set i, j
-		
-		@equal: (a, b) ->
-			a.i is b.i and a.j is b.j
-		@equals: @equal
+			if isArray i
+				@set i[0], i[1]
+			else
+				@set i, j
 
 		@add: (a, b) ->
 			new @ a.i + b.i, a.j + b.j
@@ -19,23 +18,24 @@ define ->
 		@divide: (v, n) ->
 			new @ v.i / n, v.j / n
 
-		@perpendicular: (v) ->
-			new @ -v.j, v.i
+		@normalize: (v) ->
+			v = v.clone()
+			l = v.length()
+			return if l is 0 then v.set(0.00000001, 0.00000001) else v.divide l
 
 		@limit: (v, n) ->
-			vec = v.clone()
-			if vec.length() > n then vec.normalize().multiply n else vec
+			v = v.clone()
+			l = v.length()
+			return if l > n then v.normalize().multiply n else v
 
-		@normalize: (v) ->
-			vec = v.clone()
-			len = v.length()
-			if len is 0 then vec else vec.divide len
-		
 		@invert: (v) ->
-			new @ -v.i, -v.j
+			v.clone().invert()
 		
-		@distance: (a, b) ->
-			a.clone().subtract(b).length()
+		@rotate: (v, theta) ->
+			v.clone().rotate theta
+
+		@abs: (v) ->
+			v.clone().abs()
 
 		@floor: (v) ->
 			v.clone().floor()
@@ -46,29 +46,15 @@ define ->
 		@ceil: (v) ->
 			v.clone().ceil()
 
-		@rotate: (v, theta) ->
-			v.clone().rotate theta
-		
-		@projectPoint: (point) ->
-			
-		
-		set: (@i = 0, @j = 0) -> @
-		
-		copy: (v) ->
-			@set v.i, v.j
+		leftNormal: (v) ->
+			new @ v.j, -v.i
 
-		clone: ->
-			new Vector @i, @j
+		rightNormal: (v) ->
+			new @ -v.j, v.i
 
-		debug: ->
-			"<Vector : i=#{@i}, j=#{@j}>"
+		perpendicular: (v) ->
+			new @ -v.j, v.i
 
-		toString: @::debug
-
-		equals: (v) ->
-			Vector.equals @, v
-
-		equal: @::equals
 
 		add: (v) ->
 			@i += v.i
@@ -79,84 +65,81 @@ define ->
 			@i -= v.i
 			@j -= v.j
 			@
-		
+
 		multiply: (n) ->
 			@i *= n
 			@j *= n
 			@
-		
+
 		divide: (n) ->
 			@i /= n
 			@j /= n
 			@
-		
-		transform: (matrix) ->
-			@clone().set(
-				@i * matrix.a + @j * matrix.c + matrix.tx
-				@i * matrix.b + @j * matrix.d + matrix.ty
-			)
-		
-		dot: (v) ->
-			(@i * v.i) + (@j * v.j)
-		
-		perpDot: (v) ->
-			(@i * v.j) + (-@j * v.i)
-		
-		cross: (v) ->
-			(@i * v.j) - (@j * v.i)
-		
-		length: ->
-			Math.sqrt @dot @
 
-		lengthSquared: ->
-			@dot @
+		normalize: ->
+			l = @length()
+			return if l is 0 then @set(0.00000001, 0.00000001) else @divide l
 
-		magnitude: @::length
-
-		angle: ->
-			Math.atan2 @j, @i
-		
-		distance: (v) ->
-			Math.sqrt @distanceSquared v
-
-		distanceSquared: (v) ->
-			v.clone().subtract(@).lengthSquared()
-		
-		leftNormal:  -> new Vector  @j, -@i
-		rightNormal: -> new Vector -@j,  @i
-		
 		limit: (n) ->
 			if @length() > n then @normalize().multiply n else @
+
+		invert: ->
+			@set -@i, -@j
 
 		rotate: (theta) ->
 			@i = (@i * Math.cos theta) - (@j * Math.sin theta)
 			@j = (@i * Math.sin theta) + (@j * Math.cos theta)
 			@
 
-		round: (n) ->
-			@i = @i.round()
-			@j = @j.round()
-			@
-
-		normalize: ->
-			length = @length()
-			if length < 0.01
-				@i = @j = 0
-				@
-			else
-				@divide length
-
-		truncate: (max) ->
-			@length = Math.min max, @length()
-			@
-		
 		abs: ->
 			@set Math.abs(@i), Math.abs(@j)
-		
-		inv: ->
-			@set -@i, -@j
-		invert: @::inv
-		
+
+		floor: ->
+			@set Math.floor(@i), Math.floor(@j)
+
+		round: ->
+			@set Math.round(@i), Math.round(@j)
+
+		ceil: (v) ->
+			@set Math.ceil(@i), Math.ceil(@j)
+
+		transform: (matrix) ->
+			@clone().set(
+				@i * matrix.a + @j * matrix.c + matrix.tx
+				@i * matrix.b + @j * matrix.d + matrix.ty
+			)
+
+		# these shouldn't really be here
+		leftNormal:  -> new Vector  @j, -@i
+		rightNormal: -> new Vector -@j,  @i
+
+		length: ->
+			Math.sqrt @dot @
+
+		lengthSquared: ->
+			@dot @
+
+		distance: (v) ->
+			Math.sqrt @distanceSquared v
+
+		distanceSquared: (v) ->
+			v.clone().subtract(@).lengthSquared()
+
+		dot: (v) ->
+			(@i * v.i) + (@j * v.j)
+
+		perpDot: (v) ->
+			(@i * v.j) + (-@j * v.i)
+
+		cross: (v) ->
+			(@i * v.j) - (@j * v.i)
+
+		angle: ->
+			Math.atan2 @j, @i
+
+		@::equal = @::equals = (v) ->
+			Vector.equals @, v
+
 		isZero: ->
 			@i is 0 and @j is 0
 
@@ -165,12 +148,22 @@ define ->
 
 		isNormal: @::isUnit
 
-		draw: (graphics) ->
-			graphics.beginPath()
-			graphics.moveTo 0, 0
-			graphics.lineTo @i, @j
-			graphics.closePath()
+		###
 		
+		###
+
+		set: (@i = 0, @j = 0) ->
+			@
+
+		copy: (v) ->
+			@set v.i, v.j
+
+		clone: ->
+			new Vector @i, @j
+
+		@::debug = @::toString = ->
+			"Vector:(#{@i},#{@j})"
+
 		#extend Vector, ClassUtils.Ext.Accessors
 		
 		#@set 'length', (value) ->
