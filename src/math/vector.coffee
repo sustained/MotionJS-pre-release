@@ -6,6 +6,10 @@ define ->
 			else
 				@set i, j
 
+		@Array: (n, v = new @) ->
+			i = 0
+			v while i < n
+				
 		@add: (a, b) ->
 			new @ a.i + b.i, a.j + b.j
 
@@ -27,10 +31,16 @@ define ->
 			v = v.clone()
 			l = v.length()
 			return if l > n then v.normalize().multiply n else v
-
+		
+		@lerp: (a, b, t) ->
+			Vector.add a, Vector.subtract(b, a).multiply(t)
+		
 		@invert: (v) ->
 			v.clone().invert()
-		
+
+		@angle: () ->
+			dot = @dot
+
 		@rotate: (v, theta) ->
 			v.clone().rotate theta
 
@@ -55,7 +65,6 @@ define ->
 		perpendicular: (v) ->
 			new @ -v.j, v.i
 
-
 		add: (v) ->
 			@i += v.i
 			@j += v.j
@@ -78,11 +87,14 @@ define ->
 
 		normalize: ->
 			l = @length()
-			return if l is 0 then @set(0.00000001, 0.00000001) else @divide l
+			return if l is 0 then @ else @divide l
 
 		limit: (n) ->
 			if @length() > n then @normalize().multiply n else @
 
+		array: ->
+			[@i, @j]
+		
 		invert: ->
 			@set -@i, -@j
 
@@ -177,5 +189,8 @@ define ->
 		#	length = @length()
 		#	@i = Math.cos(theta) * length
 		#	@j = Math.sin(theta) * length
+	
+	Vector.__defineGetter__ 'Zero', -> new Vector
+	Vector.__defineGetter__ 'Rand', -> new Vector Math.random() * Number.MAX_VALUE, Math.random() * Number.MAX_VALUE
 	
 	Vector

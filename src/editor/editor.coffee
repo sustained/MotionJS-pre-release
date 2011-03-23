@@ -8,7 +8,7 @@ require {
 	'colour'
 	'geometry/polygon'
 	'geometry/circle'
-	'physics/collision/SAT'
+	'collision/SAT'
 ], (Motion, game, Entity, Camera, Colour, Polygon, Circle, SAT) ->
 	Vector = Motion.Vector
 	

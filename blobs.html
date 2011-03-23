@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<style>
-html > * {
-	cursor: none !important;
-}
-	</style>
-	
 	<script>
 var require = {
-	priority: ['core']
-,	baseUrl: 'http://localhost/Shared/Javascript/MotionJS/lib/'
+	paths:    {
+		'game': 'examples/blobs'
+	}
+,	priority: ['core']
+,	baseUrl: 'http://localhost/Private/JS/MotionJS/lib/'
 ,	urlArgs: "nocache=" +  (new Date()).getTime()
 };
 	</script>
 	
 	<script src="vendor/jquery.js"></script>
-	<script src="vendor/require.js" data-main="./lib/examples/blobs/blobs"></script>
+	<script src="vendor/require.js"></script>
+	
+	<script>
+$(function() {
+	require(['game/blobs']);
+});
+	</script>
 </head>
 <body>
 </body>

@@ -138,9 +138,9 @@ define [
 		
 		polygon: (vertices, style) ->
 			@context.beginPath()
-			@context.moveTo vertices[0].i, vertices[0].j
-			@context.lineTo vertex.i, vertex.j for vertex in vertices
-			@context.lineTo vertices[0].i, vertices[0].j
+			@context.moveTo vertices[0].i.round(), vertices[0].j.round()
+			@context.lineTo vertex.i.round(), vertex.j.round() for vertex in vertices
+			@context.lineTo vertices[0].i.round(), vertices[0].j.round()
 			@context.closePath()
 			
 			@draw style

@@ -1,9 +1,13 @@
 define [
+	'math/vector'
+	'math/matrix'
+	'math/random'
+	'natives/hash'
 	'natives/math'
 	'natives/array'
 	'natives/number'
 	'natives/string'
-], ->
+], (Vector, Matrix, Random) ->
 	toString  = Object::toString
 	isBrowser = window? and document? and navigator?
 	
@@ -11,39 +15,43 @@ define [
 	
 	return root.Motion if root.Motion?
 	
-	Motion = root.Motion = 
-		env:  if isBrowser then 'client' else 'server'
+	Motion = root.$M = root.Motion = 
+		env: if isBrowser then 'client' else 'server'
 		root: root
-		
-		globalize: ->
-			for i in [
-				'ext', 'extend', 'inc', 'include'
-			] then root[i] = Motion[i]
-			
-			true
-		
 		version: '0.1'
 	
-	# Some useful global functions for checking types
-	root.isString   = (obj) -> toString.call(obj) is '[object String]'
-	root.isObject   = (obj) -> toString.call(obj) is '[object Object]'
-	root.isNumber   = (obj) -> toString.call(obj) is '[object Number]'
-	root.isRegExp   = (obj) -> toString.call(obj) is '[object RegExp]'
-	root.isFunction = (obj) -> toString.call(obj) is '[object Function]'
-	root.isArray    = Array.isArray ? (obj) -> toString.call(obj) is '[object Array]'
-	root.isInfinite = (obj) -> not isFinite obj
+	Math.Vector = Vector
+	Math.Matrix = Matrix
+	Math.Random = Random
 	
 	# Extend an object
-	Motion.ext = Motion.extend = (object, mixin, overwrite = on) ->
+	ext = Motion.extend = (object, mixin, overwrite = on) ->
 		for k, v of mixin
 			continue if overwrite is off and k of object
 			object[k] = v
 		object
 	
 	# Mixin an object
-	Motion.inc = Motion.include = (klass, mixin) ->
-		Motion.ext klass::, mixin
+	inc = Motion.include = (klass, mixin) ->
+		Motion.extend klass::, mixin
 	
+	Motion.setup = (opts) ->
+		opts = ext {
+			
+		}, opts
+	
+	# Check types
+	root.isA        = (object, klass) -> object? and object instanceof klass
+	root.isArray    = Array.isArray ? (obj) -> toString.call(obj) is '[object Array]'
+	root.isString   = (object) -> toString.call(object) is '[object String]'
+	root.isObject   = (object) -> toString.call(object) is '[object Object]'
+	root.isNumber   = (object) -> toString.call(object) is '[object Number]'
+	root.isRegExp   = (object) -> toString.call(object) is '[object RegExp]'
+	root.isFunction = (object) -> toString.call(object) is '[object Function]'
+	root.isInfinite = (object) -> not isFinite object
+	root.isVector   = (object) -> isA object, Math.Vector
+	root.isMatrix   = (object) -> isA object, Math.Matrix
+
 	if not root.console?
 		root.console = {}
 		for method in '''
@@ -53,5 +61,5 @@ define [
 			profileEnd time timeEnd trace warn
 		'''.split /\s+/
 			root.console[method] = -> null
-	
+
 	Motion

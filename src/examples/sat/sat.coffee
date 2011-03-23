@@ -7,8 +7,8 @@ require [
 	'math/vector'
 	'geometry/polygon'
 	'geometry/circle'
-	'physics/collision/SAT'
-	'physics/world'
+	'collision/SAT'
+	'dynamics/world'
 	'screen'
 ], (Game, Entity, Camera, Canvas, Colour, Vector, Polygon, Circle, SAT, World, Screen) ->
 	game = new Game

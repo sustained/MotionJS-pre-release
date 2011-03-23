@@ -12,11 +12,11 @@ define ->
 			
 			Accessors:
 				set: (name, set, options = {}) ->
-					options = Motion.ext {enumerable: true, configurable: true}, options
-					Object.defineProperty @::, name, Motion.ext options, set: set
+					options = Motion.extend {enumerable: true, configurable: true}, options
+					Object.defineProperty @::, name, Motion.extend options, set: set
 				
 				get: (name, get, options = {}) ->
-					options = Motion.ext {enumerable: true, configurable: true}, options
-					Object.defineProperty @::, name, Motion.ext options, get: get
+					options = Motion.extend {enumerable: true, configurable: true}, options
+					Object.defineProperty @::, name, Motion.extend options, get: get
 	
 	ClassUtils

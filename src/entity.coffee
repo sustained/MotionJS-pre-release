@@ -1,8 +1,13 @@
 define [
 	'eventful'
-	'physics/body'
+	'dynamics/body'
 ], (Eventful, Body) ->
 	_entityId = 0
+	
+	class Entity
+		constructor: ->
+			
+	
 	
 	class Static
 		body: null
@@ -25,17 +30,49 @@ define [
 		stroke: false
 		
 		constructor: ->
+			#@game = require 'client/game'
+			
 			@id = ++_entityId
 			@body = new Body
 			
 			@event = new Eventful ['collision'], binding: @
 			
+			@collisions       = []
 			@behaviours       = {}
 			@activeBehaviours = []
 		
+		addBehaviour: (name, behaviour, opts = {}) ->
+			opts = Motion.extend {
+				active:   true
+				parent:   @
+				listener: @
+			}, opts
+			
+			behaviour         = new behaviour opts.parent, opts.listener
+			@behaviours[name] = behaviour
+			
+			@activeBehaviours.push(name) if opts.active is true
+		
+		getBehaviour: (name) ->
+			@behaviours[name] or undefined
+		
+		removeBehaviour: (name) ->
+			if name in @behaviours
+				@behaviours = @behaviours.remove(name)
+				
+				true
+			
+			false
+		
 		input:   -> null
 		damping: -> null
-		update:  -> null
-		render:  -> null
+		
+		update: ->
+			for i in @activeBehaviours
+				@behaviours[i].update()
+		
+		render: ->
+			for i in @activeBehaviours
+				@behaviours[i].render()
 	
 	{Static, Dynamic}

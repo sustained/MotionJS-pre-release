@@ -1,9 +1,16 @@
 define [
 	'geometry/shape'
 	'math/vector'
-	'physics/aabb'
+	'collision/aabb'
 ], (Shape, Vector, AABB) ->
 	class Polygon extends Shape
+		@createAABB: (position, extents = {}) ->
+			extents = Motion.extend {t:0, r:0, b:0, l:0}, extents
+			
+			aabb = new @ [
+				
+			]
+		
 		@createShape: (sides, radius = 100, position = new Vector) ->
 			return false if sides < 3
 			
@@ -18,7 +25,7 @@ define [
 			
 			new @ vertices, position, [radius, radius]
 		
-		@createRectangle: (width, height, position) ->
+		@createRectangle: (width, height, position = new Vector) ->
 			hW = width  / 2
 			hH = height / 2
 			
@@ -38,6 +45,18 @@ define [
 		
 		center:   null
 		offset:   null
+		
+		calculateAABBExtents: ->
+			minX = minY =  Number.MAX_VALUE
+			maxX = maxY = -Number.MAX_VALUE
+			
+			for v in @vertices
+				minX = v.i if v.i < minX
+				maxX = v.i if v.i > maxX
+				minY = v.j if v.j < minY
+				maxY = v.j if v.j > maxY
+			
+			{t:minY.abs(), b:maxY, l:minX.abs(), r:maxX}
 		
 		constructor: (@_vertices = [], position = new Vector, size = [0, 0]) ->
 			super position
@@ -81,11 +100,11 @@ define [
 			g.closePath()
 			
 			if @fill
-				g.fillStyle = @fill
+				g.fillStyle = @fill.toString()
 				g.fill()
 			
 			if @stroke
-				g.strokeStyle = @stroke
+				g.strokeStyle = @stroke.toString()
 				g.stroke()
 			
 			#graphics.translate -@position.i, -@position.j
@@ -121,7 +140,6 @@ define [
 		#	new Vector( -(b.j - a.j), (b.i - a.i)).normalize()
 		
 		collide: (polygon) ->
-			
 		
 		project: (axis) ->
 			min = max = axis.dot @verticesT[0]
@@ -135,6 +153,27 @@ define [
 				i++
 			
 			[min, max]
+		
+		cacheSelfProjection: ->
+			axes = []
+			
+			while i < @verticesT.length
+				axis = @findNormalAxis @verticesT, i
+				
+				axes.push @project axis
+				
+				i++
+			
+			axes
+		
+		###
+		@findNormalAxis: (vertices, index) ->
+			a = vertices[index]
+			b = if index >= vertices.length - 1 then vertices[0] else vertices[index + 1]
+			
+			new Vector( -(b.j - a.j), (b.i - a.i)).normalize()
+			
+		###
 		
 		defineAxes: ->
 			i = 0; l = @vertices.length

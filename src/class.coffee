@@ -7,8 +7,8 @@ define ['classutils'], (ClassUtils) ->
 		constructor: ->
 			@id = classId++
 		
-		@extend:  (object, overwrite = no) -> Motion.ext @,   object, overwrite
-		@include: (object, overwrite = no) -> Motion.ext @::, object, overwrite
+		@extend:  (object, overwrite = no) -> Motion.extend @,   object, overwrite
+		@include: (object, overwrite = no) -> Motion.extend @::, object, overwrite
 
 		@extend ClassUtils.Ext.Accessors
 

@@ -1,4 +1,7 @@
 define ->
+	Array::clone = ->
+		@.concat()
+	
 	Array::sum = ->
 		sum = 0
 		sum += i for i in @

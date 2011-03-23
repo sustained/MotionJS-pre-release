@@ -28,7 +28,7 @@ define ->
 			if isArray(r) and @parts.length >= 3
 				@parts = r
 			
-				@parts.push a if @parts.length < 3
+				@parts.push a if @parts.length < 4
 			else
 				@parts = [r, g, b, a]
 	
@@ -45,7 +45,8 @@ define ->
 		
 		rgba: ->
 			"rgba(#{@parts.join ', '})"
-	
+		@::toString = @::rgba
+		
 		copy: -> 
 			new Colour @parts[0], @parts[1], @parts[2], @parts[3]
 		duplicate: @::copy

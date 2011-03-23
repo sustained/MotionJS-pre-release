@@ -5,8 +5,7 @@ define [
 		area:      0
 		perimiter: 0
 		
-		_scaleX: 1
-		_scaleY: 1
+		_scale: [1, 1]
 		
 		_position: null
 		_rotation: 0
@@ -17,22 +16,16 @@ define [
 		fill:   ''
 		stroke: ''
 		
-		isNormal:  ->
-		isRegular: ->
-		
 		constructor: (position = new Vector) ->
 			#@transform = Matrix.Identity
 			@transform =
-				a: 1
-				b: 0
-				c: 0
-				d: 1
-				tx: 0
-				ty: 0
+				 a: 1,  b: 0
+				 c: 0,  d: 1
+				tx: 0, ty: 0
 			
 			@position = position
 		
-		Motion.ext BaseShape, ClassUtils.Ext.Accessors
+		Motion.extend BaseShape, ClassUtils.Ext.Accessors
 		
 		@set 'position', (@_position) ->
 			@transform.tx = @_position.i
@@ -41,6 +34,7 @@ define [
 		
 		@get 'position', -> @_position
 		
+		###
 		@set 'rotation', (@_rotation) ->
 			@transform.rotate Math.degreesToRadians _rotation
 			@transformed = false
@@ -58,6 +52,7 @@ define [
 			@transformed = false
 		
 		@get 'scaleY', -> @_scaleY
+		###
 		
 		@set 'x', (x) ->
 			@_position.i = @transform.tx = x

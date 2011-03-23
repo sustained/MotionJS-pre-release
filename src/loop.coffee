@@ -8,6 +8,7 @@ define ->
 		accum: 0 # accumulator
 		
 		update: 0 # update frame number
+		lastUpdate: 0
 		render: 0 # render frame number
 		
 		# interval ids
@@ -80,6 +81,7 @@ define ->
 			length  = @deltas.length
 			average = @deltas.sum()
 			@fpsUpdate.text 'Update @ ' + (@update - @lastUpdate) + ' FPS'
+			return if length is 0
 			@fpsRender.text 'Render @ ' + (1 / (average / length)).toFixed(0) + ' FPS'
 		
 		loop: ->

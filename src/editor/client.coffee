@@ -7,9 +7,9 @@ require [
 	'math/vector'
 	'geometry/polygon'
 	'geometry/circle'
-	'physics/collision/SAT'
-	'physics/world'
-	'physics/aabb'
+	'collision/SAT'
+	'dynamics/world'
+	'collision/aabb'
 	'screen'
 	#'http://localhost:8080/socket.io/socket.io.js'
 ], (Game, Entity, Camera, Canvas, Colour, Vector, Polygon, Circle, SAT, World, AABB, Screen) ->

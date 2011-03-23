@@ -1,22 +1,23 @@
 define [
 	'math/vector'
-	'physics/aabb'
+	'collision/aabb'
 ], (Vector, AABB) ->
 	class Camera
 		entity: null
 		
 		constructor: (bounds = [1024, 768]) ->
-			@w = bounds[0]
-			@h = bounds[1]
+			@hw = (@w = bounds[0]) / 2
+			@hh = (@h = bounds[1]) / 2
 			
-			@aabb     = new AABB null, [bounds[0] / 2, bounds[1] / 2]
+			@aabb     = new AABB null, {t:@hh, b:@hh, l:@hw, r:@hw}
 			@position = new Vector
 		
 		update: (delta) ->
 			if @entity
 				@position.i = @entity.body.x - (@w / 2)
 				@position.j = @entity.body.y - (@h / 2)
-				@aabb.set @entity.body.position.clone()
+				@aabb.setPosition @entity.body.position
+				return
 			
 			#@position.i = @aabb.hW if @position.i < @aabb.hW
 			#@position.i = 10000 - @aabb.hW if @position.i > 10000 - @aabb.hW
@@ -51,7 +52,7 @@ define [
 			###
 		
 		render: (canvas) ->
-			canvas.rectangle @aabb.center.clone(), [@aabb.hW * 2, @aabb.hH * 2], mode: 'center', stroke: 'red', width: 5
+			canvas.rectangle @aabb.position.clone(), [@aabb.w, @aabb.h], mode: 'center', stroke: 'red', width: 5
 		
 		attach: (entity) ->
 			@entity = entity
