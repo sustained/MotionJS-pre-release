@@ -148,7 +148,58 @@ define ->
 
 		angle: ->
 			Math.atan2 @j, @i
-
+		
+		sigh: (v) ->
+			dot  = @dot v
+			modA = @length()
+			modB = v.length()
+			
+			return null if modA * modB is 0
+			
+			return Math.acos Math.clamp dot / (modA * modB), -1, 1
+		
+		###
+		angleFrom: function(vector) {
+	    	var V = vector.elements || vector;
+	    	var n = this.elements.length, k = n, i;
+	
+	    	if (n != V.length) { return null; }
+	
+	    	var dot = 0, mod1 = 0, mod2 = 0;
+	    	// Work things out in parallel to save time
+	    	this.each(function(x, i) {
+	      		dot += x * V[i-1];
+	      		mod1 += x * x;
+	      		mod2 += V[i-1] * V[i-1];
+	    	});
+	
+	    mod1 = Math.sqrt(mod1); mod2 = Math.sqrt(mod2);
+	    if (mod1*mod2 === 0) { return null; }
+	
+	    var theta = dot / (mod1*mod2);
+	    if (theta < -1) { theta = -1; }
+	    if (theta > 1) { theta = 1; }
+	
+	    return Math.acos(theta);
+	  },
+		###
+		
+		realAngle: (v) ->
+			#dot   = @dot v
+			angle = (@angle() - v.angle())
+			#angle = Math.acos dot / (@length() * v.length())
+			
+			#if angle < 0 then angle += 360
+			#if dot < 0 then angle += if angle > 0 then Math.PI else -Math.PI
+			
+			angle
+		
+		angleTo: (v) ->
+			@angle() - v.angle()
+		
+		angleFrom: (v) ->
+			v.angle() - @angle()
+		
 		@::equal = @::equals = (v) ->
 			Vector.equals @, v
 

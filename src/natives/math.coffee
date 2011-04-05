@@ -8,6 +8,7 @@ define ->
 	# ellipse kappa thingy ma jigga... find out what this really is and how the fuck it works
 	Math.K = 0.5522848
 
+	Math.HALFPI = Math.PI * 0.5
 	# tau!
 	Math.TAU = Math.TWOPI = Math.PI * 2
 	

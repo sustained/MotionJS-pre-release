@@ -19,12 +19,12 @@ define [
 
 		render: (context) ->
 			@body.shape.draw context
-			
 			canvas.polygon [
 				new Vector @body.aabb.l, @body.aabb.t
 				new Vector @body.aabb.r, @body.aabb.t
 				new Vector @body.aabb.r, @body.aabb.b
 				new Vector @body.aabb.l, @body.aabb.b
 			], stroke: 'rgba(0, 255, 0, 0.5)'
+			#canvas.text @body.position.clone(), "#{@body.x}, #{@body.y}", fill: 'white'
 
 	Wall

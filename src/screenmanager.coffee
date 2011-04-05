@@ -3,19 +3,19 @@ define [
 	'screen'
 ], (Class, Screen) ->
 	class ScreenManager extends Class
-		constructor: (@Game) ->
+		constructor: (@game) ->
 			super()
 			
 			@screens = {}
 			@enabled = []
 		
-		add: (name, screen, enable = true) ->
-			return false if not isFunction screen
-			screen = new screen name, @Game
+		add: (name, screen, enable = false) ->
+			return null if not isFunction screen
+			screen = new screen name, @game
 			return false if not screen instanceof Screen
 			
-			screen.bind 'update', null, [@Game.Loop.delta]
-			screen.bind 'render', null, [@Game.Loop.context]
+			screen.bind 'update', null, [@game.loop.delta]
+			screen.bind 'render', null, [@game.loop.context]
 			
 			@screens[name] = screen
 			
@@ -58,13 +58,13 @@ define [
 		
 		update: ->
 			for name in @enabled
-				@screens[name].update @Game.Loop.tick
-				@screens[name].tick += @Game.Loop.delta
-			null
+				@screens[name].update @game.Loop.tick
+				@screens[name].tick += @game.Loop.delta
+			return
 		
 		render: ->
 			for name in @enabled
 				@screens[name].render.call()
-			null
+			return
 	
 	ScreenManager

@@ -3,9 +3,9 @@ define [
 	'eventful'
 ], (Class, Eventful) ->
 	class Screen extends Class
+		zIndex = 0
 		
 		tick: 0
-		zIndex = 0
 		
 		loaded:     false
 		persistent: false
@@ -13,13 +13,16 @@ define [
 		#fadeIn:  1000
 		#fadeOut: 1000
 		
+		transitionIn:  null
+		transitionOut: null
+		
 		blur:  -> null
 		focus: -> null
 		
-		constructor: (@name, @Game) ->
+		constructor: (@name, @game) ->
 			super()
 			
-			@E = @Event = new Eventful [
+			@event = new Eventful [
 				'loaded',    'unloaded'
 				'enabled',   'disabled'
 				'beforeIn',  'afterIn'
@@ -28,9 +31,9 @@ define [
 			@GUI    = {}
 			@zIndex = ++zIndex
 			
-			@Event.on 'loaded', -> @loaded = true
+			@event.on 'loaded', -> @loaded = true
 			
-			@Event.on 'unloaded', -> @loaded = false
+			@event.on 'unloaded', -> @loaded = false
 			
 			###
 			@Event.on 'beforeIn', ->
@@ -40,14 +43,14 @@ define [
 			@Event.on 'beforeOut', ->
 				@screenLayer.fadeOut @fadeOut,
 				=> @Event.fire 'afterOut'
-			
-			@elements = {}
-			@screenLayer = $ '<div />'
-				.attr 'id', @name + 'Screen'
-				.css 'z-index', @zIndex
-				.addClass 'motionScreenLayer'
-				.appendTo 'body'
 			###
+			
+			#@elements = {}
+			@screenLayer = $('<div />')
+				.attr('id', @name + 'Screen')
+				.css('z-index', @zIndex)
+				.addClass('mjsScreenLayer')
+				#.appendTo('body')
 		
 		update: (Game, tick, delta) ->
 			

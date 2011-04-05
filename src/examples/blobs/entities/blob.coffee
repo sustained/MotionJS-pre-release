@@ -40,8 +40,12 @@ define [
 			change    = 2
 			hMovement = false
 			
+			# parachute
+			
 			if input.isKeyDown('p') and @body.velocity.j >= 100
 				@body.applyForce new Vector 0, -350
+			
+			# movement
 			
 			if input.isKeyDown @keys.l
 				hMovement         = true
@@ -53,14 +57,15 @@ define [
 				@facingRight      = not (@facingLeft = false)
 				#@body.velocity.i += change
 				@body.applyForce new Vector 150, 0
-			else
+			###else
 				if @groundBelow
 					if @body.velocity.i.abs() > 0.0001
 						@body.velocity.i *= 0.98
 					else
-						@body.velocity.i = 0
+						@body.velocity.i = 0###
 		
 			# air resistance
+			
 			if not @groundBelow
 				if @body.velocity.i.abs() > 0.0001
 					@body.velocity.i *= 0.98
@@ -68,6 +73,7 @@ define [
 					@body.velocity.i = 0
 		
 			# jumping
+			
 			if input.isKeyDown(@keys.j) and @groundBelow
 				@body.applyForce new Vector 0, -7500
 					#@jumpTicker = 0
@@ -80,7 +86,27 @@ define [
 				#@jumpStart = game.Loop.tick if not @jumpStart
 		
 			if not @colliding then @groundBelow = false
-		
+			
+			# aiming
+			
+			#if @hasAGun
+			a = @body.position
+			b = input.mouse.position.game
+			
+			#theta = Math.degrees Math.atan2 a.j - b.j, a.i - b.i
+			theta = Math.atan2 a.j - b.j, a.i - b.i
+			# make 0-360deg
+			#if theta < 0 then theta += 360
+			if theta < 0 then theta += Math.TWOPI
+			
+			# make 0deg up
+			#theta = (theta + Math.TWOPI + Math.PI) % Math.TWOPI
+			
+			#@theta = Math.radians theta
+			@theta = theta
+			@logger.log Math.degrees theta
+			#console.log Math.degrees(angleA).round() + ' ' + Math.degrees(angleB).round()
+			
 			return
 		
 			if @jumpAllowed is true
@@ -238,15 +264,40 @@ define [
 			###
 			#canvas.rectangle @body.position.clone().round(), [250, 250],
 			#	stroke: 'green', mode: 'center', width: 2.0
-	
+		
+		drawGun: ->
+			return false if not @hasAGun
+			
+			if @facingLeft
+				canvas.rectangle new Vector(@body.x - 28, @body.y), [12, 4], mode:'center', fill:'orange'
+				canvas.rectangle new Vector(@body.x - 24, @body.y + 3), [4, 8], mode:'center', fill:'orange'
+			else if @facingRight
+				canvas.rectangle new Vector(@body.x + 28, @body.y), [12, 4], mode:'center', fill:'orange'
+				canvas.rectangle new Vector(@body.x + 24, @body.y + 3), [4, 8], mode:'center', fill:'orange'
+		
+		drawCrosshairs: (context) ->
+			context.translate @body.position.i, @body.position.j
+			context.rotate @theta
+			
+			canvas.rectangle new Vector(0, 0), [20, 10], mode:'center', fill:'purple'
+			
+			context.rotate -@theta
+			context.translate -@body.position.i, -@body.position.j
+		
 		render: (context) ->
 			@drawBlob()
 			@drawEyes()
 			@drawMouth()
 			@drawAABB()
+			#@drawGun()
+			@drawCrosshairs(context)
+		
+		hasAGun: false
 		
 		constructor: ->
 			super
+			
+			@theta = 0
 			
 			@game  = new (require 'client/game')
 			@input = @input.bind(@, @game.Input) if @input?
@@ -266,6 +317,8 @@ define [
 			@body.caabb = new AABB @body.position, 50
 			
 			@body.aabb.set @body.position, 13
+			
+			@logger = new Logger 500
 			
 			#@event.on 'collision', (collision, entity) ->
 			#	if collision.vector.j is 1 then @groundBelow = true

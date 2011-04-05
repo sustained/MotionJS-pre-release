@@ -17,39 +17,38 @@ define [
 			super()
 			
 			options = Motion.extend {
-				size: [1024, 768]
+				url:   ''
+				size:  [1024, 768]
 				delta: 1.0 / 60
 			}, options
 			
-			@world      = new World [2000, 2000]
-			@world.game = @
+			@worlds = {}
+			@createWorld 'default', options.size
 			
-			if Motion.env is 'client'
-				@Input    = new Input
-				@Screen   = new MScreen @
-				#@Graphics = new Graphics
+			@input  = @Input    = new Input
+			@screen = @Screen   = new MScreen @
 			
-			@Loop       = new Loop @
-			@Loop.delta = options.delta
+			@loop = @Loop = new Loop @
+			@loop.delta   = options.delta
 			
-			@Event = new Eventful
+			@event = @Event = new Eventful
 			
 			@canvas = new Canvas options.size
 			@canvas.create()
 			
-			@Loop.context = @canvas.context
-			@Input?.setup @canvas.$canvas
+			@loop.context = @canvas.context
+			@input.setup @canvas.$canvas
 			
 			__instance = @
 		
 		createWorld: (name, options) ->
-			options = Motion.extend {
-				size: [1024, 768]
-			}, options
-			
-			@worlds[name] = new World options
+			@worlds[name]      = new World options
+			@worlds[name].game = @
+		
+		getWorld: (name) ->
+			@worlds[name]
 		
 		removeWorld: (name) ->
 			delete @worlds[name]
 	
-	Game
+	return if __instance then __instance else Game

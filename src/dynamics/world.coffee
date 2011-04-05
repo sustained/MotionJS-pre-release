@@ -11,7 +11,7 @@ define [
 		
 		visible: {}
 		
-		constructor: (@bounds = [Number.MAX_VALUE, Number.MAX_VALUE]) ->
+		constructor: (@bounds = [100000, 100000]) ->
 			@id = _id++
 			
 			@w = @bounds[0]
@@ -30,20 +30,22 @@ define [
 			@cameras  = {}
 			@entities = {}
 		
-		addCamera: () ->
-			
+		createCamera: (name, size) ->
+			camera = new Camera
 		
 		addEntity: (entity) ->
+			entity.world = @
+			
 			@entities[entity.id] = entity
 			
 			@bodies[if entity.body.static then 'static' else 'dynamic'][entity.id] = entity.body
 		
 		removeEntity: (id) ->
-			if entity of @entities
-				entity.destructor()
-				#delete @entities[id]
-				#delete @bodies.static[id]  if id of @bodies.static
-				#delete @bodies.dynamic[id] if id of @bodies.dynamic
+			if id of @entities
+				#entity.destructor()
+				delete @entities[id]
+				delete @bodies.static[id]  if id of @bodies.static
+				delete @bodies.dynamic[id] if id of @bodies.dynamic
 				
 				true
 			
@@ -105,21 +107,32 @@ define [
 				#a.linIntegrate delta
 				#a.angIntegrate delta
 				a.integrate delta
-				A.update @game.Loop.delta, @game.Loop.tick
+				A.update @game.loop.delta, @game.loop.tick
 			
 			for i, a of @bodies.static
 				A = @entities[i]
-				A.update @game.Loop.tick
+				A.update @game.loop.tick
 			
 			return
 		
 		render: (context, camera) ->
+			@drawBounds()
+			
 			for id, entity of @entities
 				continue if not camera.aabb.intersects entity.body.aabb
 				
 				entity.render context
 			
 			return
+		
+		boundsStyle = {stroke: 'red', width: 2}
+		
+		drawBounds: ->
+			canvas.line new Vector(0, 0), new Vector(@w, 0), boundsStyle
+			canvas.line new Vector(0, 0), new Vector(0, @h), boundsStyle
+			
+			canvas.line new Vector(@w, @h), new Vector(0, @h), boundsStyle
+			canvas.line new Vector(@w, @h), new Vector(@w, 0), boundsStyle
 		
 		randomV: -> new Vector @randomX(), @randomY()
 		randomX: -> Math.rand 0, @bounds[0]

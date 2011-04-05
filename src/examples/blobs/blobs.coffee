@@ -13,7 +13,8 @@ require [
 	'game/entities/wall'
 	'game/entities/portal'
 	'game/entities/powerup'
-], (Game, Screen, Camera, Canvas, Colour, Polygon, Circle, SAT, AABB, World, Blob, Wall, Portal, Powerup) ->
+	'game/entities/weapon'
+], (Game, Screen, Camera, Canvas, Colour, Polygon, Circle, SAT, AABB, World, Blob, Wall, Portal, Powerup, Weapon) ->
 	{Vector, Matrix, rand} = Math
 
 	game = new Game size:[1024, 768], delta:1.0 / 60
@@ -37,17 +38,17 @@ require [
 	
 	world.addEntity player1
 
-	player2 = new Blob
+	###player2 = new Blob
 	player2.body.position = new Vector $hW - 25, 100
 	player2.keys = l: 'left', r: 'right', j: 'up'
 	
-	world.addEntity player2
+	world.addEntity player2###
 	
 	walls = for i in [0..1000]
 		wall = new Wall
 		
 		coe = Math.random()
-		cof = 0.0
+		cof = 0.01
 		
 		coe = 0.1 if coe < 0.1
 		coe = 0.5 if coe > 0.5
@@ -55,9 +56,8 @@ require [
 		wall.body.coe = coe
 		wall.body.cof = cof
 		
-		wall.body.shape.fill = new Colour(Math.remap(coe, [0, 1], [0, 255]).round(), 0, 0).rgb()
-		#wall.body.shape.fill   = new Colour(0, 200, 0).rgb()
-		wall.body.shape.stroke = new Colour(255, 0, 0).rgb()
+		wall.body.shape.fill   = new Colour(Math.remap(coe, [0, 1], [0, 255]).round(), 0, 0).rgb()
+		wall.body.shape.stroke = new Colour(0, Math.remap(cof, [0, 1], [0, 255]).round(), 0).rgb()
 		
 		world.addEntity wall
 	
@@ -86,6 +86,14 @@ require [
 		
 		world.addEntity powerup
 	
+	weapons = for i in [0..10]
+		weapon = new Weapon
+		
+		weapon.body.shape.fill = 'blue'
+		
+		world.addEntity weapon
+		
+		weapon
 	
 	#portals = for i in [0..10]
 	#	portal = new Portal
@@ -121,11 +129,18 @@ require [
 			
 			game.Input.update @camera
 		
+		findWeapons: ->
+			for i in [0..10]
+				canvas.line weapons[i].body.position, player1.body.position,
+					stroke: 'rgba(100, 100, 100, 0.25)'
+			return
+		
 		render: (context) ->
 			context.clearRect 0, 0, $W, $H
 			context.translate -@camera.position.i.round(), -@camera.position.j.round()
 			world.render context, @camera
 			@camera.render canvas
+			@findWeapons()
 			#canvas.circle game.Input.mouse.position.game, 2, fill: 'white'
 			context.translate @camera.position.i.round(), @camera.position.j.round()
 

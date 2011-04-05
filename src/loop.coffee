@@ -17,8 +17,8 @@ define ->
 		
 		context: null
 		
-		onUpdate: -> null
-		onRender: -> null
+		_onUpdate: ->
+		_onRender: ->
 		
 		constructor: (@Game) ->
 			if Motion.env is 'client'
@@ -42,25 +42,31 @@ define ->
 				@fpsRender.css(css).css(top:'45px', left:'10px').attr 'id', 'fpsRender'
 				@fpsUpdate.add(@fpsRender).appendTo 'body'
 			else
-				@frameRate = noop
+				@frameRate = -> null
 			
 			@time   = Date.now()
 			@deltas = [];
 			
 			if Motion.env is 'client'
 				haveGame  = isObject(@Game) #and @Game.class() is 'Game'
-				@onUpdate = @Game.Screen.method 'update' if haveGame
-				@onRender = @Game.Screen.method 'render' if haveGame
+				@onUpdate @Game.Screen.method 'update' if haveGame
+				@onRender @Game.Screen.method 'render' if haveGame
+		
+		onUpdate: (update) ->
+			@_onUpdate = update.bind update, [@delta]
+		
+		onRender: (render) ->
+			@_onRender = render.bind render, [@context]
 		
 		start: ->
 			@currentTime = Date.now()
 			
-			@gameLoop  = window.setInterval (=> @loop()), 1
+			@gameLoop = setInterval (=> @loop()), 10
 			#@frameLoop = window.setInterval (=> @frameRate()), 1000 if Motion.env is 'client'
 		play: @::start
 		
 		stop: ->
-			window.clearInterval @gameLoop
+			clearInterval @gameLoop
 			#window.clearInterval @frameLoop if Motion.env is 'client'
 		pause: @::stop
 		
@@ -99,7 +105,7 @@ define ->
 				@update += 1
 				@tick   += @delta
 				
-				@onUpdate @tick
+				@_onUpdate @tick
 				
 			if @tick - @tock > 1
 				@tock = @tick
@@ -109,6 +115,6 @@ define ->
 			@alpha   = @accum / @delta
 			@render += 1
 			
-			@onRender()
+			@_onRender()
 	
 	Loop

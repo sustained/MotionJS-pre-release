@@ -3,7 +3,8 @@ define [
 	'collision/aabb'
 ], (Vector, AABB) ->
 	class Camera
-		entity: null
+		entity:  null
+		origin: 'center'
 		
 		constructor: (bounds = [1024, 768]) ->
 			@hw = (@w = bounds[0]) / 2
@@ -13,11 +14,27 @@ define [
 			@position = new Vector
 		
 		update: (delta) ->
+			speed = 2
+			
 			if @entity
 				@position.i = @entity.body.x - (@w / 2)
 				@position.j = @entity.body.y - (@h / 2)
 				@aabb.setPosition @entity.body.position
-				return
+			else
+				if game.Input.isKeyDown 'left'
+					@position.i -= speed
+				else if game.Input.isKeyDown 'right'
+					@position.i += speed
+				
+				if game.Input.isKeyDown 'up'
+					@position.j -= speed
+				else if game.Input.isKeyDown 'down'
+					@position.j += speed
+				
+				if @origin is 'topleft'
+					@aabb.setPosition Vector.add @position, new Vector @hw, @hh
+				else if @origin is 'center'
+					@aabb.setPosition @position
 			
 			#@position.i = @aabb.hW if @position.i < @aabb.hW
 			#@position.i = 10000 - @aabb.hW if @position.i > 10000 - @aabb.hW
@@ -26,33 +43,13 @@ define [
 			#@position.j = 10000 - @aabb.hH if @position.j > 10000 - @aabb.hH
 			
 			#speed = if Game.Input.keyboard.shift then 32 else 16
-			
-			###
-			if Game.Input.isKeyDown 'left'
-				@velocity.i += speed
-			else if Game.Input.isKeyDown 'right'
-				@velocity.i -= speed
-			else
-				if @velocity.i.abs() > 0.00005
-					@velocity.i *= 0.8
-				else
-					@velocity.i = 0
-		
-			if Game.Input.isKeyDown 'up'
-				@velocity.j += speed
-			else if Game.Input.isKeyDown 'down'
-				@velocity.j -= speed
-			else
-				if @velocity.j.abs() > 0.00005
-					@velocity.j *= 0.8
-				else
-					@velocity.j = 0
-		
-			@updateVectors dt
-			###
 		
 		render: (canvas) ->
-			canvas.rectangle @aabb.position.clone(), [@aabb.w, @aabb.h], mode: 'center', stroke: 'red', width: 5
+			#if @origin is 'topleft'
+			#	pos = 
+			#else if @origin is 'center'
+				
+			canvas.rectangle @position.clone(), [@aabb.w, @aabb.h], stroke: 'red', width: 5
 		
 		attach: (entity) ->
 			@entity = entity

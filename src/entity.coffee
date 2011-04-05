@@ -34,6 +34,7 @@ define [
 			
 			@id = ++_entityId
 			@body = new Body
+			@body.static = false
 			
 			@event = new Eventful ['collision'], binding: @
 			

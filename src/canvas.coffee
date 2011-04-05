@@ -12,7 +12,7 @@ define [
 		@DefaultDimensions: DIMENSIONS[1]
 		
 		_canvasId = -1
-	
+		
 		name: null
 		size: Canvas.DefaultDimensions
 		show: true
@@ -20,11 +20,11 @@ define [
 		fill:   'white'
 		width:  1.0
 		stroke: 'white'
-		
+			
 		canvas:  null # DOM Object
 		$canvas: null # jQuery Object
 		context: null
-	
+		
 		created: false
 		
 		constructor: (@size = Canvas.DefaultDimensions) ->
