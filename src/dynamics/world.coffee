@@ -120,7 +120,6 @@ define [
 			
 			for id, entity of @entities
 				continue if not camera.aabb.intersects entity.body.aabb
-				
 				entity.render context
 			
 			return

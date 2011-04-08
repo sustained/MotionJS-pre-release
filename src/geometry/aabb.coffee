@@ -25,6 +25,31 @@ define [
 				new Vector -@hw,  @hh
 			], position, [@w, @h]
 		
+		###
+		#	Set the extents by passing in a top, right, bottom and left value.
+		###
+		setEdges: (edges) ->
+			@extents = edges
+			@hw = (@w = @extents.l + @extents.r) / 2
+			@hh = (@h = @extents.t + @extents.b) / 2
+		
+		###
+		#	Set the extents by passing in a width and a height.
+		###
+		setSizes: (width, height) ->
+			@hw = (@w = width)  / 2
+			@hh = (@h = height) / 2
+			
+			@extents = {t: -@hh, b:  @hh, l: -@hw, r:  @hw}
+		
+		setPosition: (@position) ->
+			
+		
+		###
+		#	
+		#	
+		#	
+		###
 		update: (position, extents = {}) ->
 			@position = position if position?
 			@extents  = Motion.extend @extents, extents

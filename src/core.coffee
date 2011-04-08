@@ -2,6 +2,7 @@ define [
 	'math/vector'
 	'math/matrix'
 	'math/random'
+	
 	'natives/hash'
 	'natives/math'
 	'natives/array'
@@ -41,40 +42,36 @@ define [
 			console.log args...
 	
 	Motion = root.$M = root.Motion = 
-		env: if isBrowser then 'client' else 'server'
-		root: root
+		env:     if isBrowser then 'client' else 'server'
+		root:    root
 		version: '0.1'
 		
-		Asset: null
-		Input: {}
-		Screen: null
+		# Extend an object
+		extend: (object, mixin, overwrite = on) ->
+			for k, v of mixin
+				continue if overwrite is off and k of object
+				object[k] = v
+			object
+		
+		# Mix an object into a prototype.
+		include: (klass, mixin, overwrite) ->
+			Motion.extend klass::, mixin, overwrite
+		
+		# Merge two objects
+		merge: (objA, objB, returnNew = false) ->
+			obj = if returnNew then {} else objA
+			
+			for k of objB
+				try
+					obj[k] = if isObject objB[k] then Motion.merge objA[k], objB[k] else objB[k]
+				catch e
+					obj[k] = objB[k]
+			
+			obj
 	
 	Math.Vector = Vector
 	Math.Matrix = Matrix
 	Math.Random = Random
-	
-	# Extend an object
-	Motion.extend = (object, mixin, overwrite = on) ->
-		for k, v of mixin
-			continue if overwrite is off and k of object
-			object[k] = v
-		object
-	
-	# Mix an object into a prototype.
-	Motion.include = (klass, mixin, overwrite) ->
-		Motion.extend klass::, mixin, overwrite
-	
-	# Merge two objects
-	Motion.merge = (objA, objB, returnNew = false) ->
-		obj = if returnNew then {} else objA
-		
-		for k of objB
-			try
-				obj[k] = if isObject objB[k] then Motion.merge objA[k], objB[k] else objB[k]
-			catch e
-				obj[k] = objB[k]
-		
-		obj
 	
 	if not root.console?
 		root.console = {}
@@ -85,5 +82,5 @@ define [
 			profileEnd time timeEnd trace warn
 		'''.split /\s+/
 			root.console[method] = -> null
-
+	
 	Motion

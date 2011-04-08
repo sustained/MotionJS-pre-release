@@ -3,8 +3,13 @@ define [
 	'screen'
 ], (Class, Screen) ->
 	class ScreenManager extends Class
+		focus: true
+		
 		constructor: (@game) ->
 			super()
+			
+			$(window).focus => @focus = true
+			$(window).blur  => @focus = false
 			
 			@screens = {}
 			@enabled = []
@@ -58,13 +63,15 @@ define [
 		
 		update: ->
 			for name in @enabled
+				screen = @screens[name]
+				continue if @focus is false and screen.persistent is false
 				@screens[name].update @game.Loop.tick
 				@screens[name].tick += @game.Loop.delta
 			return
 		
 		render: ->
 			for name in @enabled
+				screen = @screens[name]
+				continue if @focus is false and screen.persistent is false
 				@screens[name].render.call()
 			return
-	
-	ScreenManager

@@ -38,6 +38,11 @@ define [
 		
 		shape: null
 		
+		# Previous position and velocity, so we can interpolate when rendering
+		prevState:
+			position: null
+			velocity: null
+		
 		constructor: ->
 			@aabb         = new AABB
 			@force        = new Vector
@@ -45,6 +50,9 @@ define [
 			@_position    = new Vector
 			#@orientation  = new Matrix
 			@acceleration = new Vector
+			
+			@prevState.position = new Vector
+			@prevState.velocity = new Vector
 		
 		Motion.extend Body, ClassUtils.Ext.Accessors
 		
@@ -97,52 +105,27 @@ define [
 		applyTorque: ->
 		
 		applyImpulse: ->
-		###
-		collide: (body, t) ->
-			N = new Vector
-
-			A  = @body.shape.vertices
-			PA = @body.position
-			VA = @body.velocity
-			OA = @body.orientation
-
-			B  = body.shape.vertices
-			PB = body.position
-			VB = body.velocity
-			OB = body.orientation
-
-			if CheckCollision A, PA, VA, OA, B, PB, VB, OB, N, t
-				CA   = Vector.Array 4
-				CB   = Vector.Array 4
-				CNum = 0
-
-				FindContacts A, PA, VA, OA, B, PA, VB, OB, N, t, CA, CB
-
-				Contact(CA, CB, CNum, N, t, @, @body)
-				Contact.solve()
-
-				return true
-
-			return false
-		###
-
-		# update:
-		integrate: (delta) ->
-			@acceleration = @force.multiply @invMass
-			@velocity.add(Vector.multiply(@acceleration, delta)).limit @maxSpeed
-			@position = @position.add(Vector.multiply(@velocity, delta))
+			
 		
+		integrate: (delta) ->
+			@prevState.position.set @position
+			@prevState.velocity.set @velocity
+			
+			@acceleration = @force.multiply @invMass
+			@velocity.add(Vector.multiply @acceleration, delta).limit @maxSpeed
+			@position = @position.add Vector.multiply @velocity, delta
+			
 			#@angularAcceleration = @torque * @invInertia
 			#@angularVelocity    += @angularAcceleration * delta
-		
+			
 			#@angle       = Math.wrap(@angularVelocity * delta, -Math.TAU, Math.TAU)
 			#@orientation.fromAngle @angle
-		
+			
 			#@torque = 0
 			@force.set()
 			
-			@aabb.set @position.clone()
-	
+			@aabb.set @position
+		
 		angIntegrate: (delta) ->
 			@angularAcceleration = @torque * @invInertia
 			@angularVelocity    += @angularAcceleration * delta
@@ -177,12 +160,15 @@ define [
 			Va += V’ * (InvMassA) / (InvMassA + InvMassB);
 			Vb -= V’ * (InvMassB) / (InvMassA + InvMassB);
 			###
+			
+			# totals
 			te = @coe     + body.coe
 			tf = @cof     + body.cof
 			tm = @invMass + body.invMass
 			
+			# remap co-efficients to 0...1
 			coe = Math.remap te, [0, 2], [0, 1]
-			cof = Math.remap tf, [0, 1], [0, 1]
+			cof = Math.remap tf, [0, 2], [0, 1]
 			
 			@position     = @position.add          Vector.divide collision.separation, 2
 			body.position = body.position.subtract Vector.divide collision.separation, 2
@@ -202,11 +188,3 @@ define [
 			
 			@velocity     = @velocity.add(         Vector.divide(Vector.multiply(vv,     @invMass), tm))
 			body.velocity = body.velocity.subtract(Vector.divide(Vector.multiply(vv, body.invMass), tm))
-	
-	class Static extends Body
-	
-
-	class Dynamic extends Body
-	
-
-	Body

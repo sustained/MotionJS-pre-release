@@ -1,5 +1,22 @@
 define ->
 	class Colour
+		###
+		#	Create common colours...
+		###
+		@setup: ->
+			@create 'white',
+				255, 255, 255
+			@create 'black',
+				  0,   0,   0
+			@create 'red',
+				255,   0,   0
+			@create 'green',
+				  0, 255,   0
+			@create 'blue',
+				  0,   0, 255
+			@create 'yellow',
+				255, 255,   0
+		
 		@ALPHA: [.0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
 		@DEFAULT_ALPHA: 1.0
 		
@@ -50,18 +67,3 @@ define ->
 		copy: -> 
 			new Colour @parts[0], @parts[1], @parts[2], @parts[3]
 		duplicate: @::copy
-	
-	Colour.create 'white',
-		255, 255, 255
-	Colour.create 'black',
-		  0,   0,   0
-	Colour.create 'red',
-		255,   0,   0
-	Colour.create 'green',
-		  0, 255,   0
-	Colour.create 'blue',
-		  0,   0, 255
-	Colour.create 'yellow',
-		255, 255,   0
-	
-	Colour

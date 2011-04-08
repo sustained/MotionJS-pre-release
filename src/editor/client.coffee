@@ -3,7 +3,6 @@ require [
 	'entity'
 	'camera'    
 	'canvas'
-	'colour'
 	'math/vector'
 	'geometry/polygon'
 	'geometry/circle'

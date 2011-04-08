@@ -3,18 +3,15 @@ define [
 	'math/vector'
 ], (ClassUtils, Vector) ->
 	class AABB
-		# position in local space
-		extents: null
+		# Local and world extents
+		local: null
+		world: null
 		
-		# position in world space
-		t: 0
-		b: 0
-		l: 0
-		r: 0
-		
+		# Dimensions
 		h: 0
 		w: 0
 		
+		# Half dimensions
 		hh: 0
 		hw: 0
 		
@@ -22,54 +19,83 @@ define [
 		
 		render: (style) ->
 			canvas.polygon [
-				new Vector @position.i - @l, @position.j - @t
-				new Vector @position.i + @r, @position.j - @t
-				new Vector @position.i + @r, @position.j + @b
-				new Vector @position.i - @l, @position.j + @b
+				new Vector @world.l, @world.t
+				new Vector @world.r, @world.t
+				new Vector @world.r, @world.b
+				new Vector @world.l, @world.b
 			], style
+			
+			#canvas.polygon [
+			#	new Vector @position.i - @local.l, @position.j - @local.t
+			#	new Vector @position.i + @local.r, @position.j - @local.t
+			#	new Vector @position.i + @local.r, @position.j + @local.b
+			#	new Vector @position.i - @local.l, @position.j + @local.b
+			#], style
 		
-		constructor: (position = new Vector, extents = {}) ->
-			@extents = t:0, b:0, l:0, r:0
+		constructor: (position, extents = {}) ->
+			@local = {t:0, b:0, l:0, r:0}
+			@world = {t:0, b:0, l:0, r:0}
+			
+			@position = new Vector
 			
 			@set position, extents
 		
 		#Motion.extend AABB, ClassUtils.Ext.Accessors
 		
-		setTop:     (top)     -> @extents.t = top
-		setBottom:  (bottom)  -> @extents.b = bottom
-		setLeft:    (left)    -> @extents.l = left
-		setRight:   (right)   -> @extents.r = right
+		setTop:     (top)     -> @local.t = top
+		setBottom:  (bottom)  -> @local.b = bottom
+		setLeft:    (left)    -> @local.l = left
+		setRight:   (right)   -> @local.r = right
 		
-		setExtents: (extents = {}) ->
-			if isNumber extents
-				extents = t:extents, b:extents, l:extents, r:extents
-			
-			@extents = Motion.extend @extents, extents
-			
-			#@setTop    extents.t
-			#@setBottom extents.b
-			#@setLeft   extents.l
-			#@setRight  extents.r
-			
-			@h = @extents.t + @extents.b
-			@w = @extents.l + @extents.r
+		###
+		#	Set the AABBs size via a width and height.
+		###
+		setDimensions: (size) ->
+			@hh = (@h = size[1]) / 2
+			@hw = (@w = size[0]) / 2
 			
 			@_isSquare = @h is @w
 			
-			@hh = @h / 2
-			@hw = @w / 2
+			@local.t = @hh
+			@local.b = @hh
+			@local.l = @hw
+			@local.r = @hw
 		
-		setPosition: (position) ->
-			@position = if position then position.clone() else new Vector
+		###
+		#	Set the AABBs size via a top, bottom, left and right value.
+		###
+		setExtents: (extents = {}) ->
+			if isNumber extents then extents = t:extents, b:extents, l:extents, r:extents
 			
-			@t = @position.j - @extents.t
-			@b = @position.j + @extents.b
-			@l = @position.i - @extents.l
-			@r = @position.i + @extents.r
+			@local = Motion.extend @local, extents
+			
+			@hh = (@h = @local.t + @local.b) / 2
+			@hw = (@w = @local.l + @local.r) / 2
+			
+			@_isSquare = @h is @w
 		
+		###
+		#	Set the world position of the AABB, updates the worldExtents.
+		###
+		setPosition: (position) ->
+			return if not position
+			
+			@position.copy position
+			@world.t = @position.j - @local.t
+			@world.b = @position.j + @local.b
+			@world.l = @position.i - @local.l
+			@world.r = @position.i + @local.r
+		
+		###
+		#	Set the position and/or extents of the AABB.
+		###
 		set: (position, extents) ->
 			@setPosition position
-			@setExtents  extents
+			
+			if isObject extents
+				@setExtents extents
+			else if isArray extents
+				@setDimensions extents
 		
 		intersects: (aabb) ->
 			diff = Vector.subtract(@position, aabb.position).abs()
@@ -77,9 +103,9 @@ define [
 			diff.j < @hh + aabb.hh and diff.i < @hw + aabb.hw
 		
 		contains: (aabb) ->
-			aabb.t > @t and aabb.b < @b and aabb.l > @l and aabb.r < @r
+			aabb.world.t > @world.t and aabb.world.b < @world.b and
+			aabb.world.l > @world.l and aabb.world.r < @world.r
 		
 		containsPoint: (v) ->
-			v.j > @t and v.j < @b and v.i > @l and v.i < @r
-	
-	AABB
+			v.j > @world.t and v.j < @world.b and
+			v.i > @world.l and v.i < @world.r

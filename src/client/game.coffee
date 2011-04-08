@@ -7,12 +7,17 @@ define [
 	'canvas'
 	'screenmanager'
 	'dynamics/world'
-], (Class, Eventful, Stateful, Loop, Input, Canvas, MScreen, World) ->
-	__instance = null
+	'client/input/keyboard'
+	'client/input/mouse'
+], (Class, Eventful, Stateful, Loop, Input, Canvas, MScreen, World, Keyboard, Mouse) ->
+	_instance = null
 	
 	class Game extends Class
+		@instance: ->
+			return if _instance then _instance else new @
+		
 		constructor: (options) ->
-			return __instance if __instance?
+			return _instance if _instance?
 			
 			super()
 			
@@ -25,8 +30,13 @@ define [
 			@worlds = {}
 			@createWorld 'default', options.size
 			
-			@input  = @Input    = new Input
+			@input  = @Input    = new Input # needs deprecating
 			@screen = @Screen   = new MScreen @
+			
+			# if not a touch device...
+			@mouse    = new Mouse
+			@keyboard = new Keyboard
+			# else
 			
 			@loop = @Loop = new Loop @
 			@loop.delta   = options.delta
@@ -39,7 +49,7 @@ define [
 			@loop.context = @canvas.context
 			@input.setup @canvas.$canvas
 			
-			__instance = @
+			_instance = @
 		
 		createWorld: (name, options) ->
 			@worlds[name]      = new World options
@@ -50,5 +60,3 @@ define [
 		
 		removeWorld: (name) ->
 			delete @worlds[name]
-	
-	return if __instance then __instance else Game

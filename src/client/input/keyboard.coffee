@@ -5,6 +5,9 @@ define [
 		_setup     = false
 		_singleton = null
 		
+		@instance: ->
+			return if _singleton then _singleton else new @
+		
 		# Maps event codes to key names.
 		_KEYMAP =
 			8:  'backspace'
@@ -26,46 +29,6 @@ define [
 		_KEYMAP[48 + i] = i for i in [0...10]
 		# a...z
 		_KEYMAP[65 + i] = String.fromCharCode 97 + i for i in [0...26]
-		console.log _KEYMAP
-		
-		###
-			48:  0
-			49:  1
-			50:  2
-			51:  3
-			52:  4
-			53:  5
-			54:  6
-			55:  7
-			56:  8
-			57:  9
-			65: 'a'
-			66: 'b'
-			67: 'c'
-			68: 'd'
-			69: 'e'
-			70: 'f'
-			71: 'g'
-			72: 'h'
-			73: 'i'
-			74: 'j'
-			75: 'k'
-			76: 'l'
-			77: 'm'
-			78: 'n'
-			79: 'o'
-			80: 'p'
-			81: 'q'
-			82: 'r'
-			83: 's'
-			84: 't'
-			85: 'u'
-			86: 'v'
-			87: 'w'
-			88: 'x'
-			89: 'y'
-			90: 'z'
-		###
 		
 		# Maps key names to event codes.
 		_CODEMAP       = {}

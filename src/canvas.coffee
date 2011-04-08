@@ -76,12 +76,14 @@ define [
 				@context.stroke()
 		
 		lineV: (position, direction, style) ->
-			@line position, directioin, style
+			@line position, direction, style
 		
 		lineA: (position, direction, style) ->
 			@line new Vector(position), new Vector(direction), style
 		
 		line: (position, direction, style) ->
+			position = position.clone().round()
+			
 			@context.beginPath()
 			@context.moveTo position.i,  position.j
 			@context.lineTo direction.i, direction.j
@@ -94,7 +96,9 @@ define [
 		
 		@CIRC_MODE: 'center'
 		
-		circle: (position, radius, style)->	
+		circle: (position, radius, style)->
+			position = position.clone().round()	
+			
 			if Canvas.CIRC_MODE is 'corner'
 				position.i -= radius
 				position.j -= radius
@@ -110,6 +114,8 @@ define [
 		@DEFAULT_FONT: 'Deja Vu Sans Mono'
 		
 		text: (position, text, style = {}) ->
+			position = position.clone().round()
+			
 			@context.font         = style.font or Canvas.DEFAULT_FONT
 			@context.textAlign    = style.align if style.align
 			@context.textBaseline = style.base  if style.base
@@ -123,18 +129,20 @@ define [
 				@context.strokeText text, position.i, position.j
 		
 		rectangle: (position, dimensions, style = {}) ->
+			position = position.clone().round()
+			
 			if style.mode is 'center'
 				position.i -= dimensions[0] / 2
 				position.j -= dimensions[1] / 2
 			
 			if style.fill
 				@context.fillStyle = style.fill
-				@context.fillRect position.i, position.j, dimensions[0], dimensions[1]
+				@context.fillRect position.i.round(), position.j.round(), dimensions[0], dimensions[1]
 			
 			if style.stroke
 				@context.lineWidth   = style.width or 1.0
 				@context.strokeStyle = style.stroke
-				@context.strokeRect position.i, position.j, dimensions[0], dimensions[1]
+				@context.strokeRect position.i.round(), position.j.round(), dimensions[0], dimensions[1]
 		
 		polygon: (vertices, style) ->
 			@context.beginPath()

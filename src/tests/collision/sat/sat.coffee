@@ -7,13 +7,13 @@ define [
 	'screen'
 	'entity'
 	'camera'
-	'colour'
 	'animation/animation'
 	'animation/easing'
-], (Game, World, Circle, Polygon, AABB, Screen, Entity, Camera, Colour, Animation, Easing) ->
+], (Game, World, Circle, Polygon, AABB, Screen, Entity, Camera, Animation, Easing) ->
 	game = new Game
 	
-	{Vector, rand} = Math
+	{Vector} = Math
+	{Colour} = Motion
 	
 	Motion.root.world      = game.world
 	Motion.root.canvas     = game.canvas

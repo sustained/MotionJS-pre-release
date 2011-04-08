@@ -1,25 +1,30 @@
 define [
 	'eventful'
 ], (Eventful) ->
+	{Vector} = Math
+	
 	class Mouse
 		_setup     = false
 		_singleton = null
+		
+		@instance: ->
+			return if _singleton then _singleton else new @
 		
 		_MAP = 1: 'left', 2: 'middle', 3: 'right'
 		
 		_onMouseDown = (e) ->
 			button = _MAP[e.which]
 			
-			if @mouse[button] is off
-				@mouse[button] = on
+			if @[button] is off
+				@[button] = on
 				@event.fire 'down', [button, e]
 		
 		_onMouseUp = (e) ->
 			button = _MAP[e.which]
 			
-			if @mouse[button] is on
-				@mouse[button] = off
-				@event.fire '_up', [but, e]
+			if @[button] is on
+				@[button] = off
+				@event.fire 'up', [button, e]
 		
 		_onMouseMove = (e) ->
 			#if e.timeStamp - @lastUpdate > 100
@@ -43,14 +48,17 @@ define [
 			return _singleton if _singleton?
 			
 			@event    = new Eventful ['down', 'up'], binding: @
-			@position = new Math.Vector
+			@position = new Vector
 			
-			@event.on 'up', (button) ->
-				@left   = button is 'left'
-				@right  = button is 'right'
-				@middle = button is 'middle'
+			#@event.on 'up', (button) ->
+			#	@left   = button is 'left'
+			#	@right  = button is 'right'
+			#	@middle = button is 'middle'
 				
 			_singleton = @
+		
+		inCamera: (camera) ->
+			Vector.add camera.position, @position
 		
 		setup: ($el) ->
 			$el = $el ? $(document)
