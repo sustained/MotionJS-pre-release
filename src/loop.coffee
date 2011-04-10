@@ -91,8 +91,6 @@ define ->
 			return if length is 0
 			@fpsRender.text 'Render @ ' + (1 / (average / length)).toFixed(0) + ' FPS'
 		
-		_logger = new Logger 100
-		
 		fps: 0
 		
 		loop: ->

@@ -19,11 +19,16 @@ define [
 			@input = @input.bind @, Keyboard.instance(), Mouse.instance()
 		
 		
-		EDGE_MOVE_DISTANCE = 100
-		EDGE_MOVE_MAXSPEED = 5
+		EDGE_MOVE_DISTANCE = 200
+		EDGE_MOVE_MAXSPEED = 2.5
 		
 		input: (kb, ms) ->
 			speed = 2
+			
+			if kb.keys.shift
+				EDGE_MOVE_MAXSPEED = 10
+			else 
+				EDGE_MOVE_MAXSPEED = 5
 			
 			if kb.keys.left
 				@position.i -= speed

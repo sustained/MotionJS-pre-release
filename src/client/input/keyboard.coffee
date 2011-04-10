@@ -39,10 +39,10 @@ define [
 			
 			@keys[key] = on
 			@event.fire 'down', [key, {
-				alt:   event.altKey
-				ctrl:  event.ctrlKey
-				meta:  event.metaKey
-				shift: event.shiftKey
+				alt:   (@altKey   = event.altKey)
+				ctrl:  (@ctrlKey  = event.ctrlKey)
+				meta:  (@metaKey  = event.metaKey)
+				shift: (@shiftKey = event.shiftKey)
 				time:  event.timeStamp
 				which: event.which
 			}]
@@ -52,10 +52,10 @@ define [
 			
 			@keys[key] = off
 			@event.fire 'up', [key, {
-				alt:   event.altKey
-				ctrl:  event.ctrlKey
-				shift: event.shiftKey
-				meta:  event.metaKey
+				alt:   (@altKey   = event.altKey)
+				ctrl:  (@ctrlKey  = event.ctrlKey)
+				meta:  (@metaKey  = event.metaKey)
+				shift: (@shiftKey = event.shiftKey)
 				time:  event.timeStamp
 				which: event.which
 			}]
@@ -84,5 +84,7 @@ define [
 			$el = $el ? $(document)
 			$el.keyup   _onKeyUp  .bind @
 			$el.keydown _onKeyDown.bind @
+			
+			$(document).bind 'contextmenu', (e) -> e.preventDefault()
 			
 			true

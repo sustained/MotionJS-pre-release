@@ -1,7 +1,11 @@
 define [
 	'collision/sat'
-	'math/vector'
-], (SAT, Vector) ->
+], (SAT) ->
+	{Vector} = Math
+	
+	###
+	#	
+	###
 	class World
 		_id = 0
 		
@@ -29,16 +33,59 @@ define [
 			
 			@cameras  = {}
 			@entities = {}
+			
+			@types   = {}
+			@classes = {}
 		
 		createCamera: (name, size) ->
 			camera = new Camera
 		
+		getEntityById: (id) ->
+			@entities[id] ? false
+		
+		getEntitiesByType: (type) ->
+			@types[type]
+		
+		getEntitiesByClass: (klass) ->
+			@classes[klass]
+		
 		addEntity: (entity) ->
+			type  = entity.collideType
+			klass = entity.constructor.name
+			
 			entity.world = @
 			
-			@entities[entity.id] = entity
+			if not @types[type]    then @types[type]    = []
+			if not @classes[klass] then @classes[klass] = []
 			
-			@bodies[if entity.body.static then 'static' else 'dynamic'][entity.id] = entity.body
+			@types[type].push    entity
+			@classes[klass].push entity
+			
+			bodyType = if entity.body.static then 'static' else 'dynamic'
+			@bodies[bodyType][entity.id] = entity.body
+			
+			@entities[entity.id] = entity
+		
+		# return an array of entity ids whose 
+		queryAabbIntersects: (aabb, exclude = []) ->
+			intersects = []
+			
+			for id, entity of @entities
+				if aabb.intersects entity.body.aabb
+					intersects.push entity
+			
+			intersects
+		
+		queryAabbContains: (aabb, exclude = []) ->
+			contains = []
+			
+			for id, entity of @entities
+				continue if exclude.indexOf id isnt -1
+				
+				if aabb.contains entity.body.aabb
+					contains.push entity
+			
+			contains
 		
 		removeEntity: (id) ->
 			if id of @entities
