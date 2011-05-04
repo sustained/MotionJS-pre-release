@@ -19,7 +19,7 @@ define [
 		startTime: 0
 		
 		constructor: (options) ->
-			Motion.extend @, options
+			#Motion.extend @, options
 			
 			#if @reference
 				#@start = @reference#.clone()

@@ -31,7 +31,7 @@ define [
 			@id   = ++_canvasId
 			@name = "motionCanvas#{@id}"
 			
-			$w = $(window)
+			$w = jQuery window
 			
 			resizeMap = {
 				 800:  600
@@ -156,7 +156,7 @@ define [
 		create: (@show = true) ->
 			return null if @created
 			
-			@$canvas = $('<canvas>').attr id: @name, width: @size[0], height: @size[1]
+			@$canvas = jQuery('<canvas>').attr id: @name, width: @size[0], height: @size[1]
 			@$canvas.css
 					top:  if @show then '0px' else '-10000px'
 					left: if @show then '0px' else '-10000px'

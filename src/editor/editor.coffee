@@ -76,7 +76,7 @@ require {
 	
 	window.cx = canvas.context
 	window.ed = game.Screen.screens.editor
-
-	$ ->
+	
+	jQuery ->
 		game.Loop.delta = 1.0 / 60
 		game.Loop.start()

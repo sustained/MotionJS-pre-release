@@ -1,29 +1,28 @@
-define ->
-	Number::abs = -> Math.abs @
-	Number::chr = -> String.fromCharCode @
+Number.isNumber = (object) -> toString.call(object) is '[object Number]'
 
-	Number::odd  = ->     @ & 1
-	Number::even = -> not @ & 1
+Number::abs = -> Math.abs @
+Number::chr = -> String.fromCharCode @
 
-	Number::ceil  = -> Math.ceil  @
-	Number::floor = -> Math.floor @
-	Number::round = -> Math.round @
+Number::odd  = ->     @ & 1
+Number::even = -> not @ & 1
 
-	Number::times = (iter) ->
-		i = 0
-		n = this.abs()
-		while i < n then iter(i++)
+Number::ceil  = -> Math.ceil  @
+Number::floor = -> Math.floor @
+Number::round = -> Math.round @
 
-	Number::upto = (to, iter) ->
-		return false if to < @
-		item = @; index = to - @
-		while index-- then iter(item++)
+Number::times = (iter) ->
+	i = 0
+	n = this.abs()
+	while i < n then iter(i++)
 
-	Number::downto = (to, iter) ->
-		return false if to > @
-		item = @; index = @ - to
-		while index-- then iter(item--)
+Number::upto = (to, iter) ->
+	return false if to < @
+	item = @; index = to - @
+	while index-- then iter(item++)
 
-	Number::random = -> (rand * @).round()
+Number::downto = (to, iter) ->
+	return false if to > @
+	item = @; index = @ - to
+	while index-- then iter(item--)
 
-	true
+Number::random = -> (rand * @).round()

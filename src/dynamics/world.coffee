@@ -33,6 +33,7 @@ define [
 			
 			@cameras  = {}
 			@entities = {}
+			@entityIds = []
 			
 			@types   = {}
 			@classes = {}
@@ -58,32 +59,34 @@ define [
 			if not @types[type]    then @types[type]    = []
 			if not @classes[klass] then @classes[klass] = []
 			
-			@types[type].push    entity
-			@classes[klass].push entity
+			@types[type].push    entity.id
+			@classes[klass].push entity.id
 			
 			bodyType = if entity.body.static then 'static' else 'dynamic'
 			@bodies[bodyType][entity.id] = entity.body
 			
 			@entities[entity.id] = entity
+			@entityIds.push entity.id
 		
 		# return an array of entity ids whose 
-		queryAabbIntersects: (aabb, exclude = []) ->
+		queryAabbIntersects: (aabb, callback) ->
 			intersects = []
 			
 			for id, entity of @entities
 				if aabb.intersects entity.body.aabb
-					intersects.push entity
+					intersects.push entity.id
 			
 			intersects
 		
-		queryAabbContains: (aabb, exclude = []) ->
+		queryAabbContains: (aabb, callback) ->
 			contains = []
 			
 			for id, entity of @entities
 				continue if exclude.indexOf id isnt -1
 				
 				if aabb.contains entity.body.aabb
-					contains.push entity
+					if callback then callback entity
+					contains.push id
 			
 			contains
 		
@@ -166,7 +169,7 @@ define [
 			@drawBounds()
 			
 			for id, entity of @entities
-				continue if not camera.aabb.intersects entity.body.aabb
+				#continue if not camera.aabb.intersects entity.body.aabb
 				entity.render context
 			
 			return

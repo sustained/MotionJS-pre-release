@@ -1,5 +1,5 @@
 define [
-	'classutils'
+	'utilities/classutils'
 	'math/vector'
 ], (ClassUtils, Vector) ->
 	NullAABB = t: 0, r: 0, b: 0, l: 0

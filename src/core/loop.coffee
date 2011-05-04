@@ -1,4 +1,28 @@
 define ->
+	_initClient = ->
+		@fpsUpdate = jQuery '<p />'
+		@fpsRender = jQuery '<p />'
+		
+		css = {
+			position: 'absolute', zIndex: 9999
+			
+			background: '#121212', color: '#b3b3b3'
+			
+			fontFamily: 'sans-serif', fontWeight: 'normal'
+			
+			padding: '3px', margin: '0px', border: '2px solid #040404'
+			
+			height: '16px', lineHeight: '16px'
+		}
+		
+		@fpsUpdate.css(css).css(top:'10px', left:'10px').attr 'id', 'fpsUpdate'
+		@fpsRender.css(css).css(top:'45px', left:'10px').attr 'id', 'fpsRender'
+		
+		@fpsUpdate.add(@fpsRender).appendTo('body')#.hide()
+	
+	_initServer = ->
+		
+	
 	class Loop
 		time:  0 # current time
 		tick:  0 # game tick
@@ -20,55 +44,27 @@ define ->
 		_onUpdate: ->
 		_onRender: ->
 		
-		constructor: (@Game) ->
+		constructor: (@game, options = {}) ->
+			@delta = options.delta if options.delta?
+			
 			# move this shit
 			if Motion.env is 'client'
-				@fpsUpdate = $('<p />')
-				@fpsRender = $('<p />')
-				css = 
-					position: 'absolute'
-					zIndex: 9999
-					background: '#121212'
-					border: '2px solid #040404'
-					fontFamily: 'sans-serif'
-					color: '#b3b3b3'
-					fontWeight: 'normal'
-					margin: '0px'
-					padding: '3px'
-					height: '16px'
-					lineHeight: '16px'
-					#'webkit-border-radius': '5px'
-				
-				@fpsUpdate.css(css).css(top:'10px', left:'10px').attr 'id', 'fpsUpdate'
-				@fpsRender.css(css).css(top:'45px', left:'10px').attr 'id', 'fpsRender'
-				@fpsUpdate.add(@fpsRender).appendTo('body').hide()
+				_initClient.call @
 			else
-				@frameRate = -> null
+				_initServer.call @
 			
 			@time   = Date.now()
-			@deltas = [];
-			
-			if Motion.env is 'client'
-				haveGame  = isObject(@Game) #and @Game.class() is 'Game'
-				@onUpdate @Game.Screen.method 'update' if haveGame
-				@onRender @Game.Screen.method 'render' if haveGame
-		
-		onUpdate: (update) ->
-			@_onUpdate = update.bind update, [@delta]
-		
-		onRender: (render) ->
-			@_onRender = render.bind render, [@context]
+			@deltas = []
 		
 		start: ->
 			@currentTime = Date.now()
 			
 			@gameLoop = setInterval (=> @loop()), 10
-			#@frameLoop = window.setInterval (=> @frameRate()), 1000 if Motion.env is 'client'
-		play: @::start
 		
 		stop: ->
 			clearInterval @gameLoop
-			#window.clearInterval @frameLoop if Motion.env is 'client'
+			
+		play:  @::start
 		pause: @::stop
 		
 		reset: ->
@@ -86,9 +82,8 @@ define ->
 			return if @showFPS is false
 			
 			length  = @deltas.length
-			average = @deltas.sum()
+			average = Array.sum @deltas
 			@fpsUpdate.text 'Update @ ' + (@update - @lastUpdate) + ' FPS'
-			return if length is 0
 			@fpsRender.text 'Render @ ' + (1 / (average / length)).toFixed(0) + ' FPS'
 		
 		fps: 0
@@ -97,7 +92,7 @@ define ->
 			time  = Date.now()
 			delta = (time - @time) / 1000
 			delta = 0.25 if delta > 0.25
-			#@deltas = [] if @deltas.push(delta) > 42
+			@deltas = [] if @deltas.push(delta) > 42
 			
 			@fps    = 1.0 / delta if @update % 15 is 0
 			@time   = time
@@ -109,10 +104,10 @@ define ->
 				@accum  -= @delta
 				@update += 1
 			
-			#if @tick - @tock > 1
-			#	@tock = @tick
-			#	@frameRate()
-			#	@lastUpdate = @update
+			if @tick - @tock > 1
+				@tock = @tick
+				@frameRate()
+				@lastUpdate = @update
 			
 			@alpha = @accum / @delta
 			

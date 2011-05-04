@@ -1,7 +1,6 @@
-define [
-	'class'
-	'eventful'
-], (Class, Eventful) ->
+define ->
+	{Class, Eventful} = Motion
+	
 	class Screen extends Class
 		zIndex = 0
 		
@@ -28,11 +27,11 @@ define [
 				'beforeIn',  'afterIn'
 				'beforeOut', 'afterOut'
 			], bind: @
-			@GUI    = {}
+			
+			@screen = @game.screen
 			@zIndex = ++zIndex
 			
-			@event.on 'loaded', -> @loaded = true
-			
+			@event.on 'loaded',   -> @loaded = true
 			@event.on 'unloaded', -> @loaded = false
 			
 			###
@@ -46,11 +45,20 @@ define [
 			###
 			
 			#@elements = {}
-			@screenLayer = $('<div />')
+			@screenLayer = jQuery('<div />')
 				.attr('id', @name + 'Screen')
 				.css('z-index', @zIndex)
 				.addClass('mjsScreenLayer')
 				#.appendTo('body')
+		
+		image: (image, options = {}) ->
+			
+		
+		audio: (audio, options = {}) ->
+			
+		
+		video: (video, options = {}) ->
+			
 		
 		update: (Game, tick, delta) ->
 			
@@ -58,7 +66,8 @@ define [
 		render: (Game, alpha, context) ->
 			
 		
+		enable:  -> @screen.enable @name
+		disable: -> @screen.disable @name
+		
 		load:   -> null
 		unload: -> null
-	
-	Screen

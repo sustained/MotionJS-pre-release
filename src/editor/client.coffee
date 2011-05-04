@@ -106,5 +106,4 @@ require [
 	
 	game.Screen.add 'editor', EditorScreen, true
 	
-	$ ->
-		game.Loop.start()
+	jQuery -> game.loop.start()

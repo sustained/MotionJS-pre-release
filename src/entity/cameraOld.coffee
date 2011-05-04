@@ -5,6 +5,13 @@ define [
 ], (AABB, Keyboard, Mouse) ->
 	{Vector} = Math
 	
+	###
+	class Camera extends Entity
+		constructor: (name, options)->
+			super name, options
+			
+	###
+	
 	class Camera
 		entity:  null
 		origin: 'center'
@@ -18,7 +25,6 @@ define [
 			
 			@input = @input.bind @, Keyboard.instance(), Mouse.instance()
 		
-		
 		EDGE_MOVE_DISTANCE = 200
 		EDGE_MOVE_MAXSPEED = 2.5
 		
@@ -26,44 +32,51 @@ define [
 			speed = 2
 			
 			if kb.keys.shift
-				EDGE_MOVE_MAXSPEED = 10
+				EDGE_MOVE_MAXSPEED = 20
 			else 
 				EDGE_MOVE_MAXSPEED = 5
 			
-			if kb.keys.left
+			if kb.keys.a
 				@position.i -= speed
-			else if kb.keys.right
+			else if kb.keys.d
 				@position.i += speed
 			
-			if kb.keys.up
+			if kb.keys.w
 				@position.j -= speed
-			else if kb.keys.down
+			else if kb.keys.s
 				@position.j += speed
 			
 			if ms.position.i < EDGE_MOVE_DISTANCE
-				move = -Math.remap Math.abs(EDGE_MOVE_DISTANCE - ms.position.i), [0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED]
+				move = -Math.remap(Math.abs(EDGE_MOVE_DISTANCE - ms.position.i),
+					[0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED])
 			else if ms.position.i > (@w - EDGE_MOVE_DISTANCE)
-				move = Math.remap Math.abs(EDGE_MOVE_DISTANCE - (@w - ms.position.i)), [0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED]
+				move = Math.remap(Math.abs(EDGE_MOVE_DISTANCE - (@w - ms.position.i)),
+					[0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED])
 			else
 				move = 0
+			
 			@position.i = @position.i + Math.min EDGE_MOVE_MAXSPEED, move
 			
 			if ms.position.j < EDGE_MOVE_DISTANCE
-				move = -Math.remap Math.abs(EDGE_MOVE_DISTANCE - ms.position.j), [0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED]
+				move = -Math.remap(Math.abs(EDGE_MOVE_DISTANCE - ms.position.j),
+					[0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED])
 			else if ms.position.j > (@h - EDGE_MOVE_DISTANCE)
-				move = Math.remap Math.abs(EDGE_MOVE_DISTANCE - (@h - ms.position.j)), [0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED]
+				move = Math.remap(Math.abs(EDGE_MOVE_DISTANCE - (@h - ms.position.j)),
+					[0, EDGE_MOVE_DISTANCE], [0, EDGE_MOVE_MAXSPEED])
 			else
 				move = 0
+			
 			@position.j = @position.j + Math.min EDGE_MOVE_MAXSPEED, move
 		
 		update: (delta, tick) ->
 			if @entity
-				@position.i = @entity.body.x - (@w / 2)
-				@position.j = @entity.body.y - (@h / 2)
-				@aabb.setPosition @entity.body.position
+				#@position.i = @entity.body.position.i
+				#@position.j = @entity.body.position.j
+				@position.i = @entity.body.position.i - (@w / 2)
+				@position.j = @entity.body.position.j - (@h / 2)
+				#@aabb.setPosition @entity.body.position
 			else
 				@input()
-			
 			
 			if @origin is 'topleft'
 				@aabb.setPosition Vector.add @position, new Vector @hw, @hh

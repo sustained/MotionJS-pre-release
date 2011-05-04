@@ -1,32 +1,54 @@
 define ->
 	class Vector
+		set: (@i = 0, @j = 0) ->
+			@
+		
 		constructor: (i, j) ->
-			if isArray i
+			if i and i.length
 				@set i[0], i[1]
 			else
 				@set i, j
-
+		
+		@up:    new @( 0, -1)
+		@down:  new @( 0,  1)
+		@left:  new @(-1,  0)
+		@right: new @( 1,  0)
+		
+		@zero: new @(0, 0)
+		
+		# todo - remove
+		@__defineGetter__ 'Zero', ->
+			new Vector
+		
+		max = Number.MAX_VALUE
+		# todo - remove
+		@__defineGetter__ 'Rand', ->
+			new Vector Math.random() * max, Math.random() * max
+		
+		@random: ->
+			new Vector Math.random() * max, Math.random() * max
+		
 		@Array: (n, v = new @) ->
 			i = 0
 			v while i < n
-				
+		
 		@add: (a, b) ->
 			new @ a.i + b.i, a.j + b.j
-
+		
 		@subtract: (a, b) ->
 			new @ a.i - b.i, a.j - b.j
-
+		
 		@multiply: (v, n) ->
 			new @ v.i * n, v.j * n
-
+		
 		@divide: (v, n) ->
 			new @ v.i / n, v.j / n
-
+		
 		@normalize: (v) ->
 			v = v.clone()
 			l = v.length()
 			return if l is 0 then v.set(0.00000001, 0.00000001) else v.divide l
-
+		
 		@limit: (v, n) ->
 			v = v.clone()
 			l = v.length()
@@ -37,25 +59,25 @@ define ->
 		
 		@invert: (v) ->
 			v.clone().invert()
-
+		
 		@angle: () ->
 			dot = @dot
-
+		
 		@rotate: (v, theta) ->
 			v.clone().rotate theta
-
+		
 		@abs: (v) ->
 			v.clone().abs()
-
+		
 		@floor: (v) ->
 			v.clone().floor()
-
+		
 		@round: (v) ->
 			v.clone().round()
-
+		
 		@ceil: (v) ->
 			v.clone().ceil()
-
+		
 		leftNormal: (v) ->
 			new @ v.j, -v.i
 
@@ -200,33 +222,24 @@ define ->
 		angleFrom: (v) ->
 			v.angle() - @angle()
 		
-		@::equal = @::equals = (v) ->
+		equal: @::equals = (v) ->
 			Vector.equals @, v
-
+		
 		isZero: ->
 			@i is 0 and @j is 0
-
-		isUnit: ->
-			@length() is 1
-
-		isNormal: @::isUnit
-
-		###
 		
-		###
-
-		set: (@i = 0, @j = 0) ->
-			@
-
+		isUnit: @::isNormal = ->
+			@length() is 1
+		
 		copy: (v) ->
 			@set v.i, v.j
-
+		
 		clone: ->
 			new Vector @i, @j
-
+		
 		@::debug = @::toString = ->
 			"Vector:(#{@i},#{@j})"
-
+		
 		#extend Vector, ClassUtils.Ext.Accessors
 		
 		#@set 'length', (value) ->
@@ -241,7 +254,4 @@ define ->
 		#	@i = Math.cos(theta) * length
 		#	@j = Math.sin(theta) * length
 	
-	Vector.__defineGetter__ 'Zero', -> new Vector
-	Vector.__defineGetter__ 'Rand', -> new Vector Math.random() * Number.MAX_VALUE, Math.random() * Number.MAX_VALUE
-	
-	Vector
+	Math.Vector = Vector

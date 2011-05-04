@@ -1,4 +1,6 @@
 define ->
+	return null
+	
 	class Matrix			
 		height: ->
 			@m.length
@@ -62,3 +64,5 @@ define ->
 
 		constructor: (@m = @Identity) ->
 			super()
+	
+	Math.Matrix = Matrix

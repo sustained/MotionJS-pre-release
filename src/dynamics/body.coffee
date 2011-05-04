@@ -88,6 +88,10 @@ define [
 			@_inertia    = inertia
 			@_invInertia = if inertia > 0 then 1.0 / inertia else 0
 		
+		moveBy: (vector) ->
+			position = Vector.add @position, vector
+			@position = position
+		
 		@set 'position', (@_position) ->
 			@aabb.setPosition @_position
 			@shape.position = @_position

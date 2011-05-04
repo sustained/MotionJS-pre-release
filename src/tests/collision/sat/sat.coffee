@@ -190,5 +190,5 @@ define [
 	game.Screen.add 'game', GameScreen, true
 	Motion.root.screen = game.Screen.screens.game
 	
-	$ ->
-		game.Loop.start()
+	jQuery ->
+		game.loop.start()

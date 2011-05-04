@@ -1,5 +1,5 @@
 define [
-	'eventful'
+	'utilities/eventful'
 ], (Eventful) ->
 	{Vector} = Math
 	
@@ -61,7 +61,7 @@ define [
 			Vector.add camera.position, @position
 		
 		setup: ($el) ->
-			$el = $el ? $(document)
+			$el = $el ? jQuery(document)
 			$el.mouseup   _onMouseUp  .bind @
 			$el.mousedown _onMouseDown.bind @
 			$el.mousemove _onMouseMove.bind @

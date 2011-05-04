@@ -1,5 +1,5 @@
 define [
-	'classutils'
+	'utilities/classutils'
 ], (ClassUtils) ->
 	class BaseShape
 		area:      0
@@ -25,7 +25,7 @@ define [
 			
 			@position = position
 		
-		Motion.extend BaseShape, ClassUtils.Ext.Accessors
+		Object.extend BaseShape, ClassUtils.Accessors
 		
 		@set 'position', (@_position) ->
 			@transform.tx = @_position.i

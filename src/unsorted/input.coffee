@@ -150,7 +150,7 @@ input = (Vector, Eventful) ->
 			#doc.mousemove @_onMouseMove.bind @
 		
 		setup: ($el) ->
-			$doc = $(document)
+			$doc = jQuery document
 			
 			$doc.keyup   @_onKeyUp.bind   @
 			$doc.keydown @_onKeyDown.bind @
@@ -165,5 +165,5 @@ input = (Vector, Eventful) ->
 
 define [
 	'math/vector'
-	'eventful'
+	'utilities/eventful'
 ], input

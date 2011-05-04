@@ -1,5 +1,5 @@
 define [
-	'classutils'
+	'utilities/classutils'
 	'math/vector'
 ], (ClassUtils, Vector) ->
 	class AABB

@@ -1,5 +1,5 @@
 define [
-	'eventful'
+	'utilities/eventful'
 ], (Eventful) ->
 	class Keyboard
 		_setup     = false
@@ -60,8 +60,8 @@ define [
 				which: event.which
 			}]
 		
-		isKeyDown: (key) -> @keys[key] is on
-		isKeyUp:   (key) -> @keys[key] is off
+		down: (key) -> @keys[key] is on
+		up:   (key) -> @keys[key] is off
 		
 		altKey:   false
 		ctrlKey:  false
@@ -79,12 +79,12 @@ define [
 			_singleton = @
 		
 		setup: ($el) ->
-			return if _setup
+			return false if _setup is true
 			
-			$el = $el ? $(document)
-			$el.keyup   _onKeyUp  .bind @
+			$el = $el ? jQuery(document)
+			$el.keyup   _onKeyUp.bind   @
 			$el.keydown _onKeyDown.bind @
 			
-			$(document).bind 'contextmenu', (e) -> e.preventDefault()
+			jQuery(document).bind 'contextmenu', (e) -> e.preventDefault()
 			
 			true

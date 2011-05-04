@@ -1,19 +1,16 @@
 define [
-	'eventful'
+	'utilities/eventful'
 	'dynamics/body'
 ], (Eventful, Body) ->
 	_entityId = 0
-	
-	class Entity
-		constructor: ->
-			
-	
 	
 	class Static
 		body: null
 		
 		fill:   false
 		stroke: false
+		
+		selected: false
 		
 		constructor: ->
 			@id = ++_entityId
@@ -28,6 +25,8 @@ define [
 		
 		fill:   false
 		stroke: false
+		
+		selected: false
 		
 		constructor: ->
 			#@game = require 'client/game'
@@ -73,7 +72,10 @@ define [
 				@behaviours[i].update()
 		
 		render: ->
-			for i in @activeBehaviours
-				@behaviours[i].render()
+			if @selected is true
+				@body.aabb.render stroke:'blue'
+			
+			#for i in @activeBehaviours
+			#	@behaviours[i].render
 	
 	{Static, Dynamic}
