@@ -5,9 +5,9 @@ path = require 'path'
 $lib = path.join __dirname, 'lib/'
 $src = path.join __dirname, 'src/'
 
-{puts, print} = require 'util'
-{exec, spawn} = require 'child_process'
-CoffeeScript  = require 'coffee-script'
+CoffeeScript           = require 'coffee-script'
+{exec, spawn}          = require 'child_process'
+{puts, print, inspect} = require 'util'
 
 brew = (options, callbacks = {}) ->
 	coffee = spawn "coffee", options.split(' '), cwd: __dirname
@@ -20,8 +20,20 @@ brew = (options, callbacks = {}) ->
 	
 	coffee
 
-task 'build', 'Build MotionJS.', ->
-	brew '--compile --bare --output lib/ src/'
+task 'build', 'Build...', ->
+	puts 'Building...'
+	
+	if $lib.indexOf('/MotionJS/') is -1
+		process.exit 1
+	
+	exec "rm -rf #{$lib}*", ->
+		puts "Cleaned lib/ directory [#{$lib}]"
+		
+		brew '--compile --bare --output lib/ src/', {
+			onexit: ->
+				puts "Compiled src/ directory [#{$src}]"
+				puts "Done"
+		}
 
-task 'watch', 'Auto-compile anything in src/ to lib/ when modified.', ->
+task 'watch', 'Auto-compile...', ->
 	brew '--compile --bare --watch --output lib/ src/'
