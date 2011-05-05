@@ -4,9 +4,10 @@ define [
 	{Class} = Motion
 	
 	class ScreenManager extends Class
-		focus:     true
+		focus:     false
 		paused:    false
 		autopause: true
+		pauseloop: true
 		
 		register: ->
 			@game.loop._onUpdate = @update.bind @
@@ -15,24 +16,30 @@ define [
 		constructor: (@game) ->
 			super()
 			
-			jQuery(window).focus =>
-				@focus = true
-				@unpause() if @autopause is true
-			
-			jQuery(window).blur =>
-				@focus = false
-				@pause() if @autopause is true
+			if Motion.env is 'client'
+				jQuery(window).focus =>
+					return if @focus is true
+					@focus = true
+					@play() if @autopause is true
+				
+				jQuery(window).blur =>
+					@focus = false
+					@pause() if @autopause is true
 			
 			@screens = {}
 			@enabled = []
 		
 		pause: ->
-			console.log 'ScreenManager paused'
 			@paused = true
+			@game.loop.pause() if @pauseloop is true
+			
+			@
 		
-		unpause: ->
-			console.log 'ScreenManager unpaused'
+		play: ->
 			@paused = false
+			@game.loop.play() if @pauseloop is true
+			
+			@
 		
 		add: (name, screen, options = {}) ->
 			options = Object.extend {
@@ -58,9 +65,9 @@ define [
 			screen.bind 'render', null, [@game.loop.context]
 			
 			@screens[name] = screen
+			@screens[name].persistent = options.persistent
 			
-			if options.enable     is true then @enable name
-			if options.persistent is true then @screens[name].persistent = true
+			if options.enable is true then @enable name
 			
 			@
 		
@@ -73,22 +80,22 @@ define [
 				@enable i for i in name
 				return
 			
-			@screens[name].focus()
+			screen = @screens[name]
+			
+			screen.event.fire 'focus'
 			@enabled.push name
 			
 			@
 		
-		disable: (name) ->
-			if Array.isArray name
-				@disable i for i in name
-				return
+		disable: (name, remove = false) ->
+			if Array.isArray name then return @disable i, remove for i in name
 			
 			screen = @screens[name]
 			
-			return false if screen.persistent
+			return false if screen.persistent is true
 			
 			screen.tick = 0
-			screen.blur()
+			screen.event.fire 'blur'
 			@enabled = @enabled.remove name
 			
 			@
@@ -96,6 +103,8 @@ define [
 		sort: ->
 			@enabled = @enabled.sort (a, b) =>
 				return if @screens[a].zIndex > @screens[b].zIndex then 1 else -1
+			
+			@
 		
 		update: ->
 			for name in @enabled
