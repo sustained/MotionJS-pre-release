@@ -15,24 +15,39 @@ define ->
 		transitionIn:  null
 		transitionOut: null
 		
-		blur:  -> null
-		focus: -> null
+		load:   null
+		unload: null
+		focus:  null
+		blur:   null
 		
 		constructor: (@name, @game) ->
 			super()
 			
 			@event = new Eventful [
-				'loaded',    'unloaded'
-				'enabled',   'disabled'
-				'beforeIn',  'afterIn'
-				'beforeOut', 'afterOut'
-			], bind: @
+				'load',   'unload'
+				'focus',  'blur'
+				'enable', 'disable'
+				#'beforeIn',  'afterIn'
+				#'beforeOut', 'afterOut'
+			], binding: @
 			
 			@screen = @game.screen
 			@zIndex = ++zIndex
 			
-			@event.on 'loaded',   -> @loaded = true
-			@event.on 'unloaded', -> @loaded = false
+			@event.on 'load', ->
+				@loaded = true
+				@load() if @load
+			
+			@event.on 'unload', ->
+				@loaded = false
+				@unload() if @unload
+			
+			@event.on 'focus', ->
+				if @loaded is false then @event.fire 'load'
+				@focus() if @focus isnt null
+			
+			@event.on 'blur', ->
+				@blur() if @blur isnt null
 			
 			###
 			@Event.on 'beforeIn', ->
@@ -51,15 +66,6 @@ define ->
 				.addClass('mjsScreenLayer')
 				#.appendTo('body')
 		
-		image: (image, options = {}) ->
-			
-		
-		audio: (audio, options = {}) ->
-			
-		
-		video: (video, options = {}) ->
-			
-		
 		update: (Game, tick, delta) ->
 			
 		
@@ -69,5 +75,4 @@ define ->
 		enable:  -> @screen.enable @name
 		disable: -> @screen.disable @name
 		
-		load:   -> null
-		unload: -> null
+		toggle: (name) -> @screen.toggle @name, name
