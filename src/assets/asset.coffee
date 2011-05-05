@@ -1,8 +1,4 @@
-define [
-	#'assets/image'
-	#'assets/audio'
-	#'assets/video'
-], (Img, Audio, Video) ->
+define ->
 	###
 		BaseClass for Image, Audio, Video
 	###
