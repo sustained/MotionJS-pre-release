@@ -71,7 +71,7 @@ define [
 			@asset.attr 'src', Image.getUrl() + @path + '.' + @extname()
 	
 	Image.Batch = class ImageBatch extends Batch
-		constructor: (batch, options) ->
-			super batch, Image, options
+		constructor: (batch, options = {}) ->
+			super batch, Object.extend options, load: Image
 	
 	Image
