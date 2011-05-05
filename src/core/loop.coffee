@@ -59,7 +59,7 @@ define ->
 		start: ->
 			@currentTime = Date.now()
 			
-			@gameLoop = setInterval (=> @loop()), 10
+			@gameLoop = setInterval (=> @loop()), 1
 		
 		stop: ->
 			clearInterval @gameLoop
