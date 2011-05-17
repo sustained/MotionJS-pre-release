@@ -18,6 +18,9 @@ define [
 			@[name] = @[name].bind bind, args...
 			@[name]
 		
+		parent: ->
+			@__super__?.constructor.name
+		
 		class: ->
 			@constructor.name
 		
