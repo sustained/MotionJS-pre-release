@@ -58,12 +58,11 @@ define ->
 		
 		start: ->
 			@currentTime = Date.now()
-			
-			@gameLoop = setInterval (=> @loop()), 1
+			@gameLoop    = setInterval (=> @loop()), 1
 		
 		stop: ->
 			clearInterval @gameLoop
-			
+		
 		play:  @::start
 		pause: @::stop
 		
@@ -92,9 +91,9 @@ define ->
 			time  = Date.now()
 			delta = (time - @time) / 1000
 			delta = 0.25 if delta > 0.25
-			@deltas = [] if @deltas.push(delta) > 42
+			@deltas = [] if @deltas.push(delta) > 60
 			
-			@fps    = 1.0 / delta if @update % 15 is 0
+			#@fps    = 1.0 / delta if @update % 15 is 0
 			@time   = time
 			@accum += delta
 			
