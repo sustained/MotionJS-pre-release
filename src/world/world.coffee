@@ -4,35 +4,24 @@ define ->
 	class World
 		_id = 0
 		
-		constructor: (@bounds = [100000, 100000]) ->
+		constructor: ->
 			@id = _id++
 			
-			@w = @bounds[0]
-			@h = @bounds[1]
-			
-			@groups = 
-				player:  {}
-				static:  {}
-				dynamic: {}
-			
-			@cameras  = {}
-			@entities = {}
-			@entityIds = []
+			@cameras   = {}
+			@entities  = {}
 			
 			@types   = {}
 			@classes = {}
 		
 		update: ->
-			
 		
 		render: ->
-			
 		
 		createCamera: (name, size) ->
-			camera = new Camera
+			@cameras[name] = new Camera size
 		
 		getEntityById: (id) ->
-			@entities[id] ? false
+			@entities[id]
 		
 		getEntitiesByType: (type) ->
 			@types[type]
@@ -41,19 +30,19 @@ define ->
 			@classes[klass]
 		
 		addEntity: (entity) ->
-			type  = entity.collideType
+			type  = entity.type
 			klass = entity.constructor.name
 			
 			entity.world = @
 			
-			if not @types[type]    then @types[type]    = []
-			if not @classes[klass] then @classes[klass] = []
+			@types[type] = [] if not @types[type]
+			@types[type].push entity.id
 			
-			@types[type].push    entity.id
+			@classes[klass] = [] if not @classes[klass]
 			@classes[klass].push entity.id
 			
 			@entities[entity.id] = entity
-			@entityIds.push entity.id
+			#@entityIds.push entity.id
 		
 		removeEntity: (id) ->
 			if id of @entities
