@@ -1,28 +1,30 @@
 define ->
 	{Class, Eventful} = Motion
-	
-	class Screen extends Class
+
+	class State extends Class
 		zIndex = 0
-		
+
 		tick: 0
-		
+
 		loaded:     false
 		persistent: false
-		
+
 		#fadeIn:  1000
 		#fadeOut: 1000
-		
+
 		transitionIn:  null
 		transitionOut: null
-		
+
 		load:   null
 		unload: null
 		focus:  null
 		blur:   null
-		
-		constructor: (@name, @game) ->
+
+		constructor: (name, @game) ->
 			super()
-			
+
+			@_name = name
+
 			@event = new Eventful [
 				'load',   'unload'
 				'focus',  'blur'
@@ -30,25 +32,32 @@ define ->
 				#'beforeIn',  'afterIn'
 				#'beforeOut', 'afterOut'
 			], binding: @
-			
-			@screen = @game.screen
+
+			@state = @game.state
 			@zIndex = ++zIndex
-			
+
 			@event.on 'load', ->
+				console.log "Loading state #{@_name}"
 				@loaded = true
-				@load() if @load
-			
+				@load() if @load isnt null
+
 			@event.on 'unload', ->
+				console.log "Unloading state #{@_name}"
 				@loaded = false
-				@unload() if @unload
-			
+				@unload() if @unload isnt null
+
 			@event.on 'focus', ->
+				console.log "Focusing state #{@_name}"
 				if @loaded is false then @event.fire 'load'
 				@focus() if @focus isnt null
-			
+
 			@event.on 'blur', ->
+				console.log "Blurring state #{@_name}"
 				@blur() if @blur isnt null
-			
+
+			if Function.isFunction @input
+				@input = @input.bind @, @game.keyboard, @game.mouse
+
 			###
 			@Event.on 'beforeIn', ->
 				@screenLayer.fadeIn @fadeIn,
@@ -58,21 +67,18 @@ define ->
 				@screenLayer.fadeOut @fadeOut,
 				=> @Event.fire 'afterOut'
 			###
-			
-			#@elements = {}
+
+			###@elements = {}
 			@screenLayer = jQuery('<div />')
-				.attr('id', @name + 'Screen')
+				.attr('id', @_name + 'Screen')
 				.css('z-index', @zIndex)
 				.addClass('mjsScreenLayer')
-				#.appendTo('body')
-		
-		update: (Game, tick, delta) ->
-			
-		
-		render: (Game, alpha, context) ->
-			
-		
-		enable:  -> @screen.enable @name
-		disable: -> @screen.disable @name
-		
-		toggle: (name) -> @screen.toggle @name, name
+				.appendTo('body')###
+
+		update: ->
+		render: ->
+
+		enable:  -> @state.enable  @_name
+		disable: -> @state.disable @_name
+
+		toggle: (name) -> @state.toggle @_name, name

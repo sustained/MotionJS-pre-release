@@ -1,15 +1,21 @@
 define [
-	'core/screen'
-], (Screen) ->
+	'core/state'
+], (State) ->
 	{Class} = Motion
 	
-	class ScreenManager extends Class
+	class StateManager extends Class
 		focus:     false
 		paused:    false
 		autopause: true
 		pauseloop: true
 		
 		register: ->
+			console.log 'registering'
+
+			for name, state of @states
+				state.bind 'update', null, [@game.loop.delta]
+				state.bind 'render', null, [@game.canvas.context]
+			
 			@game.loop._onUpdate = @update.bind @
 			@game.loop._onRender = @render.bind @
 		
@@ -26,46 +32,49 @@ define [
 					@focus = false
 					@pause() if @autopause is true
 			
-			@screens = {}
+			@states  = {}
 			@enabled = []
 		
 		pause: ->
+			console.log 'paused'
 			@paused = true
 			@game.loop.pause() if @pauseloop is true
 			
 			@
 		
 		play: ->
+			console.log 'unpaused'
 			@paused = false
 			@game.loop.play() if @pauseloop is true
 			
 			@
 		
-		add: (name, screen, options = {}) ->
+		get: (name) -> @states[name]
+
+		$: @::get
+		
+		add: (name, state, options = {}) ->
 			options = Object.extend {
 				enable:     false
 				persistent: false
 			}, options
 			
-			if Function.isFunction screen
-				screen = new screen name, @game
-				return false if not screen instanceof Screen
+			if Function.isFunction state
+				state = new state name, @game
+				return false if not state instanceof State
 			else
-				extend = screen
-				screen = new Screen name, @game
+				extend = state
+				state  = new State name, @game
 			
 				if Object.isObject extend
-					if Function.isFunction extend.update
-						screen.update = extend.update
-					
-					if Function.isFunction extend.render
-						screen.render = extend.render
+					state.update = extend.update if Function.isFunction extend.update
+					state.render = extend.render if Function.isFunction extend.render
 			
-			screen.bind 'update', null, [@game.loop.delta]
-			screen.bind 'render', null, [@game.loop.context]
+			#state.bind 'update', null, [@game.loop.delta]
+			#state.bind 'render', null, [@game.loop.context]
 			
-			@screens[name] = screen
-			@screens[name].persistent = options.persistent
+			@states[name] = state
+			@states[name].persistent = options.persistent
 			
 			if options.enable is true then @enable name
 			
@@ -80,43 +89,42 @@ define [
 				@enable i for i in name
 				return
 			
-			screen = @screens[name]
-			
-			screen.event.fire 'focus'
+			state = @get name
+			state.event.fire 'focus'
+
 			@enabled.push name
-			
 			@
 		
 		disable: (name, remove = false) ->
 			if Array.isArray name then return @disable i, remove for i in name
-			
-			screen = @screens[name]
-			
-			return false if screen.persistent is true
-			
-			screen.tick = 0
-			screen.event.fire 'blur'
+
+			state = @get name
+			return if state.persistent is true
+
+			state.tick = 0
+			state.event.fire 'blur'
+
 			@enabled = @enabled.remove name
-			
 			@
 		
 		sort: ->
 			@enabled = @enabled.sort (a, b) =>
-				return if @screens[a].zIndex > @screens[b].zIndex then 1 else -1
+				return if @states[a].zIndex > @states[b].zIndex then 1 else -1
 			
 			@
 		
 		update: ->
 			for name in @enabled
-				screen = @screens[name]
-				continue if @paused is true and screen.persistent is false
-				screen.update @game.loop.tick
-				screen.tick += @game.loop.delta
+				state = @get name
+				continue if @paused is true and state.persistent is false
+
+				state.update  @game.loop.tick
+				state.tick += @game.loop.delta
 			return
 		
 		render: ->
 			for name in @enabled
-				screen = @screens[name]
-				continue if @paused is true and screen.persistent is false
-				screen.render.call()
+				state = @get name
+				continue if @paused is true and state.persistent is false
+				state.render()
 			return
