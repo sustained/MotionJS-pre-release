@@ -1,6 +1,6 @@
 define [
 	'assets/image'
-], (Img) ->
+], (Image) ->
 	class TileSet
 		_options = {
 			size: 16
@@ -13,15 +13,21 @@ define [
 		image: null
 		
 		constructor: (name, options = {}) ->
-			instance = @constructor.get name ; if instance? then return instance
+			instance = @constructor.get name ;; if instance? then return instance
 			
 			@name  = name
-			@image = Img.get name
-			console.log @image
+			@image = Image.get name
 			
 			@options = Object.extend _options, options
 			Object.extend @, @options
-			console.log @size
+			
+			#if Number.isNumber @size
+			#	@size = [@size, @size]
+			
+			console.log @image
+			
+			@cellsX = @image.width  / @size
+			@cellsY = @image.height / @size
 			
 			_instances[name] = @
 		
@@ -30,3 +36,6 @@ define [
 			g.drawImage @image,
 				vTile.i * @size, vTile.j * @size, @size, @size, vDraw.i, vDraw.j, @size, @size
 			g.closePath()
+		
+		toString: ->
+			@image.toString()
