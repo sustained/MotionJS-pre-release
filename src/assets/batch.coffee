@@ -65,12 +65,17 @@ define [
 			else if Object.isObject name
 				batch = name
 				asset = path
+				name  = null
+				path  = null
 			
 			if asset is null
 				if @_type is null then throw 'asset type?' ;; return
 				asset = @_type
 			
-			return false if (asset = _assetMap[asset]) is null
+			if not _assetMap[asset]?
+				throw "unknown asset type #{asset}" ;; return
+			
+			asset = _assetMap[asset]
 			
 			for name, path of batch
 				@length++ ;; @toLoad++
