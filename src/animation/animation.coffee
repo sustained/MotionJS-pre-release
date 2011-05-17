@@ -19,6 +19,9 @@ define [
 		startTime: 0
 		
 		constructor: (options) ->
+			if options.reference
+				@reference = options.reference
+			
 			#Motion.extend @, options
 			
 			#if @reference
@@ -28,11 +31,14 @@ define [
 			#if not @easing    then @easing = Easing[if isVector(@reference) then 'Vector' else 'Scalar'].linear
 			#if not @start     then @start  = @reference.position.clone()
 		
-		update: (delta) ->
-			@currTime += delta
+		update: (delta, tick) ->
+			@currTime = tick
 			
 			if @currTime > @endTime
-				@stop()
+				if @repeat is false
+					@stop()
+				else
+					@endTime = @currTime + @duration
 			else
 				@step()
 		
