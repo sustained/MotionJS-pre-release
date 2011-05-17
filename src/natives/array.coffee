@@ -33,3 +33,6 @@ Array::remove = (remove, all = false) ->
 		@splice index, 1
 		index = @indexOf remove
 	@
+
+Array.random = (array) ->
+	array[Math.rand 0, array.length - 1]
