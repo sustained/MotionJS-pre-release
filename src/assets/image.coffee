@@ -1,7 +1,6 @@
 define [
 	'assets/asset'
-	'assets/batch'
-], (Asset, Batch) ->
+], (Asset) ->
 	class Image extends Asset
 		@STATUS:
 			NONE:    0 # Not loaded yet
@@ -30,6 +29,8 @@ define [
 		
 		width:  0
 		height: 0
+		
+		toString: -> @constructor.getUrl() + @path + '.' + @extname()
 		
 		constructor: (name, path, options = {}) ->
 			instance = @constructor.get name ; if instance? then return instance
@@ -70,8 +71,8 @@ define [
 			@asset.css  'display', 'none'
 			@asset.attr 'src', Image.getUrl() + @path + '.' + @extname()
 	
-	Image.Batch = class ImageBatch extends Batch
+	###Image.Batch = class ImageBatch extends Batch
 		constructor: (batch, options = {}) ->
-			super batch, Object.extend options, load: Image
+			super batch, Object.extend options, load: Image###
 	
 	Image
