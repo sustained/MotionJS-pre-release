@@ -1,17 +1,10 @@
-define [
-	'math/vector'
-], (Vector) ->
+define ->
+	{Vector} = Math
+	
 	class Canvas
-		DIMENSIONS = [
-			[800,   600]
-			[1024,  768]
-			[1280, 1024]
-			[1680, 1050]
-		]
+		@DEFAULT_DIMENSIONS: [1024, 768]
 		
-		@DefaultDimensions: DIMENSIONS[1]
-		
-		_canvasId = -1
+		_canvasId = 0
 		
 		name: null
 		size: Canvas.DefaultDimensions
@@ -27,12 +20,27 @@ define [
 		
 		created: false
 		
-		constructor: (@size = Canvas.DefaultDimensions) ->
-			@id   = ++_canvasId
+		constructor: (@size = Canvas.DEFAULT_DIMENSIONS) ->
+			@id   = _canvasId++
 			@name = "motionCanvas#{@id}"
 			
-			$w = jQuery window
+			Motion.ready =>
+				@$canvas = jQuery('<canvas>').attr id: @name, width: @size[0], height: @size[1]
+				@$canvas.css
+						top:  if @show then '0px' else '-10000px'
+						left: if @show then '0px' else '-10000px'
+						width:  @size[0] + 'px'
+						height: @size[1] + 'px'
+						zIndex: @id
+						position: 'absolute'
+						backgroundColor: '#000000'
+				@$canvas.appendTo 'body'
+				
+				@canvas  = @$canvas.get 0
+				@context = @canvas.getContext '2d'
+				@created = true
 			
+			###
 			resizeMap = {
 				 800:  600
 				1024:  768
@@ -42,7 +50,6 @@ define [
 			
 			lastResize = 0
 			
-			###
 			$w.resize (e) =>
 				return if Date.now() - lastResize < 4000
 				w = $w.width()
@@ -152,26 +159,6 @@ define [
 			@context.closePath()
 			
 			@draw style
-		
-		create: (@show = true) ->
-			return null if @created
-			
-			@$canvas = jQuery('<canvas>').attr id: @name, width: @size[0], height: @size[1]
-			@$canvas.css
-					top:  if @show then '0px' else '-10000px'
-					left: if @show then '0px' else '-10000px'
-					width:  @size[0] + 'px'
-					height: @size[1] + 'px'
-					zIndex: @id
-					position: 'absolute'
-					backgroundColor: '#000000'
-			@$canvas.appendTo 'body'
-		
-			@canvas  = @$canvas.get 0
-			@context = @canvas.getContext '2d'
-			@created = true
-			
-			#game.Loop.context = @context if @id is 0
 		
 		setSize: (width, height) ->
 			return false if not @created
