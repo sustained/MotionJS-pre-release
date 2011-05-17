@@ -54,14 +54,14 @@ define [
 			#	@left   = button is 'left'
 			#	@right  = button is 'right'
 			#	@middle = button is 'middle'
-				
+			
+			Motion.ready =>
+				$el = jQuery document
+				$el.mouseup   _onMouseUp  .bind @
+				$el.mousedown _onMouseDown.bind @
+				$el.mousemove _onMouseMove.bind @
+			
 			_singleton = @
 		
 		inCamera: (camera) ->
 			Vector.add camera.position, @position
-		
-		setup: ($el) ->
-			$el = $el ? jQuery(document)
-			$el.mouseup   _onMouseUp  .bind @
-			$el.mousedown _onMouseDown.bind @
-			$el.mousemove _onMouseMove.bind @

@@ -38,27 +38,27 @@ define [
 			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is on
 			
 			@keys[key] = on
-			@event.fire 'down', [key, {
+			###@event.fire 'down', [key, {
 				alt:   (@altKey   = event.altKey)
 				ctrl:  (@ctrlKey  = event.ctrlKey)
 				meta:  (@metaKey  = event.metaKey)
 				shift: (@shiftKey = event.shiftKey)
 				time:  event.timeStamp
 				which: event.which
-			}]
+			}]###
 		
 		_onKeyUp = (event) ->
 			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is off
 			
 			@keys[key] = off
-			@event.fire 'up', [key, {
+			###@event.fire 'up', [key, {
 				alt:   (@altKey   = event.altKey)
 				ctrl:  (@ctrlKey  = event.ctrlKey)
 				meta:  (@metaKey  = event.metaKey)
 				shift: (@shiftKey = event.shiftKey)
 				time:  event.timeStamp
 				which: event.which
-			}]
+			}]###
 		
 		down: (key) -> @keys[key] is on
 		up:   (key) -> @keys[key] is off
@@ -76,15 +76,11 @@ define [
 			@keys       = {}
 			@keys[key] = off for code, key of _KEYMAP
 			
+			Motion.ready =>
+				$el = jQuery document
+				$el.keyup   _onKeyUp.bind   @
+				$el.keydown _onKeyDown.bind @
+				
+				$el.bind 'contextmenu', (e) -> e.preventDefault() ;; e.stopPropagation()
+			
 			_singleton = @
-		
-		setup: ($el) ->
-			return false if _setup is true
-			
-			$el = $el ? jQuery(document)
-			$el.keyup   _onKeyUp.bind   @
-			$el.keydown _onKeyDown.bind @
-			
-			jQuery(document).bind 'contextmenu', (e) -> e.preventDefault()
-			
-			true
