@@ -1,53 +1,17 @@
 define [
-	'class'
-	'eventful'
-	'loop'
-	'dynamics/world'
-	
-	'path'
-], (Class, Eventful, Loop, World, path) ->
-	__instance = null
-	
-	class Game extends Class
-		constructor: (options) ->
-			return __instance if __instance?
+	'shared/game'
+], (Game) ->
+	class ServerGame extends Game
+		@DEFAULT_OPTIONS: {
+			delta: 1.0 / 30
+		}
+
+		_instance = null
+		@instance: -> return if _instance then _instance else new @
+
+		constructor: (path, config = {}) ->
+			return _instance if _instance?
 			
-			super()
+			super path, config
 			
-			@options = Motion.extend {
-				path:  ''
-				delta: 1.0 / 10
-			}, options
-			
-			if @path = options.path
-				@load()
-			
-			@loop = @Loop = new Loop @
-			@loop.delta   = options.delta
-			
-			@event = @Event = new Eventful
-			
-			@worlds = {}
-			@createWorld 'default'
-			
-			__instance = @
-		
-		createWorld: (name, options) ->
-			options = Motion.extend {
-				size: [1024, 768]
-			}, options
-			
-			@worlds[name] = new World options
-		
-		getWorld: (name) ->
-			@worlds[name]
-		
-		removeWorld: (name) ->
-			delete @worlds[name]
-		
-		load: ->
-			if path.existsSync @path
-				entities = listFiles "#{@path}src/"
-				console.log entities
-	
-	Game
+			_instance = @
