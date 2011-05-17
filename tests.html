@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>MotionJS Test Suite</title>
+
+	<link rel="stylesheet" href="vendor/qunit/qunit.css" />
+
+	<style>
+body {
+	background-color: #eee;
+	padding: 0; margin: 0;
+}
+	</style>
+
+	<script src="vendor/qunit/qunit.js"></script>
+	<script src="vendor/jquery/jquery.js"></script>
+
+	<script>
+var require = {
+	baseUrl: 'http://192.168.0.2/Private/JS/MotionJS/lib/'
+,	deps: [
+		'tests/core'
+	,	'tests/eventful'
+	]
+,	paths: {
+		'fs': 'client/node/fs'
+	,	'path': 'client/node/path'
+	,	'vendor': '../vendor'
+	}
+,	priority: [
+		'natives/array'
+	,	'natives/function'
+	,	'natives/math'
+	,	'natives/number'
+	,	'natives/object'
+	,	'natives/regexp'
+	,	'natives/string'
+
+	,	'core/core'
+	]
+,	urlArgs: "nocache=" +  (new Date()).getTime()
+};
+	</script>
+
+	<script src="vendor/requirejs/require.js"></script>
+</head>
+
+<body>
+	<h1 id="qunit-header">MotionJS Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
