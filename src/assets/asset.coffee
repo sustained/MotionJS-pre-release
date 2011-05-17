@@ -39,6 +39,6 @@ define ->
 				@_basename = path
 		
 		toString: ->
-			@basename() + '.' + @extname()
+			@path + '.' + @extname()
 		
 		load: -> null
