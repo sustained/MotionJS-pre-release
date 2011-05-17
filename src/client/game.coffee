@@ -1,92 +1,55 @@
 define [
-	'core/loop'
-	'core/screenmanager'
-	
 	'assets/asset'
+	'assets/batch'
 	'assets/image'
 	#'assets/audio'
 	#'assets/video'
-	
+
 	'graphics/canvas'
 	'graphics/tileset'
-	
+
 	'client/input/keyboard'
 	'client/input/mouse'
-	
-	'dynamics/world'
-], (Loop, MScreen, Asset, Image, Canvas, TileSet, Keyboard, Mouse, World) ->
+
+	'shared/game'
+
+	#'world/tiled'
+	#'world/rigid'
+], (Asset, Batch, Image, Canvas, TileSet, Keyboard, Mouse, Game) ->
 	{Class, Eventful} = Motion
-	
-	class Game extends Class
-		_setup    = false
-		_instance = null
-		
-		@instance: ->
-			return if _instance then _instance else new @
-		
-		options: null
-		
-		setup: (options = {}) ->
-			return if _setup is true
-			
-			@options = Object.extend {
-				url:   ''
+
+	class ClientGame extends Game
+		@DEFAULT_OPTIONS = {
+			delta: 1.0 / 60
+			display:
 				size:  [1024, 768]
-				delta: 1.0 / 60
-			}, options
-			
-			_setup = true
-		
-		constructor: (options) ->
+				scale: 1.0
+			preload:
+				audio: null
+				image: null
+				video: null
+			states:   null
+			entities: null
+		}
+
+		_instance = null
+		@instance: -> return if _instance then _instance else new @
+
+		constructor: (url, config = {}) ->
 			return _instance if _instance?
-			
-			super()
-			
-			@setup options
-			
-			@worlds = {}
-			@createWorld 'default', options.size
-			
-			@loop   = new Loop @, delta: options.delta
-			#@input  = new Input # needs deprecating
-			@screen = @scene = new MScreen @
-			
-			if @options.url.length > 0
-				Asset.setUrl @options.url + 'assets/'
-				
-				Image.setUrl null, true
-				#Audio.setUrl null, true
-				#Video.setUrl null, true
-			
+
+			super url, Object.merge ClientGame.DEFAULT_OPTIONS, config
+
 			# if not a touch device...
 			@mouse    = new Mouse
 			@keyboard = new Keyboard
-			# else
-			
-			
-			@event = new Eventful ['ready'], binding: @
-			
-			@event.on 'ready', ->
-				if @mouse    then @mouse.setup()
-				if @touch    then @touch.setup()
-				if @keyboard then @keyboard.setup()
-			
-			Motion.event.on 'load', => @event.fire 'ready'
-			
-			@canvas = new Canvas options.size
-			@canvas.create()
-			
-			@loop.context = @canvas.context
-			#@input.setup @canvas.$canvas
-			
+
+			@canvas = new Canvas @config.display.size
+
+			if url
+				Asset.setUrl url + 'assets/'
+				Image.setUrl 'image/naughty/', true
+				#Audio.setUrl null, true
+				#Video.setUrl null, true
+
 			_instance = @
-		
-		createWorld: (name, options) ->
-			@worlds[name]      = new World options
-			@worlds[name].game = @
-		
-		getWorld: (name) ->
-			@worlds[name]
-		
-		removeWorld: (name) ->
-			delete @worlds[name]
