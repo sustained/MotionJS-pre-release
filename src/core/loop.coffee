@@ -1,29 +1,26 @@
 define ->
+	pad = (number, length, pad = '0') ->
+		str = "#{number}"
+		str = pad + str while str.length < length
+		str
+	
 	_initClient = ->
-		@fpsUpdate = jQuery '<p />'
-		@fpsRender = jQuery '<p />'
-		
-		css = {
-			position: 'absolute', zIndex: 9999
-			
-			background: '#121212', color: '#b3b3b3'
-			
-			fontFamily: 'sans-serif', fontWeight: 'normal'
-			
-			padding: '3px', margin: '0px', border: '2px solid #040404'
-			
-			height: '16px', lineHeight: '16px'
-		}
-		
-		@fpsUpdate.css(css).css(top:'10px', left:'10px').attr 'id', 'fpsUpdate'
-		@fpsRender.css(css).css(top:'45px', left:'10px').attr 'id', 'fpsRender'
-		
-		@fpsUpdate.add(@fpsRender).appendTo('body')#.hide()
+		@fpsContainer = jQuery '<div />'
+		@fpsUpdate    = jQuery '<p>Update @ <span></span> FPS</p>'
+		@fpsRender    = jQuery '<p>Render @ <span></span> FPS</p>'
+
+		@fpsContainer.attr 'id', 'motionFpsContainer'
+
+		jQuery('span', @fpsUpdate).html '&nbsp;&nbsp;0'
+		jQuery('span', @fpsRender).html '&nbsp;&nbsp;0'
+
+		@fpsUpdate.add(@fpsRender).appendTo @fpsContainer.appendTo 'body'
 	
 	_initServer = ->
-		
 	
 	class Loop
+		@INTERVAL_WAIT: 2 # setInterval interval
+
 		time:  0 # current time
 		tick:  0 # game tick
 		tock:  0
@@ -38,7 +35,8 @@ define ->
 		# interval ids
 		gameLoop:  null
 		frameLoop: null
-		
+		showFPS: true
+
 		context: null
 		
 		_onUpdate: ->
@@ -58,10 +56,12 @@ define ->
 		
 		start: ->
 			@currentTime = Date.now()
-			@gameLoop    = setInterval (=> @loop()), 1
+			@gameLoop    = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
 		
 		stop: ->
 			clearInterval @gameLoop
+			jQuery('span', @fpsUpdate).html '&nbsp;&nbsp;0'
+			jQuery('span', @fpsRender).html '&nbsp;&nbsp;0'
 		
 		play:  @::start
 		pause: @::stop
@@ -69,21 +69,23 @@ define ->
 		reset: ->
 			@time = @tick = @tock = @accum = @update = @render = 0
 		
-		showFPS: ->
+		showFps: ->
 			@showFPS = true
-			@fpsUpdate.add(@fpsRender).show()
+			@fpsContainer.show()
 		
-		hideFPS: ->
+		hideFps: ->
 			@showFPS = false
-			@fpsUpdate.add(@fpsRender).hide()
+			@fpsContainer.hide()
 		
 		frameRate: ->
-			return if @showFPS is false
-			
 			length  = @deltas.length
 			average = Array.sum @deltas
-			@fpsUpdate.text 'Update @ ' + (@update - @lastUpdate) + ' FPS'
-			@fpsRender.text 'Render @ ' + (1 / (average / length)).toFixed(0) + ' FPS'
+
+			updateRate = @update - @lastUpdate
+			renderRate = (1 / (average / length)).toFixed 0
+
+			jQuery('span', @fpsUpdate).html pad(updateRate, 3, '&nbsp;')
+			jQuery('span', @fpsRender).html pad(renderRate, 3, '&nbsp;') if not isNaN renderRate
 		
 		fps: 0
 		
@@ -103,7 +105,7 @@ define ->
 				@accum  -= @delta
 				@update += 1
 			
-			if @tick - @tock > 1
+			if @showFPS is true and @tick - @tock > 1
 				@tock = @tick
 				@frameRate()
 				@lastUpdate = @update
