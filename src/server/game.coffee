@@ -9,9 +9,9 @@ define [
 		_instance = null
 		@instance: -> return if _instance then _instance else new @
 
-		constructor: (path, config = {}) ->
+		constructor: (config = {}) ->
 			return _instance if _instance?
 			
-			super path, config
+			super Object.merge ServerGame.DEFAULT_OPTIONS, config
 			
 			_instance = @
