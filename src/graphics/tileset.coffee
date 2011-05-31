@@ -21,13 +21,14 @@ define [
 			@options = Object.extend _options, options
 			Object.extend @, @options
 			
-			#if Number.isNumber @size
-			#	@size = [@size, @size]
+			if Array.isArray @size
+				@cellsX = Math.round @image.width  / @size[0]
+				@cellsY = Math.round @image.height / @size[1]
+			else if Number.isNumber @size
+				@cellsX = Math.round @image.width  / @size
+				@cellsY = Math.round @image.height / @size
 			
-			console.log @image
-			
-			@cellsX = @image.width  / @size
-			@cellsY = @image.height / @size
+			console.log @image, @image.width, @image.height, @cellsX, @cellsY
 			
 			_instances[name] = @
 		
