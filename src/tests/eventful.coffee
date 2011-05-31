@@ -1,54 +1,71 @@
-define ->
-	{Eventful}  = Motion
-	_defBinding = one:1, two:2, three:3
-	_newBinding = foo:1, bar:2, baz:3
-
-	event = new Eventful 'evt', binding: _defBinding
-
+define ['core/core'], ->
 	module 'Eventful'
 
-	test "Callback arguments.", ->
-		event.on 'evt', ((a, b) ->
-			equal a,  42, '1st argument from on() should be present'
-			equal b, 420, '2nd argument from fire() should be present'
+	test "Sanity.", -> ok Motion.Eventful?, 'Motion.Eventful should exist'
+
+	_defBinding = one: 1, two: 2
+	_newBinding = foo: 1, bar: 2
+	_event      = new Motion.Eventful 'evt', binding: _defBinding
+
+	# shortcuts
+	event = _event.on.bind    _event, 'evt'
+	after = _event.after.bind _event, 'evt'
+	fire  = _event.fire.bind  _event, 'evt'
+	clear = _event.clear.bind _event, 'evt'
+
+	test "Callback args from on() & fire() should work both independently and simultaneously.", ->
+		event ( (foo) ->
+			equal foo, 'foo', 'the callbacks argument should be foo'
+		), args: ['foo']
+		fire()
+		clear()
+
+		event (bar) -> equal bar, 'bar', 'the callbacks argument should be bar'
+		fire ['bar']
+		clear()
+
+		event ( (a, b) ->
+			equal a, 42,  'the callbacks 1st argument should be 42'
+			equal b, 420, 'the callbacks 2nd argument should be 420'
 		), args: [42]
-		event.fire 'evt', [420]
-		event.clear 'evt'
+		fire [420]
+		clear()
 
 	test "Callback binding.", ->
-		event.on 'evt', ->
-			strictEqual @, _defBinding, 'callback should be bound to the default binding'
-		event.fire  'evt'
-		event.clear 'evt'
+		event ->
+			strictEqual @, _defBinding, "the callback should be bound to _defBinding"
+		fire()
+		clear()
 
-		event.on 'evt', (->
-			strictEqual @, _newBinding, 'callback should be bound to the callback-specific binding'
+		event ( ->
+			strictEqual @, _newBinding, "the callback should be bound to _newBinding"
 		), bind: _newBinding
-		event.fire 'evt'
-		event.clear 'evt'
+		fire()
+		clear()
 	
 	test "One-time callbacks.", ->
 		increments = 0
 
-		event.on 'evt', (-> increments++), once: true
-		event.fire 'evt' for i in [0...5]
+		event (-> increments++), once: true
+		fire() for i in [0...5]
 
-		equal increments, 1, "callback should only be called once"
-		equal event.events.evt.length, 0, "callback should have been removed afterwards"
+		equal increments, 1, "the callback should have been called just once"
+		equal _event.events.evt.length, 0, "the callback should be gone now"
 
-		event.clear 'evt'
+		clear()
 	
 	test "Event limits.", ->
 		increments = 0
 
-		event.setOptions 'evt', limit: 3
-		equal event.eventOptions.evt.limit, 3, "the events limit should be set"
+		_event.setOptions 'evt', limit: 3
+		equal _event.eventOptions.evt.limit, 3, "the fire limit for the event should be 3"
 
-		event.on    'evt', -> increments++
-		event.after 'evt', -> equal increments, 3, "event should not fire more times than the limit"
-		event.fire  'evt' for i in [0...5]
+		event -> increments++
+		#after -> equal increments, 3, "event should not fire more times than the limit"
+		fire() for i in [0...5]
 
-		equal event.isEvent('evt'), false, "event should have been removed afterwards"
-		equal event.isEvent('after_evt'), false, "after_event should have been removed too"
+		equal increments, 3, "the event should not have fired more than the limit"
+		equal _event.isEvent('evt'), false, "does the event still exist"
+		equal _event.isEvent('after_evt'), false, "does the after_event exist"
 
-		event.clear 'evt'
+		clear()
