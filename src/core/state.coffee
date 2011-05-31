@@ -2,18 +2,10 @@ define ->
 	{Class, Eventful} = Motion
 
 	class State extends Class
-		zIndex = 0
-
 		tick: 0
 
 		loaded:     false
 		persistent: false
-
-		#fadeIn:  1000
-		#fadeOut: 1000
-
-		transitionIn:  null
-		transitionOut: null
 
 		load:   null
 		unload: null
@@ -24,36 +16,35 @@ define ->
 			super()
 
 			@_name = name
-
-			@event = new Eventful [
-				'load',   'unload'
-				'focus',  'blur'
-				'enable', 'disable'
-				#'beforeIn',  'afterIn'
-				#'beforeOut', 'afterOut'
-			], binding: @
-
+			@event = new Eventful ['load', 'unload', 'focus', 'blur'], binding: @
 			@state = @game.state
-			@zIndex = ++zIndex
 
 			@event.on 'load', ->
-				console.log "Loading state #{@_name}"
-				@loaded = true
-				@load() if @load isnt null
+				if Function.isFunction @load
+					@log 'loading'
+					@loaded = true
+					@load() 
+				else
+					@log 'nothing to load'
 
 			@event.on 'unload', ->
-				console.log "Unloading state #{@_name}"
+				@log 'unloading'
 				@loaded = false
-				@unload() if @unload isnt null
+				@unload() if Function.isFunction @unload
+
+			@event.on 'focus', (->
+				@event.fire 'load'
+			), once: true
 
 			@event.on 'focus', ->
-				console.log "Focusing state #{@_name}"
-				if @loaded is false then @event.fire 'load'
-				@focus() if @focus isnt null
+				@log 'focusing'
+				@focus() if Function.isFunction @focus
+
+			#console.log @event.events.focus
 
 			@event.on 'blur', ->
-				console.log "Blurring state #{@_name}"
-				@blur() if @blur isnt null
+				@log 'blurring'
+				@blur() if Function.isFunction @blur
 
 			if Function.isFunction @input
 				@input = @input.bind @, @game.keyboard, @game.mouse
@@ -75,6 +66,9 @@ define ->
 				.addClass('mjsScreenLayer')
 				.appendTo('body')###
 
+		log: (log) ->
+			console.log "State #{@_name}: #{log}"
+		
 		update: ->
 		render: ->
 
