@@ -7,6 +7,8 @@
 
 	<link rel="stylesheet" href="vendor/qunit/qunit.css" />
 
+	<script src="vendor/jquery/jquery.js"></script>
+
 	<style>
 body {
 	background-color: #eee;
@@ -14,37 +16,32 @@ body {
 }
 	</style>
 
-	<script src="vendor/qunit/qunit.js"></script>
-	<script src="vendor/jquery/jquery.js"></script>
-
 	<script>
 var require = {
 	baseUrl: 'http://192.168.0.2/Private/JS/MotionJS/lib/'
-,	deps: [
-		'tests/core'
+,	deps: [ // tests:
+		'vendor/qunit/qunit.js'
+		
 	,	'tests/eventful'
 	]
 ,	paths: {
-		'fs': 'client/node/fs'
-	,	'path': 'client/node/path'
+		'fs':     'client/node/fs'
+	,	'path':   'client/node/path'
 	,	'vendor': '../vendor'
 	}
 ,	priority: [
-		'natives/array'
+	,	'natives/array'
 	,	'natives/function'
 	,	'natives/math'
 	,	'natives/number'
 	,	'natives/object'
 	,	'natives/regexp'
 	,	'natives/string'
-
 	,	'core/core'
 	]
 ,	urlArgs: "nocache=" +  (new Date()).getTime()
 };
 	</script>
-
-	<script src="vendor/requirejs/require.js"></script>
 </head>
 
 <body>
@@ -54,5 +51,7 @@ var require = {
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture"></div>
+
+	<script src="vendor/requirejs/require.js"></script>
 </body>
 </html>
