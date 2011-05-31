@@ -7,7 +7,7 @@ define [
 		constructor: (@size = [16000, 16000]) ->
 			super
 			
-			@layers  = []
+			@layers = []
 		
 		update: (dt, t) ->
 			for entity in @entities
@@ -15,6 +15,8 @@ define [
 			return
 		
 		render: (g) ->
-			for layer in @layers
-				layer.render g
-			return
+			g.clearRect 0, 0, 1024, 768
+			context.translate -@camera.position.i.round(), -@camera.position.j.round()
+			world.render context, @camera
+			@camera.render canvas
+			context.translate @camera.position.i.round(), @camera.position.j.round()
