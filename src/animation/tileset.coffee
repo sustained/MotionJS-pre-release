@@ -25,6 +25,9 @@ define ->
 		pause: ->
 			@paused = true
 		
+		reset: ->
+			@setFrame @sequence[0]
+		
 		update: (dt, t) ->
 			return if @paused is true
 			
@@ -39,11 +42,17 @@ define ->
 					@frame      = @sequence[newFrame]
 					@frameIndex = newFrame
 				
-				#console.log "#{@frameIndex}: frame #{@frame}"
+				console.log @frameIndex, @frame
+		
+		setFrame: (frame) ->
+			@frame      = frame
+			@frameIndex = @sequence.indexOf frame
 		
 		render: (g) ->
 			g.beginPath()
-			g.drawImage(
-				@tileset.image.domOb, (@frame - 1) * @w, 0, @w, @h, @position[0], @position[1], @w, @h
-			)
+			g.drawImage(@tileset.image.domOb,
+				((@frame - 1) % @tileset.cellsX) * @w,
+				Math.floor((@frame - 1) / @tileset.cellsX) * @h,
+				@w, @h,
+				Math.floor(@position[0]), Math.floor(@position[1]), @w, @h)
 			g.closePath()
