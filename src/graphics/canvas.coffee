@@ -20,10 +20,7 @@ define ->
 		
 		created: false
 		
-		constructor: (@size = Canvas.DEFAULT_DIMENSIONS) ->
-			@id   = _canvasId++
-			@name = "motionCanvas#{@id}"
-			
+		create: ->
 			Motion.ready =>
 				@$canvas = jQuery('<canvas>').attr id: @name, width: @size[0], height: @size[1]
 				@$canvas.css
@@ -39,6 +36,12 @@ define ->
 				@canvas  = @$canvas.get 0
 				@context = @canvas.getContext '2d'
 				@created = true
+			
+			@created
+
+		constructor: (@size = Canvas.DEFAULT_DIMENSIONS) ->
+			@id   = ++_canvasId
+			@name = "motionCanvas#{@id}"
 			
 			###
 			resizeMap = {
