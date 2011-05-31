@@ -5,46 +5,50 @@ define [
 	#'assets/audio'
 	#'assets/video'
 
-	'graphics/canvas'
-	'graphics/tileset'
+	'path'
 
 	'client/input/keyboard'
 	'client/input/mouse'
 
 	'shared/game'
 
+	'client/screen/screenmanager'
+
 	#'world/tiled'
 	#'world/rigid'
-], (Asset, Batch, Image, Canvas, TileSet, Keyboard, Mouse, Game) ->
+], (Asset, Batch, Image, path, Keyboard, Mouse, SGame, ScreenManager) ->
 	{Class, Eventful} = Motion
 
-	class ClientGame extends Game
-		@DEFAULT_OPTIONS = {
+	class ClientGame extends SGame
+		@DEFAULT_OPTIONS: {
 			delta: 1.0 / 60
 			display:
 				size:  [1024, 768]
 				scale: 1.0
-			preload:
-				audio: null
-				image: null
-				video: null
-			states:   null
-			entities: null
+			preload: {}
 		}
 
 		_instance = null
 		@instance: -> return if _instance then _instance else new @
 
-		constructor: (url, config = {}) ->
+		constructor: (config = {}) ->
 			return _instance if _instance?
 
-			super url, Object.merge ClientGame.DEFAULT_OPTIONS, config
+			if config.url?
+				url = config.url
+				url = url.replace /^http[s]?\:\/\//, ''
+				url = path.normalize url
+				url = if url.substr(4, 1) is 's' then "https://#{url}" else "http://#{url}"
+				console.log config.url = url
+			
+			@state = new ScreenManager @
+			super Object.merge ClientGame.DEFAULT_OPTIONS, config
 
-			# if not a touch device...
+			# if touch device
+			# @touch = new Touchpad
+			# else
 			@mouse    = new Mouse
 			@keyboard = new Keyboard
-
-			@canvas = new Canvas @config.display.size
 
 			if url
 				Asset.setUrl url + 'assets/'
