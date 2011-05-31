@@ -135,6 +135,8 @@ define ->
 			#return console.log "non-existant event #{name}" if not @isEvent name
 			return false if not @isEvent(name)
 			
+			removes = []
+			
 			for i in @events[name]
 				call  = i[0]
 				opts  = i[1]
@@ -142,8 +144,10 @@ define ->
 				call.apply false, args
 				
 				if opts.once is true
-					#console.log "removing callback #{_i} #{i} for event #{name}"
-					@removeCallback name, _i
+					removes.push _i
+			
+			if removes.length > 0
+				@removeCallback name, remove for remove in removes
 			
 			opts = @eventOptions[name]
 			if opts.limit isnt false
