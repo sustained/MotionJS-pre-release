@@ -42,23 +42,14 @@ define ->
 			j = 0 ;; while j < @mapTilesY
 				i = 0 ;; while i < @mapTilesX
 					tileNumber = @tilemap[j][i]
-					
-					sX = ((tileNumber - 1) % cellsX) * 16
-					#sY = (Math.max(1, (Math.round(tileNumber / cellsX))) - 1) * 16
-					sY = Math.floor((tileNumber - 1) / cellsX) * 16
-					dX = i * 16
-					dY = j * 16
-					
-					#console.log tileNumber
-					#console.log "s #{sX},#{sY} - d #{dX},#{dY}"
-					#console.log sY
-					
-					#if dX >= 0 && dX <= 1024 and
-					#   dY >= 0 && dY <=  768
-					cx.beginPath()
-					cx.drawImage @tileset.image.domOb, sX, sY, 16, 16, dX, dY, 16, 16
-					cx.closePath()
-					
+					if tileNumber > 0
+						sX = ((tileNumber - 1) % cellsX) * 16
+						sY = Math.floor((tileNumber - 1) / cellsX) * 16
+						dX = i * 16
+						dY = j * 16
+						cx.beginPath()
+						cx.drawImage @tileset.image.domOb, sX, sY, 16, 16, dX, dY, 16, 16
+						cx.closePath()
 					i++
 				j++
 			
