@@ -4,58 +4,53 @@ define [
 	'require'
 
 	'core/loop'
-	'core/statemanager'
-	'core/state'
-], (fs, path, require, Loop, StateManager, State) ->
+], (fs, path, require, Loop) ->
 	{Eventful} = Motion
 
 	class Game
-		_setup: null
-		_ready: null
+		_setup: ->
+		_ready: ->
 
-		constructor: (url, @config = {}) ->
-			if path.exists url + 'motiongame.json'
+		constructor: (config = {}) ->
+			url = config.url + 'motiongame.json'
+
+			if path.exists url
 				try
-					config  = JSON.parse fs.readFileSync url + 'motiongame.json'
-					@config = Object.merge @config, config
+					console.log 'prop', config
+					console.log 'json', json    = JSON.parse fs.readFileSync url
+					console.log 'merg', @config = Object.merge json, config
 				catch e
-					console.log 'Error: Parsing motiongame.json failed'
+					console.error 'Error: Parsing motiongame.json failed'
+					console.log e
 			else
-				console.log "Notice: Configuration not found (at:#{url}motiongame.json)"
+				console.log "Notice: No config file (at:#{url})"
 
-			console.log @config
+			@setup @config.setup if @config.setup
+			@ready @config.ready if @config.ready
 
 			@loop  = new Loop @, delta: @config.delta
-			@state = new StateManager @
 			@event = new Eventful ['setup', 'ready'], binding: @
 
-			@event.on 'setup', @config.setup if @config.setup
-			@event.on 'ready', @config.ready if @config.ready
-			
+			@event.on 'setup', -> @_setup()
+			@event.on 'ready', -> @_ready()
+
 			@event.add   'loadModules', limit: 2
-			@event.after 'loadModules', ->
-				console.log 'loaded modules'
-				@event.fire 'setup'
-
-				Motion.ready =>
-					console.log 'game ready function'
-					@event.fire 'ready'
-
+			@event.after 'loadModules', -> Motion.ready => @event.fire 'ready'
+			
 			if @config.states
 				states = @config.states.map (state) -> "game/states/#{state}"
-
 				require states, (modules...) =>
-					console.log modules
-					@state.add state.name.toLowerCase(), state for state in modules
+					for state in modules
+						@state.add state.name.toLowerCase(), state, enable: false
 					@event.fire 'loadModules'
 			
 			if @config.entities
- 				entities = @config.entities.map (entity) -> "game/entities/#{entity}"
- 				
+				entities = @config.entities.map (entity) -> "game/entities/#{entity}"
 				require entities, (modules...) =>
-					console.log modules
 					@entities = modules
 					@event.fire 'loadModules'
+			
+			# ...
 		
 		setup: (fn = ->) -> @_setup = fn.bind @
 		ready: (fn = ->) -> @_ready = fn.bind @
