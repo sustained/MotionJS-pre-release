@@ -4,18 +4,24 @@ define ->
 	class World
 		_id = 0
 		
+		camera: null
+
 		constructor: ->
 			@id = _id++
 			
-			@cameras   = {}
-			@entities  = {}
+			@cameras  = {}
+			@entities = {}
 			
 			@types   = {}
 			@classes = {}
+
+			#@createCamera 'main'
 		
 		update: ->
-		
 		render: ->
+		
+		setCamera: (name) ->
+			@camera = name if name of @cameras
 		
 		createCamera: (name, size) ->
 			@cameras[name] = new Camera size
