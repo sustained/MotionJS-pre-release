@@ -4,58 +4,38 @@ define [
 	{Class} = Motion
 	
 	class StateManager extends Class
-		focus:     false
 		paused:    false
-		autopause: true
 		pauseloop: true
 		
 		register: ->
-			console.log 'registering'
-
-			for name, state of @states
-				state.bind 'update', null, [@game.loop.delta]
-				state.bind 'render', null, [@game.canvas.context]
-			
 			@game.loop._onUpdate = @update.bind @
 			@game.loop._onRender = @render.bind @
+
 		
 		constructor: (@game) ->
 			super()
-			
-			if Motion.env is 'client'
-				jQuery(window).focus =>
-					return if @focus is true
-					@focus = true
-					@play() if @autopause is true
-				
-				jQuery(window).blur =>
-					@focus = false
-					@pause() if @autopause is true
 			
 			@states  = {}
 			@enabled = []
 		
 		pause: ->
-			console.log 'paused'
 			@paused = true
 			@game.loop.pause() if @pauseloop is true
-			
 			@
 		
 		play: ->
-			console.log 'unpaused'
 			@paused = false
 			@game.loop.play() if @pauseloop is true
-			
 			@
 		
-		get: (name) -> @states[name]
+		get: (name) ->
+			@states[name]
 
 		$: @::get
 		
 		add: (name, state, options = {}) ->
 			options = Object.extend {
-				enable:     false
+				enable:     true
 				persistent: false
 			}, options
 			
@@ -65,7 +45,7 @@ define [
 			else
 				extend = state
 				state  = new State name, @game
-			
+
 				if Object.isObject extend
 					state.update = extend.update if Function.isFunction extend.update
 					state.render = extend.render if Function.isFunction extend.render
@@ -85,9 +65,7 @@ define [
 			@enable  enable
 		
 		enable: (name) ->
-			if Array.isArray name
-				@enable i for i in name
-				return
+			if Array.isArray name then return @enable i for i in name
 			
 			state = @get name
 			state.event.fire 'focus'
@@ -106,13 +84,7 @@ define [
 
 			@enabled = @enabled.remove name
 			@
-		
-		sort: ->
-			@enabled = @enabled.sort (a, b) =>
-				return if @states[a].zIndex > @states[b].zIndex then 1 else -1
-			
-			@
-		
+
 		update: ->
 			for name in @enabled
 				state = @get name
