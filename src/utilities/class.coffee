@@ -4,12 +4,12 @@ define [
 	class BaseClass
 		@Utils: ClassUtils
 		
-		classId = 0
+		_classId = 0
 		
 		id: null
 		
 		constructor: ->
-			@id = classId++
+			@id = _classId++
 		
 		@extend:  (object, overwrite = no) -> Object.extend  @, object, overwrite
 		@include: (object, overwrite = no) -> Object.include @, object, overwrite
@@ -20,12 +20,12 @@ define [
 		
 		parent: ->
 			@__super__?.constructor.name
-		
+
 		class: ->
 			@constructor.name
 		
 		hash: ->
-			"#{@class()}##{@id}"
+			"[class #{@class()}##{@id}]"
 		toString: @::hash
 	
 	BaseClass
