@@ -1,28 +1,36 @@
 Object.isObject = (object) -> toString.call(object) is '[object Object]'
 
-# Extend an object
-Object.extend = (object, mixin, overwrite = true) ->
-	for key, val of mixin
-		continue if overwrite is off and key of object
-		object[key] = val
+# Extend an object with another object
+Object.extend = (objectA, objectB, overwrite = true) ->
+	for key, val of objectB
+		continue if overwrite is off and key of objectA
+		objectA[key] = val
 	
-	object
+	objectA
 
-# Mix an object into a prototype.
-Object.include = (klass, mixin, overwrite = false) ->
-	Object.extend klass::, mixin, overwrite
+# Extend a constructor's prototype with an object
+Object.include = (klass, object, overwrite = false) ->
+	Object.extend klass::, object, overwrite
 
-# Merge two objects
-Object.merge = (objA, objB, returnNew = false) ->
-	obj = if returnNew then {} else objA
+Object.clone = (object) ->
+	cloned = if Object.isObject object then {} else []
+
+	for k of object
+		if Object.isObject object[k]
+			cloned[k] = Object.clone object[k]
+		else
+			cloned[k] = object[k]
 	
-	for k of objB
+	cloned
+
+# Merge b into a.
+Object.merge = (a, b) ->
+	merged = Object.clone a
+
+	for k of b
 		try
-			obj[k] = if Object.isObject objB[k]
-				Object.merge objA[k], objB[k]
-			else
-				objB[k]
+			merged[k] = if Object.isObject b[k] then Object.merge a[k], b[k] else b[k]
 		catch e
-			obj[k] = objB[k]
+			merged[k] = b[k]
 	
-	obj
+	merged
