@@ -1,12 +1,6 @@
-define [
-	'utilities/eventful'
-	'dynamics/body'
-], (Eventful, Body) ->
-	###
-	#	
-	###
+define ->
 	class Entity
-		_id = 0
+		_entityId = 0
 		
 		name:  null
 		group: null
@@ -19,22 +13,7 @@ define [
 		selected: false
 		
 		constructor: (@world) ->
-			@id    = _id++
+			@id    = _entityId++
 			@group = 0
 			@klass = @constructor.name
-		
-		input: (kb, ms, delta, tick) ->
-			
-		
-		update: (delta, tick) ->
-			@input tick
 	
-	class RigidBodyEntity extends Entity
-		constructor: ->
-			@body = new Body
-	
-	if Motion.env is 'client'
-		Entity::render = ->
-			@aabb.render
-	
-	Entity
