@@ -38,6 +38,11 @@ define [
 			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is on
 			
 			@keys[key] = on
+
+			@altKey   = event.altKey
+			@ctrlKey  = event.ctrlKey
+			@metaKey  = event.metaKey
+			@shiftKey = event.shiftKey
 			###@event.fire 'down', [key, {
 				alt:   (@altKey   = event.altKey)
 				ctrl:  (@ctrlKey  = event.ctrlKey)
@@ -51,6 +56,12 @@ define [
 			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is off
 			
 			@keys[key] = off
+
+			@altKey   = event.altKey
+			@ctrlKey  = event.ctrlKey
+			@metaKey  = event.metaKey
+			@shiftKey = event.shiftKey
+			
 			###@event.fire 'up', [key, {
 				alt:   (@altKey   = event.altKey)
 				ctrl:  (@ctrlKey  = event.ctrlKey)
