@@ -1,6 +1,14 @@
 define ->
 	{
 		normalize: (path) ->
+			final = []
+			parts = path.split /\/+/g
+
+			for part in parts
+				continue if part is '.'
+				final.push part if part isnt '..'
+			
+			final.join '/'
 		
 		join: ->
 		
