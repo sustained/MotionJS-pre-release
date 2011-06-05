@@ -41,8 +41,6 @@ define ->
 				else
 					@frame      = @sequence[newFrame]
 					@frameIndex = newFrame
-				
-				console.log @frameIndex, @frame
 		
 		setFrame: (frame) ->
 			@frame      = frame
