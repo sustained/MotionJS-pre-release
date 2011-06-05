@@ -15,36 +15,25 @@ define ->
 		constructor: (name, @game) ->
 			super()
 
+			console.log @load, @unload, @focus, @blur
+
 			@_name = name
 			@event = new Eventful ['load', 'unload', 'focus', 'blur'], binding: @
 			@state = @game.state
 
-			@event.on 'load', ->
-				if Function.isFunction @load
-					@log 'loading'
-					@loaded = true
-					@load() 
-				else
-					@log 'nothing to load'
+			if Function.isFunction @load
+				@event.on 'load', -> @loaded = true ; @log 'load' ; @load()
+			
+			if Function.isFunction @unload
+				@event.on 'unload', -> @loaded = false ; @log 'unload'; @unload()
+			
+			@event.on 'focus', (-> @event.fire 'load'), once: true
 
-			@event.on 'unload', ->
-				@log 'unloading'
-				@loaded = false
-				@unload() if Function.isFunction @unload
+			if Function.isFunction @focus
+				@event.on 'focus', -> @log 'focusing' ; @focus()
 
-			@event.on 'focus', (->
-				@event.fire 'load'
-			), once: true
-
-			@event.on 'focus', ->
-				@log 'focusing'
-				@focus() if Function.isFunction @focus
-
-			#console.log @event.events.focus
-
-			@event.on 'blur', ->
-				@log 'blurring'
-				@blur() if Function.isFunction @blur
+			if Function.isFunction @blur
+				@event.on 'blur', -> @log 'blurring' ; @blur()
 
 			if Function.isFunction @input
 				@input = @input.bind @, @game.keyboard, @game.mouse
