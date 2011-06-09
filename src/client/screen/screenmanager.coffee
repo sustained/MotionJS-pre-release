@@ -1,22 +1,24 @@
-define ['core/statemanager'], (StateManager) ->
+define [
+	'shared/statemanager'
+], (StateManager) ->
 	class ScreenManager extends StateManager
 		focus: false
 		autopause: true
 
 		constructor: (game) ->
 			super
+		
+		setup: ->
+			#@game.event.on 'ready', (->
+			jQuery(window).focus => @focus = true ; @play() if @autopause is true
+			#), bind: @
 
-			jQuery(window).focus =>
-				console.log 'window focused'
-				@focus = true
-				@play() if @autopause is true
-			
-			jQuery(window).blur =>
-				console.log 'window blurred'
-				@focus = false
-				@pause() if @autopause is true
-
+			#@game.event.on 'ready', (->
+			jQuery(window).blur => @focus = false ; @pause() if @autopause is true
+			#), bind: @
+		
 		sort: ->
+			return
 			@enabled = @enabled.sort (a, b) =>
 				if @states[a].zIndex > @states[b].zIndex then 1 else -1
 			
