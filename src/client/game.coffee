@@ -1,9 +1,9 @@
 define [
-	'assets/asset'
-	'assets/batch'
-	'assets/image'
-	#'assets/audio'
-	#'assets/video'
+	'client/assets/asset'
+	'client/assets/batch'
+	'client/assets/image'
+	#'client/assets/audio'
+	#'client/assets/video'
 
 	'path'
 
@@ -39,11 +39,12 @@ define [
 				url = url.replace /^http[s]?\:\/\//, ''
 				url = path.normalize url
 				url = if url.substr(4, 1) is 's' then "https://#{url}" else "http://#{url}"
-				console.log config.url = url
+				config.url = url
 			
 			@state = new ScreenManager @
 			super Object.merge ClientGame.DEFAULT_OPTIONS, config
-
+			@state.setup()
+			
 			# if touch device
 			# @touch = new Touchpad
 			# else
