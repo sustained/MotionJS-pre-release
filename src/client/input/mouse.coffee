@@ -1,7 +1,6 @@
-define [
-	'utilities/eventful'
-], (Eventful) ->
+define ->
 	{Vector} = Math
+	{Eventful} = Motion
 	
 	class Mouse
 		_setup     = false
