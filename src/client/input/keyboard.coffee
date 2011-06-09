@@ -1,6 +1,6 @@
-define [
-	'utilities/eventful'
-], (Eventful) ->
+define ->
+	{Eventful} = Motion
+	
 	class Keyboard
 		_setup     = false
 		_singleton = null
@@ -35,9 +35,9 @@ define [
 		_CODEMAP[key] = code for code, key of _KEYMAP
 		
 		_onKeyDown = (event) ->
-			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is on
+			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key].held is true
 			
-			@keys[key] = on
+			@keys[key].held = true
 
 			@altKey   = event.altKey
 			@ctrlKey  = event.ctrlKey
@@ -53,9 +53,9 @@ define [
 			}]###
 		
 		_onKeyUp = (event) ->
-			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key] is off
+			return false if (key = _KEYMAP[event.which]) is undefined or @keys[key].held is false
 			
-			@keys[key] = off
+			@keys[key].held = false
 
 			@altKey   = event.altKey
 			@ctrlKey  = event.ctrlKey
@@ -71,22 +71,34 @@ define [
 				which: event.which
 			}]###
 		
-		down: (key) -> @keys[key] is on
-		up:   (key) -> @keys[key] is off
+		life: (key) -> @keys[key].life
+		down: (key) -> @keys[key].held is true
+		up:   (key) -> @keys[key].held is false
 		
 		altKey:   false
 		ctrlKey:  false
 		metaKey:  false
 		shiftKey: false
 		
+		update: (dt) ->
+			for key, data of @keys
+				if data.held is true
+					data.life += dt
+				else if data.life isnt 0
+					data.life = 0
+		
 		constructor: ->
 			return _singleton if _singleton?
 			
 			@event = new Eventful ['up', 'down'], binding: @
 			
-			@keys       = {}
-			@keys[key] = off for code, key of _KEYMAP
-			
+			@keys = {}
+			for code, key of _KEYMAP
+				@keys[key] = {
+					held: false
+					life: 0
+				}
+
 			Motion.ready =>
 				$el = jQuery document
 				$el.keyup   _onKeyUp.bind   @
