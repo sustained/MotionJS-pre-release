@@ -80,9 +80,6 @@ define [
 			@
 		
 		disable: (name, remove = false) ->
-			@_wtf.push "disable #{name}"
-			console.log '???????????????' if not Motion.READY
-			console.log '...... disabling ' + name
 			#if Array.isArray name then return @disable i, remove for i in name
 
 			state = @get name
