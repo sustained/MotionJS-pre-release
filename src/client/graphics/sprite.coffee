@@ -1,6 +1,6 @@
 define [
-	'assets/image'
-	'graphics/tileset'
+	'client/assets/image'
+	'client/graphics/tileset'
 ], (Img, TileSet) ->
 	{Vector} = Math
 	

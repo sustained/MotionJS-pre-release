@@ -1,5 +1,5 @@
 define [
-	'world/world'
+	'shared/world/world'
 ], (World) ->
 	class TiledWorld extends World
 		layers: null

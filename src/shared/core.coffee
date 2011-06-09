@@ -1,13 +1,11 @@
 define [
-	'graphics/colour'
+	'shared/utilities/class'
+	'shared/utilities/eventful'
 	
-	'utilities/class'
-	'utilities/eventful'
-	
-	'math/vector'
-	'math/matrix'
-	'math/random'
-], (Colour, Class, Eventful, Vector, Matrix, Random) ->
+	'shared/math/vector'
+	'shared/math/matrix'
+	'shared/math/random'
+], (Class, Eventful, Vector, Matrix, Random) ->
 	toString  = Object::toString
 	isBrowser = window? and document? and navigator?
 	root      = if isBrowser then window else global
@@ -20,8 +18,8 @@ define [
 			
 			# Commonly used Classes
 			Class:    Class
-			Color:    Colour
-			Colour:   Colour
+			#Color:    Colour
+			#Colour:   Colour
 			Eventful: Eventful
 			
 			env:  if isBrowser then 'client' else 'server'
@@ -29,31 +27,34 @@ define [
 		
 		Motion.event = new Eventful ['dom', 'load'], binding: Motion
 		
-		jQuery(document).ready -> Motion.READY  = true ;; Motion.event.fire 'dom'
-		jQuery(window).load    -> Motion.LOADED = true ;; Motion.event.fire 'load'
+		if Motion.env is 'client'
+			root.jQuery = $.noConflict()
+			
+			jQuery(document).ready -> Motion.READY  = true ; Motion.event.fire 'dom'
+			jQuery(window).load    -> Motion.LOADED = true ; Motion.event.fire 'load'
 		
-		Motion.ready = (fn) ->
-			if Motion.READY then fn() else Motion.event.on 'dom', fn
-		
-		Motion.loaded = (fn) ->
-			if Motion.LOADED then fn() else Motion.event.on 'load', fn
+			Motion.ready = (fn, bind) ->
+				if Motion.READY then fn() else Motion.event.on 'dom', fn, bind: bind
+			
+			Motion.loaded = (fn, bind) ->
+				if Motion.LOADED then fn() else Motion.event.on 'load', fn, bind: bind
 		
 		Motion.require = (modules, callback = ->) ->
 			modules = [modules] if not Array.isArray modules
 			require modules, -> callback Array::slice.call arguments
 		
-		root.rgb  = (r, g, b)    -> new Colour r, g, b
-		root.rgba = (r, g, b, a) -> new Colour r, g, b, a
+		#root.rgb  = (r, g, b)    -> new Colour r, g, b
+		#root.rgba = (r, g, b, a) -> new Colour r, g, b, a
 		
 		#root.rand  = Random.integer
 		#root.frand = Random.float
 		
-		Colour.create 'white',       255, 255, 255
+		###Colour.create 'white',       255, 255, 255
 		Colour.create 'black',         0,   0,   0
 		Colour.create 'red',         255,   0,   0
 		Colour.create 'green',         0, 255,   0
 		Colour.create 'blue',          0,   0, 255
-		Colour.create 'yellow',      255, 255,   0
+		Colour.create 'yellow',      255, 255,   0###
 		
 		if not root.console?
 			root.console = {}
@@ -64,6 +65,8 @@ define [
 				profileEnd time timeEnd trace warn
 			'''.split /\s+/
 		
+		console.log 'Motion defined'
 		root.$M = root.Motion = Motion
 	
+	console.log 'Motion returned'
 	root.Motion

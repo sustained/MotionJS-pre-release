@@ -1,7 +1,5 @@
-define [
-	'math/vector'
-], (Vector) ->
-	#{Vector} = Math
+define ->
+	{Vector} = Math
 	
 	Easing = 
 		Scalar:

@@ -1,4 +1,6 @@
 define ->
+	{Vector} = Math
+
 	class TileSetAnimation
 		frame: null
 		paused: false
@@ -7,7 +9,7 @@ define ->
 			@tileset  = options.tileset  or null
 			@sequence = options.sequence or [1]
 			@duration = options.duration or 1
-			@position = options.position or [0, 0]
+			@position = options.position or new Vector
 			@frameIndex = -1
 			
 			if @tileset
@@ -47,10 +49,12 @@ define ->
 			@frameIndex = @sequence.indexOf frame
 		
 		render: (g) ->
+			@position.floor()
+
 			g.beginPath()
 			g.drawImage(@tileset.image.domOb,
 				((@frame - 1) % @tileset.cellsX) * @w,
 				Math.floor((@frame - 1) / @tileset.cellsX) * @h,
 				@w, @h,
-				Math.floor(@position[0]), Math.floor(@position[1]), @w, @h)
+				@position.i, @position.j - 4, @w, @h)
 			g.closePath()

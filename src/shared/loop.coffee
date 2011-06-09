@@ -19,7 +19,7 @@ define ->
 	_initServer = ->
 	
 	class Loop
-		@INTERVAL_WAIT: 2 # setInterval interval
+		@INTERVAL_WAIT: 5 # setInterval interval
 
 		time:  0 # current time
 		tick:  0 # game tick
@@ -59,9 +59,9 @@ define ->
 			@gameLoop    = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
 		
 		stop: ->
-			clearInterval @gameLoop
 			jQuery('span', @fpsUpdate).html '&nbsp;&nbsp;0'
 			jQuery('span', @fpsRender).html '&nbsp;&nbsp;0'
+			clearInterval @gameLoop
 		
 		play:  @::start
 		pause: @::stop

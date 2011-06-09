@@ -1,5 +1,5 @@
 define [
-	'graphics/image'
+	'client/graphics/image'
 ], (Image) ->
 	class AssetManager
 		@url: ''

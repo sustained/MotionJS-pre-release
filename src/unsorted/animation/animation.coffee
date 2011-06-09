@@ -1,5 +1,5 @@
 define [
-	'animation/easing'
+	'unsorted/animation/easing'
 ], (Easing) ->
 	{Vector} = Math
 	

@@ -1,5 +1,5 @@
 define [
-	'utilities/classutils'
+	'shared/utilities/classutils'
 ], (ClassUtils) ->
 	class BaseClass
 		@Utils: ClassUtils

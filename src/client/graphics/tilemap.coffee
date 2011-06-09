@@ -22,7 +22,7 @@ define ->
 			@tilemap[Math.round number / @cellsY][number % @cellsX]###
 		
 		prerender: () ->
-			console.log @tileset
+			#console.log @tileset
 			canvas = jQuery('<canvas>').attr width: @width, height: @height
 			canvas.css
 					top:  '-10000px'

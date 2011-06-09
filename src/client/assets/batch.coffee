@@ -1,7 +1,7 @@
 define [
-	'assets/audio'
-	'assets/image'
-	'assets/video'
+	'client/assets/audio'
+	'client/assets/image'
+	'client/assets/video'
 ], (Audio, Image, Video) ->
 	{Eventful} = Motion
 	

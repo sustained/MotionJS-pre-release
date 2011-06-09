@@ -1,5 +1,5 @@
 define [
-	'assets/image'
+	'client/assets/image'
 ], (Image) ->
 	class TileSet
 		_options = {
@@ -28,7 +28,7 @@ define [
 				@cellsX = Math.round @image.width  / @size
 				@cellsY = Math.round @image.height / @size
 			
-			console.log @image, @image.width, @image.height, @cellsX, @cellsY
+			#console.log @image, @image.width, @image.height, @cellsX, @cellsY
 			
 			_instances[name] = @
 		

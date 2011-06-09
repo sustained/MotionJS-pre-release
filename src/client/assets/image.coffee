@@ -1,5 +1,5 @@
 define [
-	'assets/asset'
+	'client/assets/asset'
 ], (Asset) ->
 	class Image extends Asset
 		@STATUS:
@@ -61,7 +61,8 @@ define [
 				@width  = @domOb.width
 				@height = @domOb.height
 				
-				if @batch isnt null then @batch.event.fire 'load', [@]
+				if @batch isnt null
+					@batch.event.fire 'load', [@]
 			
 			@asset.error =>
 				console.log "Load Image (failure): #{@name}.#{@extname()}"

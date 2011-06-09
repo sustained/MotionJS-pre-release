@@ -1,29 +1,32 @@
 define [
-	'core/state'
+	'shared/state'
 ], (State) ->
 	{Class} = Motion
 	
 	class StateManager extends Class
+		focus:     false
 		paused:    false
 		pauseloop: true
 		
 		register: ->
 			@game.loop._onUpdate = @update.bind @
 			@game.loop._onRender = @render.bind @
-
 		
 		constructor: (@game) ->
 			super()
 			
 			@states  = {}
 			@enabled = []
+			@_wtf = []
 		
 		pause: ->
+			console.log 'StateManager paused'
 			@paused = true
 			@game.loop.pause() if @pauseloop is true
 			@
 		
 		play: ->
+			console.log 'StateManager played'
 			@paused = false
 			@game.loop.play() if @pauseloop is true
 			@
@@ -38,7 +41,7 @@ define [
 				enable:     true
 				persistent: false
 			}, options
-			
+
 			if Function.isFunction state
 				state = new state name, @game
 				return false if not state instanceof State
@@ -56,7 +59,8 @@ define [
 			@states[name] = state
 			@states[name].persistent = options.persistent
 			
-			if options.enable is true then @enable name
+			if options.enable is true
+				@enable name
 			
 			@
 		
@@ -65,29 +69,34 @@ define [
 			@enable  enable
 		
 		enable: (name) ->
-			if Array.isArray name then return @enable i for i in name
+			#if Array.isArray name then return @enable i for i in name
 			
 			state = @get name
+			console.log state
 			state.event.fire 'focus'
 
 			@enabled.push name
+			debugger
 			@
 		
 		disable: (name, remove = false) ->
-			if Array.isArray name then return @disable i, remove for i in name
+			@_wtf.push "disable #{name}"
+			console.log '???????????????' if not Motion.READY
+			console.log '...... disabling ' + name
+			#if Array.isArray name then return @disable i, remove for i in name
 
 			state = @get name
-			return if state.persistent is true
 
 			state.tick = 0
 			state.event.fire 'blur'
 
 			@enabled = @enabled.remove name
+			debugger
 			@
 
 		update: ->
 			for name in @enabled
-				state = @get name
+				state = @states[name]
 				continue if @paused is true and state.persistent is false
 
 				state.update  @game.loop.tick
@@ -96,7 +105,7 @@ define [
 		
 		render: ->
 			for name in @enabled
-				state = @get name
+				state = @states[name]
 				continue if @paused is true and state.persistent is false
 				state.render()
 			return

@@ -13,7 +13,7 @@ Object.include = (klass, object, overwrite = false) ->
 	Object.extend klass::, object, overwrite
 
 Object.clone = (object) ->
-	cloned = if Object.isObject object then {} else []
+	cloned = if Array.isArray(object) then [] else {}
 
 	for k of object
 		if Object.isObject object[k]
