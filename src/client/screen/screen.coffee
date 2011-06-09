@@ -1,4 +1,6 @@
-define ['core/state'], (State) ->
+define [
+	'shared/state'
+], (State) ->
 	class Screen extends State
 		_zIndex = 0
 

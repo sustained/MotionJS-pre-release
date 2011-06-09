@@ -1,7 +1,7 @@
 define [
 	'client/renderer/renderer'
 
-	'graphics/canvas'
+	'client/graphics/canvas'
 ], (Renderer, Canvas) ->
 	class CanvasRenderer extends Renderer
 		canvas:  null
