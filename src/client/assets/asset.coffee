@@ -20,7 +20,7 @@ define ->
 		
 		extname:  -> @_extname
 		basename: -> @_basename
-			
+		
 		constructor: (@name, path = '') ->
 			@path   = path
 			@status = Asset.STATUS.NONE
@@ -37,6 +37,9 @@ define ->
 				@_basename = path.substr slash + 1
 			else
 				@_basename = path
+		
+		log: (log) ->
+			console.log "[#{@constructor.name}:#{@name}.#{@extname()}] #{log}"
 		
 		toString: ->
 			@path + '.' + @extname()
