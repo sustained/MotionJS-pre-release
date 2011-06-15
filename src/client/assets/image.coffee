@@ -48,14 +48,14 @@ define [
 			_instances[name] = @
 		
 		load: ->
-			return false if @status is Image.STATUS.LOADED or @status is Image.STATUS.ERROR # or not Motion.DOM_READY
+			if @status is Image.STATUS.LOADED or @status is Image.STATUS.ERROR
+				return false
 			
 			@asset = jQuery '<img>'
-			@domOb = @asset[0]
-			
-			@asset.load =>
-				console.log "Load Image (success): #{@basename()}.#{@extname()}"
-				@asset.appendTo 'body'
+			@domOb = @asset[0]				
+
+			loadAsset = =>
+				@log "load success"
 				
 				@status = Image.STATUS.LOADED
 				@width  = @domOb.width
@@ -64,13 +64,20 @@ define [
 				if @batch isnt null
 					@batch.event.fire 'load', [@]
 			
-			@asset.error =>
-				console.log "Load Image (failure): #{@name}.#{@extname()}"
-				
-				@status = Image.STATUS.ERROR
-			
 			@asset.css  'display', 'none'
 			@asset.attr 'src', Image.getUrl() + @path + '.' + @extname()
+			@asset.appendTo 'body'
+
+			if @domOb.complete is true
+				@log 'image is cached'
+				loadAsset()
+			else
+				@log 'image not cached'
+				@asset.load loadAsset
+				@asset.error =>
+					@log "load failure"
+					@status = Image.STATUS.ERROR
+				
 	
 	###Image.Batch = class ImageBatch extends Batch
 		constructor: (batch, options = {}) ->
