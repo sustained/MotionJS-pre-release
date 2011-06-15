@@ -1,1 +1,1 @@
-RegExp.isRegExp = (object) -> toString.call(object) is '[object RegExp]'
+RegExp.isRegExp = (object) -> object? and Object::toString.call(object) is '[object RegExp]'

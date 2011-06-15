@@ -1,4 +1,4 @@
-Number.isNumber = (object) -> toString.call(object) is '[object Number]'
+Number.isNumber = (object) -> object? and Object::toString.call(object) is '[object Number]'
 
 Number::abs = -> Math.abs @
 Number::chr = -> String.fromCharCode @

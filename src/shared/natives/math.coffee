@@ -43,8 +43,7 @@ Math.rad = Math.radians = (degrees) ->
 Math.sq = (n) ->
 	n * n
 
-Math.lerp = (a, b, t) ->
-	((b - a) * t) + a
+Math.lerp = (start, change, t) -> (change * t) + start
 
 Math.norm = (n, range) ->
 	range = range.array() if isVector range

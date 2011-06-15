@@ -1,4 +1,6 @@
-Object.isObject = (object) -> toString.call(object) is '[object Object]'
+#Object.isObject = (object) -> object? and object.propertyIsEnumerable?
+
+Object.isObject = (object) -> object? and Object::toString.call(object) is '[object Object]'
 
 # Extend an object with another object
 Object.extend = (objectA, objectB, overwrite = true) ->
@@ -22,6 +24,11 @@ Object.clone = (object) ->
 			cloned[k] = object[k]
 	
 	cloned
+
+Object.count = (object) ->
+	count = 0
+	count++ for k of object
+	count
 
 # Merge b into a.
 Object.merge = (a, b) ->

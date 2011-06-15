@@ -1,4 +1,4 @@
-String.isString = (object) -> toString.call(object) is '[object String]'
+String.isString = (object) -> object? and Object::toString.call(object) is '[object String]'
 
 String.ord = (char) ->
 	char.charCodeAt 0

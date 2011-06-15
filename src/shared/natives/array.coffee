@@ -1,4 +1,4 @@
-Array.isArray = (object) -> toString.call(object) is '[object Array]'
+Array.isArray = (object) -> object? and Object::toString.call(object) is '[object Array]'
 
 Array.sum = (array) ->
 	sum = 0
