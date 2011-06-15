@@ -17,6 +17,8 @@ define [
 		_onLoad = (asset) ->
 			@isLoad++ ; @toLoad--
 			
+			#console.log "#{@isLoad} - #{@toLoad}"
+
 			if @toLoad is 0
 				@event.fire 'loaded'
 			else
@@ -65,8 +67,6 @@ define [
 			else if Object.isObject name
 				batch = name
 				asset = path
-				name  = null
-				path  = null
 			
 			if asset is null
 				if @_type is null then throw 'asset type?' ;; return

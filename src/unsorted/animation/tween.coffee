@@ -3,54 +3,55 @@ define [
 ], (Easing) ->
 	{Vector} = Math
 
+	NumberTween =
+		lerp: Math.lerp
+		setReference: (n) -> @object[@property] = n
+		getReference:     -> @object[@property]
+		calculateChange:  -> @end - @start
+	
+	VectorTween =
+		lerp: Vector.lerp
+		setReference: (v) -> @object.copy v
+		getReference:     -> @object.clone()
+		calculateChange:  -> Vector.subtract @end, @start
+
 	class Tween
 		@LOOP:
-			none:    0
-			cycle:   1
+			none: 0
+			cycle: 1
 			restart: 2
-		
-		#_lerpNum = -> @setter Math.lerp   @start, @end, @time / @duration
-		#_lerpVec = -> @setter Vector.lerp @start, @end, @time / @duration
 
-		start: null
-		end:   null
+		start:     null
+		end:       null
+		object:    null
+		property:  null
+		listener:  null
 
-		time: 0
-		loop: false
-		active: false
-		easing: null
+		time:     0
 		duration: 0
 
-		listener:  null
-		reference: null
+		loop:   false
+		active: false
+
+		easing: Easing.smooth
 
 		constructor: (options = {}) ->
 			Object.extend @, options
-
-			if @reference? and Vector.isVector(@reference)
-				@set  = (v) => @reference.copy c
-				@get  = (v) => @reference.clone()
-				@lerp = Vector.lerp
-			else
-				[@object, @property] = @reference if Array.isArray(@reference)
-				
-				if not @object? or not @property?
-					console.log '[Tween]: Required options.object and/or property not present.'
-				
-				@set  = (v) => @object[@property] = v
-				@get  = (v) => @object[@property]
-				@lerp = Math.lerp2
-
-			@start  = @get() if not @start?
-			@change = @end - @start
+			Object.extend @, if Vector.isVector(@object) then VectorTween else NumberTween
+			
+			@start  = @getReference() if not @start?
+			@change = @calculateChange()
 			@active = true unless options.active is false
 
 			console.log 'Tween', @
 		
+		play: -> @active = true
+		stop: -> @active = false
+
 		doTick: ->
 			l = @time / @duration
 			l = @easing(l) if @easing?
-			@set @lerp @start, @change, l
+			@setReference @lerp @start, @change, l
 
 		onTick: (tick, bind...) ->
 			@tick = tick.bind(@, bind...) if Function.isFunction tick
@@ -64,10 +65,10 @@ define [
 			if @time >= @duration
 				@time   = 0
 				@active = false
-				@set @lerp @start, @change, 1.0
+				@setReference @lerp @start, @change, 1.0
 				@listener(@) if @listener?
 
-				if @loop isnt false
+				if @loop isnt Tween.LOOP.none
 					@active = true
 					if @loop is Tween.LOOP.cycle
 						[@start, @end] = [@end, @start]

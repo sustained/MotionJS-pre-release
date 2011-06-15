@@ -16,10 +16,7 @@ define [
 			LOADED:  false
 			VERSION: '0.1'
 			
-			# Commonly used Classes
 			Class:    Class
-			#Color:    Colour
-			#Colour:   Colour
 			Eventful: Eventful
 			
 			env:  if isBrowser then 'client' else 'server'
@@ -32,7 +29,7 @@ define [
 			
 			jQuery(document).ready -> Motion.READY  = true ; Motion.event.fire 'dom'
 			jQuery(window).load    -> Motion.LOADED = true ; Motion.event.fire 'load'
-		
+			
 			Motion.ready = (fn, bind) ->
 				if Motion.READY then fn() else Motion.event.on 'dom', fn, bind: bind
 			
@@ -43,19 +40,6 @@ define [
 			modules = [modules] if not Array.isArray modules
 			require modules, -> callback Array::slice.call arguments
 		
-		#root.rgb  = (r, g, b)    -> new Colour r, g, b
-		#root.rgba = (r, g, b, a) -> new Colour r, g, b, a
-		
-		#root.rand  = Random.integer
-		#root.frand = Random.float
-		
-		###Colour.create 'white',       255, 255, 255
-		Colour.create 'black',         0,   0,   0
-		Colour.create 'red',         255,   0,   0
-		Colour.create 'green',         0, 255,   0
-		Colour.create 'blue',          0,   0, 255
-		Colour.create 'yellow',      255, 255,   0###
-		
 		if not root.console?
 			root.console = {}
 			root.console[method] = -> null for method in '''
@@ -65,8 +49,6 @@ define [
 				profileEnd time timeEnd trace warn
 			'''.split /\s+/
 		
-		console.log 'Motion defined'
 		root.$M = root.Motion = Motion
 	
-	console.log 'Motion returned'
 	root.Motion

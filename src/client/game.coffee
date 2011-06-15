@@ -28,6 +28,7 @@ define [
 			preload: {}
 		}
 
+		#console.log 'ClientGame instance = null'
 		_instance = null
 		@instance: -> return if _instance then _instance else new @
 
@@ -41,9 +42,7 @@ define [
 				url = if url.substr(4, 1) is 's' then "https://#{url}" else "http://#{url}"
 				config.url = url
 			
-			@state = new ScreenManager @
 			super Object.merge ClientGame.DEFAULT_OPTIONS, config
-			@state.setup()
 			
 			# if touch device
 			# @touch = new Touchpad
@@ -58,3 +57,8 @@ define [
 				#Video.setUrl null, true
 
 			_instance = @
+
+			#setTimeout (->
+			@state = new ScreenManager
+			@state.setup()
+			#), 1

@@ -2,7 +2,7 @@ define [
 	'shared/state'
 ], (State) ->
 	{Class} = Motion
-	
+
 	class StateManager extends Class
 		focus:     false
 		paused:    false
@@ -12,30 +12,34 @@ define [
 			@game.loop._onUpdate = @update.bind @
 			@game.loop._onRender = @render.bind @
 		
-		constructor: (@game) ->
+		constructor: () ->
 			super()
 			
+			@game = require('client/game').instance()
+
 			@states  = {}
 			@enabled = []
-			@_wtf = []
+			@_active = {}
 		
 		pause: ->
-			console.log 'StateManager paused'
+			console.log 'StateManager pausing'
 			@paused = true
 			@game.loop.pause() if @pauseloop is true
 			@
 		
 		play: ->
-			console.log 'StateManager played'
+			console.log 'StateManager resuming'
 			@paused = false
 			@game.loop.play() if @pauseloop is true
 			@
 		
 		get: (name) ->
-			@states[name]
+			@states[name] or false
 
 		$: @::get
 		
+		isState: (name) -> @get(name) isnt false
+
 		add: (name, state, options = {}) ->
 			options = Object.extend {
 				enable:     true
@@ -43,11 +47,11 @@ define [
 			}, options
 
 			if Function.isFunction state
-				state = new state name, @game
+				state = new state name#, @game
 				return false if not state instanceof State
 			else
 				extend = state
-				state  = new State name, @game
+				state  = new State name#, @game
 
 				if Object.isObject extend
 					state.update = extend.update if Function.isFunction extend.update
@@ -57,10 +61,9 @@ define [
 			#state.bind 'render', null, [@game.loop.context]
 			
 			@states[name] = state
-			@states[name].persistent = options.persistent
+			state.persistent = options.persistent
 			
-			if options.enable is true
-				@enable name
+			@enable(name) if options.enable
 			
 			@
 		
@@ -69,40 +72,55 @@ define [
 			@enable  enable
 		
 		enable: (name) ->
-			#if Array.isArray name then return @enable i for i in name
-			
+			console.log @isState name
+			return if not @isState name
 			state = @get name
-			console.log state
+			return if state.active is true
+
+			#if Array.isArray name then return @enable i for i in name
+			#return false if not state or @_active[name]?
+			#@_active[name] = state
+			#debugger
+
+			console.log @enabled.push name
 			state.event.fire 'focus'
 
-			@enabled.push name
-			debugger
 			@
 		
 		disable: (name, remove = false) ->
-			#if Array.isArray name then return @disable i, remove for i in name
-
+			return if not @isState name
 			state = @get name
+			return if state.active is false
+
+			#if Array.isArray name then return @disable i, remove for i in name
+			#return false if not state or not @_active[name]?
 
 			state.tick = 0
-			state.event.fire 'blur'
 
-			@enabled = @enabled.remove name
-			debugger
+			#delete @_active[name]
+			#if remove is true
+			#	setTimeout (=>
+			#		console.log 'deleting state ' + name
+			#		delete @states[name]
+			#	), 1
+
+			console.log @enabled = @enabled.remove name
+			state.event.fire 'blur'
+			#@enabled = @enabled.remove name
+			#debugger
 			@
 
 		update: ->
 			for name in @enabled
-				state = @states[name]
+				state = @get name
 				continue if @paused is true and state.persistent is false
-
 				state.update  @game.loop.tick
 				state.tick += @game.loop.delta
 			return
 		
 		render: ->
 			for name in @enabled
-				state = @states[name]
+				state = @get name
 				continue if @paused is true and state.persistent is false
 				state.render()
 			return

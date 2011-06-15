@@ -4,6 +4,7 @@ define ->
 	class State extends Class
 		tick: 0
 
+		active:     false
 		loaded:     false
 		persistent: false
 
@@ -12,32 +13,31 @@ define ->
 		focus:  null
 		blur:   null
 
-		constructor: (name, @game) ->
+		constructor: (name) ->
 			super()
 
 			@_name = name
 			@event = new Eventful ['load', 'unload', 'focus', 'blur'], binding: @
-			@state = @game.state
+			@game  = require('client/game').instance()
 
 			@event.on 'focus', (-> @event.fire 'load'), once: true
 
-			@event.on 'load',   -> @log 'load'
-			@event.on 'unload', -> @log 'unload'
-			@event.on 'focus',  -> @log 'focus'
-			@event.on 'blur',   -> @log 'blur'
+			@event.on 'load',   -> @log 'loaded'   ; @loaded = true
+			@event.on 'unload', -> @log 'unloaded' ; @loaded = false
+			@event.on 'focus',  -> @log 'focused'  ; @active = true
+			@event.on 'blur',   -> @log 'blurred'  ; @active = false
 
 			if Function.isFunction @load
-				@event.on 'load', ->
-					@load() ; @loaded = true
-
-					if Function.isFunction @focus
-						@event.on 'focus', -> @focus()
-
-					if Function.isFunction @blur
-						@event.on 'blur', -> @blur()
+				@event.on 'load', @load
 			
 			if Function.isFunction @unload
-				@event.on 'unload', -> @loaded = false ; @unload()
+				@event.on 'unload', @unload
+			
+			if Function.isFunction @focus
+				@event.on 'focus', @focus
+
+			if Function.isFunction @blur
+				@event.on 'blur', @blur
 
 			if Function.isFunction @input
 				@input = @input.bind @, @game.keyboard, @game.mouse
@@ -60,12 +60,12 @@ define ->
 				.appendTo('body')###
 
 		log: (log) ->
-			console.log "State #{@_name}: #{log}"
+			console.log "[State:#{@_name}] #{log}"
 		
 		update: ->
 		render: ->
 
-		enable:  -> @state.enable  @_name
-		disable: -> @state.disable @_name
+		enable:  -> @game.state.enable  @_name
+		disable: -> @game.state.disable @_name
 
-		toggle: (name) -> @state.toggle @_name, name
+		toggle: (name) -> @game.state.toggle @_name, name

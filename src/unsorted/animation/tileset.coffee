@@ -3,15 +3,16 @@ define ->
 
 	class TileSetAnimation
 		frame: null
-		paused: false
+		paused: true
 		
 		constructor: (options = {}) ->
 			@tileset  = options.tileset  or null
 			@sequence = options.sequence or [1]
 			@duration = options.duration or 1
 			@position = options.position or new Vector
+			@posRender = new Vector
 			@frameIndex = -1
-			
+			@totalFrames = 0
 			if @tileset
 				@w = @tileset.size[0]
 				@h = @tileset.size[1]
@@ -21,7 +22,8 @@ define ->
 			
 			@frameTime = 0
 		
-		play: ->
+		play: (t = 0) ->
+			@frameTime = t
 			@paused = false
 		
 		pause: ->
@@ -32,8 +34,8 @@ define ->
 		
 		update: (dt, t) ->
 			return if @paused is true
-			
 			if t > @frameTime + @duration
+				@totalFrames++
 				newFrame   = @frameIndex + 1
 				@frameTime = t
 				
@@ -49,12 +51,12 @@ define ->
 			@frameIndex = @sequence.indexOf frame
 		
 		render: (g) ->
-			@position.floor()
+			@posRender.copy(@position).floor()
 
 			g.beginPath()
 			g.drawImage(@tileset.image.domOb,
 				((@frame - 1) % @tileset.cellsX) * @w,
 				Math.floor((@frame - 1) / @tileset.cellsX) * @h,
 				@w, @h,
-				@position.i, @position.j - 4, @w, @h)
+				@posRender.i, @posRender.j - 4, @w, @h)
 			g.closePath()

@@ -25,6 +25,8 @@ define ->
 		@__defineGetter__ 'Rand', ->
 			new Vector Math.random() * max, Math.random() * max
 		
+		@isVector: (object) -> object? and object.constructor.name is 'Vector'
+		
 		@random: ->
 			new Vector Math.random() * max, Math.random() * max
 		
@@ -54,8 +56,8 @@ define ->
 			l = v.length()
 			return if l > n then v.normalize().multiply n else v
 		
-		@lerp: (a, b, t) ->
-			Vector.add a, Vector.subtract(b, a).multiply(t)
+		@lerp: (start, change, t) ->
+			Vector.add Vector.multiply(change, t), start
 		
 		@invert: (v) ->
 			v.clone().invert()
