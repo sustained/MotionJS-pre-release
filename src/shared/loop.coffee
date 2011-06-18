@@ -1,116 +1,83 @@
 define ->
-	pad = (number, length, pad = '0') ->
-		str = "#{number}"
-		str = pad + str while str.length < length
-		str
-	
-	_initClient = ->
-		@fpsContainer = jQuery '<div />'
-		@fpsUpdate    = jQuery '<p>Update @ <span></span> FPS</p>'
-		@fpsRender    = jQuery '<p>Render @ <span></span> FPS</p>'
-
-		@fpsContainer.attr 'id', 'motionFpsContainer'
-
-		jQuery('span', @fpsUpdate).html '&nbsp;&nbsp;0'
-		jQuery('span', @fpsRender).html '&nbsp;&nbsp;0'
-
-		@fpsUpdate.add(@fpsRender).appendTo @fpsContainer.appendTo 'body'
-	
-	_initServer = ->
-	
 	class Loop
-		@INTERVAL_WAIT: 5 # setInterval interval
+		@INTERVAL_WAIT: 5
 
-		time:  0 # current time
-		tick:  0 # game tick
+		_intervalId: null
+		_running:    false
+
+		_enter:  ->
+		_leave:  ->
+		_update: ->
+
+		time:  0
+		tick:  0
 		tock:  0
-		alpha: 0 # alpha for animation
+		accum: 0
 		delta: 1.0 / 60
-		accum: 0 # accumulator
 		
-		update: 0 # update frame number
-		lastUpdate: 0
-		render: 0 # render frame number
+		loopRate:    0
+		loopCount:   0
+		updateRate:  0
+		updateCount: 0
 		
-		# interval ids
-		gameLoop:  null
-		frameLoop: null
-		showFPS: true
-
-		context: null
-		
-		_onUpdate: ->
-		_onRender: ->
-		
-		constructor: (@game, options = {}) ->
-			@delta = options.delta if options.delta?
-			
-			# move this shit
-			if Motion.env is 'client'
-				_initClient.call @
-			else
-				_initServer.call @
+		constructor: (options = {}) ->
+			Object.extend @, options
 			
 			@time   = Date.now()
 			@deltas = []
 		
 		start: ->
-			@currentTime = Date.now()
-			@gameLoop    = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
+			return if @_running is true
+			@time        = Date.now()
+			@_running    = true
+			@_intervalId = Motion.root.setInterval @loop.bind(@), Loop.INTERVAL_WAIT
 		
 		stop: ->
-			jQuery('span', @fpsUpdate).html '&nbsp;&nbsp;0'
-			jQuery('span', @fpsRender).html '&nbsp;&nbsp;0'
-			clearInterval @gameLoop
+			return if @_running is false
+			@_running = false
+			Motion.root.clearInterval @_intervalId
 		
 		play:  @::start
 		pause: @::stop
 		
 		reset: ->
-			@time = @tick = @tock = @accum = @update = @render = 0
+			@time = @tick = @tock = @accum = 0
+			@loopRate = @loopCount = @updateRate = @updateCount = 0
+			@deltas = []
 		
-		showFps: ->
-			@showFPS = true
-			@fpsContainer.show()
-		
-		hideFps: ->
-			@showFPS = false
-			@fpsContainer.hide()
+		restart: ->
+			@stop() ; @reset() ; @start()
 		
 		frameRate: ->
 			length  = @deltas.length
 			average = Array.sum @deltas
 
-			updateRate = @update - @lastUpdate
-			renderRate = (1 / (average / length)).toFixed 0
-
-			jQuery('span', @fpsUpdate).html pad(updateRate, 3, '&nbsp;')
-			jQuery('span', @fpsRender).html pad(renderRate, 3, '&nbsp;') if not isNaN renderRate
-		
-		fps: 0
+			@loopRate   = (1 / (average / length)).toFixed 0
+			@updateRate = 1.0 / @delta
 		
 		loop: ->
-			time  = Date.now()
-			delta = (time - @time) / 1000
-			delta = 0.25 if delta > 0.25
-			@deltas = [] if @deltas.push(delta) > 60
+			time = Date.now()
+
+			delta   = (time - @time) / 1000
+			delta   = 0.25 if delta > 0.25
+			@deltas = [delta] if @deltas.push(delta) > 60
 			
-			#@fps    = 1.0 / delta if @update % 15 is 0
 			@time   = time
 			@accum += delta
 			
+			@_enter()
+
 			while @accum >= @delta
-				@_onUpdate @tick
-				@tick   += @delta
-				@accum  -= @delta
-				@update += 1
+				@_update()
+				@updateCount++
+				@tick  += @delta
+				@accum -= @delta
 			
-			if @showFPS is true and @tick - @tock > 1
+			@_leave()
+			@loopCount++
+
+			if @tick - @tock > 1
 				@tock = @tick
 				@frameRate()
-				@lastUpdate = @update
 			
-			@alpha = @accum / @delta
-			
-			@_onRender @alpha
-			@render += 1
+			#@alpha = @accum / @delta
