@@ -2,9 +2,7 @@ define [
 	'fs'
 	'path'
 	'require'
-
-	'shared/loop'
-], (fs, path, require, Loop) ->
+], (fs, path, require) ->
 	{Eventful} = Motion
 
 	class Game
@@ -20,7 +18,6 @@ define [
 		
 		constructor: (options = {}) ->
 			console.log @config = Object.merge _defaultOptions, options
-			@loop  = new Loop @, delta: @config.delta
 			@event = new Eventful ['setup', 'ready'], binding: @
 
 			@event.on 'setup', options.setup if Function.isFunction options.setup
