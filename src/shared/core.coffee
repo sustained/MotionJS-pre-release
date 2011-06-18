@@ -10,6 +10,7 @@ define [
 	isBrowser = window? and document? and navigator?
 	root      = if isBrowser then window else global
 	
+	delete root.Motion if root.Motion._fake
 	if not root.Motion?
 		Motion = 
 			READY:   false
