@@ -57,7 +57,11 @@ define ->
 			return if l > n then v.normalize().multiply n else v
 		
 		@lerp: (start, change, t) ->
-			Vector.add Vector.multiply(change, t), start
+			Vector.add start, Vector.multiply(change, t)
+			#new Vector(
+			#	Math.lerp(start.i, change.i, t),
+			#	Math.lerp(start.j, change.j, t)
+			#)
 		
 		@invert: (v) ->
 			v.clone().invert()

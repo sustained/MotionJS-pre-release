@@ -18,7 +18,7 @@ define ->
 			out:   (t) -> t -= 1 ; t*t*t + 1
 			inOut: (t) ->
 				t *= 2
-				return if t < 1 then 0.5 * t*t*t else t -= 2 ; 0.5 * ((t*t*t) + 2)
+				return if t < 1 then 0.5 * t*t*t else t -= 2 ; 0.5 * (t*t*t + 2)
 			outIn: (t) ->
 				return if t < 0.5 then Easing.cubic.out(t * 2) * 0.5
 				else Easing.cubic.in(t * 2 - 1) * 0.5 + 0.5
