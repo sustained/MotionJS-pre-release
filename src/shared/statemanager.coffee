@@ -9,8 +9,8 @@ define [
 		pauseloop: true
 		
 		register: ->
-			@game.loop._onUpdate = @update.bind @
-			@game.loop._onRender = @render.bind @
+			@game.loop._update = @update.bind @
+			@game.loop._leave  = @render.bind @
 		
 		constructor: () ->
 			super()
