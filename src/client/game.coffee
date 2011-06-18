@@ -1,11 +1,13 @@
 define [
+	'path'
+
+	'client/loop'
+
 	'client/assets/asset'
 	'client/assets/batch'
 	'client/assets/image'
 	#'client/assets/audio'
 	#'client/assets/video'
-
-	'path'
 
 	'client/input/keyboard'
 	'client/input/mouse'
@@ -16,7 +18,7 @@ define [
 
 	#'world/tiled'
 	#'world/rigid'
-], (Asset, Batch, Image, path, Keyboard, Mouse, SGame, ScreenManager) ->
+], (path, Loop, Asset, Batch, Image, Keyboard, Mouse, SGame, ScreenManager) ->
 	{Class, Eventful} = Motion
 
 	class ClientGame extends SGame
@@ -42,7 +44,10 @@ define [
 				url = if url.substr(4, 1) is 's' then "https://#{url}" else "http://#{url}"
 				config.url = url
 			
-			super Object.merge ClientGame.DEFAULT_OPTIONS, config
+			config = Object.merge ClientGame.DEFAULT_OPTIONS, config
+			@loop  = new Loop delta: config.delta
+
+			super
 			
 			# if touch device
 			# @touch = new Touchpad
