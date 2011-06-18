@@ -2,16 +2,17 @@ require    = {}
 isBrowser  = window? and document? and navigator?
 rootObject = if isBrowser then window else global
 
-initMotion = (options = {}) ->
+rootObject.Motion      = _fake: true
+rootObject.Motion.init = (options = {}) ->
 	appDir  = options.appDir or false
 	sysDir  = options.sysDir or false
 
 	if not appDir or not sysDir
-		return console.error 'Missing options appDir and/or sysDir.'
+		return console.error '[Motion.init] Missing required options appDir and/or sysDir.'
 
 	require = 
 		baseUrl: sysDir
-		deps: []
+		#deps: []
 		paths:
 			app:    appDir
 			game:   appDir
@@ -30,6 +31,7 @@ initMotion = (options = {}) ->
 	if isBrowser
 		require.priority.unshift 'vendor/jquery/jquery'
 
+		# node api stuff
 		require.paths.fs   = 'client/node/fs'
 		require.paths.path = 'client/node/path'
 
