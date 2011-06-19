@@ -18,8 +18,8 @@ define [
 
 	class Tween
 		@LOOP:
-			none: 0
-			cycle: 1
+			none:    0
+			cycle:   1
 			restart: 2
 
 		start:     null
@@ -33,37 +33,57 @@ define [
 
 		active: true
 
-		loop:   'none'
-		easing: 'smooth'
+		loop:   Tween.LOOP.none
+		easing: Easing.linear
 
 		getReference: -> @object[@property]
 
 		setLoop: (val) ->
+			return if not val?
 			if String.isString(val)
 				return false if null is (val = resolveDotPath(val, Tween.LOOP))
 			@loop = val
 		
 		setEasing: (val) ->
+			return if not val?
 			if String.isString(val)
 				return false if null is (val = resolveDotPath(val, Easing))
 			@easing = val
-
-		constructor: (options = {}) ->
-			Object.extend @, options
-
-			if Vector.isVector(@object[@property])
-				Object.extend @, VectorTween
-			else
-				Object.extend @, NumberTween
-			
-			@start  = @getReference() if not @start?
-			@change = @calculateChange() if @start? and @end?
-
-			@setLoop @loop if @loop?
-			@setEasing @easing if @easing?
 		
-		play: -> @active = true
-		stop: -> @active = false ; @time = 0
+		setObject: (object, property) ->
+			if property? and object[property]?
+				@object   = object
+				@property = property
+			else
+				if Array.isArray object
+					[@object, @property] = object
+		
+		setDuration: (duration) ->
+			@duration = duration if duration?
+		
+		setKeyFrames: (start, end) ->
+			@end    = end if end?
+			@start  = start if start?
+			@change = @calculateChange() if @start? and @end?
+		
+		constructor: (opts = {}) ->
+			@setObject opts.object, opts.property
+
+			if (ref = @getReference())?
+				Object.extend @, if Vector.isVector(ref) then VectorTween else NumberTween
+				@start = ref if not @start?
+
+			@setKeyFrames opts.start, opts.end
+
+			@setLoop   opts.loop
+			@setEasing opts.easing
+
+			@setDuration opts.duration
+			@active = opts.active or @active
+			console.log 'Tween', @
+		
+		play:  -> @active = true
+		pause: -> @active = false ; @time = 0
 
 		doTick: ->
 			l = @time / @duration
@@ -77,18 +97,17 @@ define [
 
 		update: (dt, t) ->
 			return if @active is false
-			#console.log 'active!'
 			@time += dt
+
 			if @time >= @duration
-				@stop()
+				@pause()
 				@setReference @lerp @start, @change, 1.0
 				@listener(@) if @listener?
 
 				if @loop isnt Tween.LOOP.none
 					@play()
+
 					if @loop is Tween.LOOP.cycle
-						console.log 'loop:repeat'
-						[@start, @end] = [@end, @start]
-						@change = @calculateChange()
+						@setKeyFrames @end, @start
 			else
 				@tick()
