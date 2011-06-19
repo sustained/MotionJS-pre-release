@@ -21,18 +21,19 @@ Array.compact = (array) ->
 	compact
 
 # Remove one (or all) value(s) from an array
-Array::remove = (remove, all = false) ->
-	index = @indexOf remove
+Array.remove = (array, remove, all = false) ->
+	index = array.indexOf remove
 	return @ if index is -1
 	
 	if all is false
-		@splice index, 1
-		return @
+		array.splice index, 1
+		return array
 	
 	while index > -1
-		@splice index, 1
-		index = @indexOf remove
-	@
+		array.splice index, 1
+		index = array.indexOf remove
+	
+	array
 
 Array.random = (array) ->
 	array[Math.rand 0, array.length - 1]
