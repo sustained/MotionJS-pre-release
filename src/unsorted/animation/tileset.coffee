@@ -4,8 +4,9 @@ define ->
 	class TileSetAnimation
 		frame: null
 		paused: true
-		
+		time:null
 		constructor: (options = {}) ->
+			@time = 0
 			@tileset  = options.tileset  or null
 			@sequence = options.sequence or [1]
 			@duration = options.duration or 1
@@ -18,12 +19,12 @@ define ->
 				@h = @tileset.size[1]
 			
 			if @sequence.length >= 1
-				@frame = @sequence[0]
+				@frame      = @sequence[0]
+				@frameIndex = 0
 			
 			@frameTime = 0
 		
-		play: (t = 0) ->
-			@frameTime = t
+		play: () ->
 			@paused = false
 		
 		pause: ->
@@ -31,13 +32,15 @@ define ->
 		
 		reset: ->
 			@setFrame @sequence[0]
+			@frameTime = 0
 		
 		update: (dt, t) ->
 			return if @paused is true
-			if t > @frameTime + @duration
-				@totalFrames++
+			@time += dt
+
+			if @time > @frameTime + @duration
 				newFrame   = @frameIndex + 1
-				@frameTime = t
+				@frameTime = @time
 				
 				if newFrame > @sequence.length - 1
 					@frame      = @sequence[0]
