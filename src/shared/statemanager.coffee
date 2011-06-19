@@ -38,7 +38,8 @@ define [
 
 		$: @::get
 		
-		isState: (name) -> @get(name) isnt false
+		isState:   (name) -> @get(name) isnt false
+		isEnabled: (name) -> @enabled.indexOf(name) > -1
 
 		add: (name, state, options = {}) ->
 			options = Object.extend {
@@ -72,25 +73,24 @@ define [
 			@enable  enable
 		
 		enable: (name) ->
-			console.log @isState name
-			return if not @isState name
+			return if not @isState(name)
 			state = @get name
-			return if state.active is true
+			return if @isEnabled(name)
 
 			#if Array.isArray name then return @enable i for i in name
 			#return false if not state or @_active[name]?
 			#@_active[name] = state
 			#debugger
 
-			console.log @enabled.push name
+			@enabled.push name
 			state.event.fire 'focus'
 
 			@
 		
 		disable: (name, remove = false) ->
-			return if not @isState name
+			return if not @isState(name)
 			state = @get name
-			return if state.active is false
+			return if not @isEnabled(name)
 
 			#if Array.isArray name then return @disable i, remove for i in name
 			#return false if not state or not @_active[name]?
@@ -104,7 +104,7 @@ define [
 			#		delete @states[name]
 			#	), 1
 
-			console.log @enabled = @enabled.remove name
+			Array.remove @enabled, name
 			state.event.fire 'blur'
 			#@enabled = @enabled.remove name
 			#debugger
