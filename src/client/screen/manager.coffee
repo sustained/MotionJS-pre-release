@@ -1,5 +1,5 @@
 define [
-	'shared/statemanager'
+	'shared/state/manager'
 ], (StateManager) ->
 	class ScreenManager extends StateManager
 		focus: false

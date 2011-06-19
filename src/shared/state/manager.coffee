@@ -1,5 +1,5 @@
 define [
-	'shared/state'
+	'shared/state/state'
 ], (State) ->
 	{Class} = Motion
 

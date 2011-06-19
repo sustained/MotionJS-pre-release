@@ -12,16 +12,14 @@ define [
 	'client/input/keyboard'
 	'client/input/mouse'
 
-	'shared/game'
+	'client/screen/manager'
 
-	'client/screen/screenmanager'
+	'shared/game'
 
 	#'world/tiled'
 	#'world/rigid'
-], (path, Loop, Asset, Batch, Image, Keyboard, Mouse, SGame, ScreenManager) ->
-	{Class, Eventful} = Motion
-
-	class ClientGame extends SGame
+], (path, Loop, Asset, Batch, Image, Keyboard, Mouse, ScreenManager, SharedGame) ->
+	class ClientGame extends SharedGame
 		@DEFAULT_OPTIONS: {
 			delta: 1.0 / 60
 			display:
