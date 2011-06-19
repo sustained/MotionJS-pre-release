@@ -4,8 +4,9 @@ rootObject = if isBrowser then window else global
 
 rootObject.Motion      = _fake: true
 rootObject.Motion.init = (options = {}) ->
-	appDir  = options.appDir or false
-	sysDir  = options.sysDir or false
+	appDir = options.appDir or false
+	modDir = options.modDir or false
+	sysDir = options.sysDir or false
 
 	if not appDir or not sysDir
 		return console.error '[Motion.init] Missing required options appDir and/or sysDir.'
@@ -14,7 +15,9 @@ rootObject.Motion.init = (options = {}) ->
 		baseUrl: sysDir
 		#deps: []
 		paths:
-			app:    appDir
+			app: appDir
+			dep: "#{sysDir}../vendor/"
+
 			game:   appDir
 			vendor: sysDir + '../vendor/'
 		priority: [
@@ -27,6 +30,8 @@ rootObject.Motion.init = (options = {}) ->
 			'shared/natives/string'
 			'shared/core'
 		]
+
+	require.paths.mod = modDir if modDir?
 
 	if isBrowser
 		require.priority.unshift 'vendor/jquery/jquery'
