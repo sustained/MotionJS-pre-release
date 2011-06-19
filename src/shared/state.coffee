@@ -60,7 +60,7 @@ define ->
 				.appendTo('body')###
 
 		log: (log) ->
-			console.log "[State:#{@_name}] #{log}"
+			console.log "#{@game.loop.tick.toFixed 2} [State:#{@_name}] #{log}"
 		
 		update: ->
 		render: ->
