@@ -65,4 +65,4 @@ define ->
 		constructor: (@m = @Identity) ->
 			super()
 	
-	Math.Matrix = Matrix
+	Math.Matrix = Matrix if not Math.Matrix?

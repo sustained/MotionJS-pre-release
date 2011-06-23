@@ -44,14 +44,14 @@ define [
 				Motion.ready (-> @event.fire 'ready'), @
 			
 			if @config.states
-				states = @config.states.map (state) -> "game/states/#{state}"
+				states = @config.states.map (state) -> "app/states/#{state}"
 				require states, (modules...) =>
 					for state in modules
 						@state.add state.name.toLowerCase(), state, enable: false
 					@event.fire 'loadModules'
 			
 			if @config.entities
-				entities = @config.entities.map (entity) -> "game/entities/#{entity}"
+				entities = @config.entities.map (entity) -> "app/entities/#{entity}"
 				require entities, (modules...) =>
 					@entities = modules
 					@event.fire 'loadModules'

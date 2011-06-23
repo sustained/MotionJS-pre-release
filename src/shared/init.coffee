@@ -1,25 +1,23 @@
-require    = {}
+reqOpts    = {}
 isBrowser  = window? and document? and navigator?
 rootObject = if isBrowser then window else global
 
 rootObject.Motion      = _fake: true
 rootObject.Motion.init = (options = {}) ->
-	appDir = options.appDir or false
-	modDir = options.modDir or false
-	sysDir = options.sysDir or false
+	appDir = options.appDir
+	modDir = options.modDir
+	sysDir = options.sysDir
 
 	if not appDir or not sysDir
 		return console.error '[Motion.init] Missing required options appDir and/or sysDir.'
-
-	require = 
-		baseUrl: sysDir
-		#deps: []
+	
+	reqOps = 
+		baseUrl: "#{sysDir}lib/"
+		deps: []
 		paths:
-			app: appDir
-			dep: "#{sysDir}../vendor/"
-
-			game:   appDir
-			vendor: sysDir + '../vendor/'
+			app: "#{appDir}lib"
+			npm: "#{sysDir}node_modules"
+			dep: "#{sysDir}dep"
 		priority: [
 			'shared/natives/array'
 			'shared/natives/function'
@@ -31,14 +29,16 @@ rootObject.Motion.init = (options = {}) ->
 			'shared/core'
 		]
 
-	require.paths.mod = modDir if modDir?
+	reqOps.paths.mod = "#{modDir}lib/" if modDir?
 
 	if isBrowser
-		require.priority.unshift 'vendor/jquery/jquery'
+		reqOps.priority.unshift 'dep/jquery/jquery'
 
 		# node api stuff
-		require.paths.fs   = 'client/node/fs'
-		require.paths.path = 'client/node/path'
+		reqOps.paths.fs   = 'client/node/fs'
+		reqOps.paths.path = 'client/node/path'
 
 		if options.cacheBust?
-			require.urlArgs = "nocache=#{(new Date()).getTime()}"
+			reqOps.urlArgs = "nocache=#{(new Date()).getTime()}"
+	
+	reqOps

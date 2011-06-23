@@ -1,4 +1,6 @@
-define ['eventful'], (Eventful) ->
+define ->
+	{Eventful} = Motion
+
 	class Client
 		log: (message) ->
 			console.log "Client ##{@id}: #{message}"
@@ -22,5 +24,3 @@ define ['eventful'], (Eventful) ->
 			@connection.broadcast message
 		
 		isConnected: -> @connection.connected
-	
-	Client
