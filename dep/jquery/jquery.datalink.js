@@ -1,5 +1,5 @@
 /*!
- * jQuery Data Link Plugin
+ * jQuery Data Link plugin v1.0.0pre
  * http://github.com/jquery/jquery-datalink
  *
  * Copyright Software Freedom Conservancy, Inc.
@@ -74,7 +74,7 @@ $.extend({
 			var parts = field.split(".");
 			parts[1] = parts[1] ? "." + parts[1] : "";
 
-				var $this = jQuery( target ),
+				var $this = $( target ),
 					args = [ parts[0], value ];
 
 			$this.triggerHandler( eventNameSetField + parts[1] + "!", args );
@@ -100,7 +100,7 @@ function getMapping(ev, changed, newvalue, map) {
 	} else {
 		name = (target.name || target.id);
 	}
-	
+
 	if ( !map ) {
 		mappedName = name;
 	} else {
@@ -173,7 +173,7 @@ $.extend($.fn, {
 						}
 					});
 				}
-				
+
 			};
 		if ( mapping ) {
 			$.each(mapping, function(n, v) {
@@ -226,7 +226,7 @@ $.extend($.fn, {
 		this.each(function() {
 			var self = $(this),
 				links = getLinks( this ).s;
-			for (var i = links.length-1; i >= 0; i--) {                
+			for (var i = links.length-1; i >= 0; i--) {
 				var link = links[ i ];
 				if ( link.target === target ) {
 					// unbind the handlers
@@ -249,7 +249,7 @@ $.extend($.fn, {
 	},
 	setField: function(field, value) {
 		return this.each(function() {
-			jQuery.setField( this, field, value );
+			$.setField( this, field, value );
 		});
 	}
 });
