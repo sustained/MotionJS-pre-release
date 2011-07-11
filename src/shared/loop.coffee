@@ -5,9 +5,9 @@ define ->
 		_intervalId: null
 		_running:    false
 
-		_enter:  ->
-		_leave:  ->
-		_update: ->
+		_enter:  -> undefined
+		_update: -> undefined
+		_leave:  -> undefined
 
 		time:  0
 		tick:  0
@@ -15,9 +15,10 @@ define ->
 		accum: 0
 		delta: 1.0 / 60
 		
-		loopRate:    0
+		loopRate:   0
+		updateRate: 0
+
 		loopCount:   0
-		updateRate:  0
 		updateCount: 0
 		
 		constructor: (options = {}) ->
@@ -56,16 +57,18 @@ define ->
 			@updateRate = 1.0 / @delta
 		
 		loop: ->
-			time = Date.now()
+			@_enter()
 
+			time    = Date.now()
 			delta   = (time - @time) / 1000
 			delta   = 0.25 if delta > 0.25
-			@deltas = [delta] if @deltas.push(delta) > 60
+			
+			@loopRate   = 1.0 /  delta
+			@updateRate = 1.0 / @delta
+			#@deltas = [delta] if @deltas.push(delta) > 60
 			
 			@time   = time
 			@accum += delta
-			
-			@_enter()
 
 			while @accum >= @delta
 				@_update()
@@ -73,11 +76,5 @@ define ->
 				@tick  += @delta
 				@accum -= @delta
 			
+			@alpha = @accum / @delta
 			@_leave()
-			@loopCount++
-
-			if @tick - @tock > 1
-				@tock = @tick
-				@frameRate()
-			
-			#@alpha = @accum / @delta

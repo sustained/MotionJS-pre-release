@@ -42,6 +42,8 @@ define [
 				url = if url.substr(4, 1) is 's' then "https://#{url}" else "http://#{url}"
 				config.url = url
 			
+			console.log config.url
+			
 			config = Object.merge ClientGame.DEFAULT_OPTIONS, config
 			@loop  = new Loop delta: config.delta
 

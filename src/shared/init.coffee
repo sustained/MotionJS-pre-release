@@ -1,22 +1,21 @@
-reqOpts    = {}
-isBrowser  = window? and document? and navigator?
-rootObject = if isBrowser then window else global
+isBrowser = window? and document? and navigator?
+root      = if isBrowser then window else global
 
-rootObject.Motion      = _fake: true
-rootObject.Motion.init = (options = {}) ->
-	appDir = options.appDir
-	modDir = options.modDir
-	sysDir = options.sysDir
+root.Motion      = _fake: true
+root.Motion.init = (options = {}) ->
+	appDir = root.Motion.appDir = options.appDir
+	modDir = root.Motion.modDir = options.modDir
+	sysDir = root.Motion.sysDir = options.sysDir
 
 	if not appDir or not sysDir
 		return console.error '[Motion.init] Missing required options appDir and/or sysDir.'
 	
-	reqOps = 
+	reqOps =
+		#context: "motion"
 		baseUrl: "#{sysDir}lib/"
 		deps: []
 		paths:
 			app: "#{appDir}lib"
-			npm: "#{sysDir}node_modules"
 			dep: "#{sysDir}dep"
 		priority: [
 			'shared/natives/array'
@@ -32,6 +31,8 @@ rootObject.Motion.init = (options = {}) ->
 	reqOps.paths.mod = "#{modDir}lib/" if modDir?
 
 	if isBrowser
+		reqOps.priority.unshift 'dep/jquery/jquery.datalink'
+		reqOps.priority.unshift 'dep/jquery/jquery.tmpl'
 		reqOps.priority.unshift 'dep/jquery/jquery'
 
 		# node api stuff

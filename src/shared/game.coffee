@@ -7,16 +7,19 @@ define [
 
 	class Game
 		_instance = null ; @instance: (options) -> _instance ? new @ options
-
+		
 		_defaultOptions =
 			url:   null
 			delta: 1.0 / 60
-
+		
 		log: (log...) ->
 			console.log "[Game]:"
 			console.log i for i in log
 		
+		data: null
+
 		constructor: (options = {}) ->
+			@data = {}
 			console.log @config = Object.merge _defaultOptions, options
 			@event = new Eventful ['setup', 'ready'], binding: @
 
@@ -47,7 +50,10 @@ define [
 				states = @config.states.map (state) -> "app/states/#{state}"
 				require states, (modules...) =>
 					for state in modules
-						@state.add state.name.toLowerCase(), state, enable: false
+						name = state.name
+						if name.indexOf('State') isnt -1 or name.indexOf('Screen') isnt -1
+							name = name.replace /Screen|State/g, ''
+						@state.add name.toLowerCase(), state, enable: false
 					@event.fire 'loadModules'
 			
 			if @config.entities

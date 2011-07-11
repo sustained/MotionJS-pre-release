@@ -6,15 +6,13 @@ define ->
 			console.log "Client ##{@id}: #{message}"
 		
 		constructor: (@connection, @server) ->
-			@id    = connection.sessionId
+			@id    = connection.id
 			@event = new Eventful ['message', 'close', 'rejected'], binding: @
 			
-			@log 'connected'
-			
-			connection.addListener 'message', (message) =>
+			@connection.on 'message', (message) =>
 				@log "message: #{message}"
 			
-			connection.addListener 'disconnect', =>
+			@connection.on 'disconnect', =>
 				@log 'disconnected'
 		
 		send: (message) ->

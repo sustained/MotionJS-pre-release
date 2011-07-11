@@ -16,7 +16,7 @@ define ->
 		constructor: (name) ->
 			super()
 
-			@_name = name
+			@name  = name
 			@event = new Eventful ['load', 'unload', 'focus', 'blur'], binding: @
 			@game  = require('client/game').instance()
 
@@ -60,7 +60,7 @@ define ->
 				.appendTo('body')###
 
 		log: (log) ->
-			console.log "#{@game.loop.tick.toFixed 2} [State:#{@_name}] #{log}"
+			console.log "#{@game.loop.tick.toFixed 2} [State:#{@name}/#{@constructor.name}] #{log}"
 		
 		update: ->
 		render: ->

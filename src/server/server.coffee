@@ -3,8 +3,6 @@ define [
 	'http'
 	'server/client'
 ], (io, http, Client) ->
-	console.log io
-	
 	class Server
 		port:    null
 		socket:  null
@@ -14,17 +12,18 @@ define [
 			@clients = {}
 		
 		attach: (httpServer) ->
-			return
-			if not httpServer instanceof http.Server
-				return false if not isNumber @port
-				httpServer = http.createServer (request, response) ->
-				httpServer.listen @port
+			#if not httpServer instanceof http.Server
+			#	return false if not isNumber @port
+			#	httpServer = http.createServer (request, response) ->
+			#	httpServer.listen @port
 			
-			@server = io.listen httpServer, transports: [
-				'websocket', 'flashsocket', 'xhr-multipart', 'xhr-polling', 'jsonp-polling']
+			@server = io.listen httpServer#, transports: [
+			#'websocket', 'flashsocket', 'xhr-multipart', 'xhr-polling', 'jsonp-polling']
 			
-			@server.on 'connection', (client) ->
-				@clients[client.sessionId] = new Client client, @
+			@server.sockets.on 'connection', (client) ->
+				console.log client
+				
+				@clients[client.id] = new Client client, @
 			
 			true
 		
