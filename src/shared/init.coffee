@@ -16,7 +16,7 @@ root.Motion.init = (options = {}) ->
 		deps: []
 		paths:
 			app: "#{appDir}lib"
-			dep: "#{sysDir}dep"
+			dep: "#{sysDir}vendor"
 		priority: [
 			'shared/natives/array'
 			'shared/natives/function'
