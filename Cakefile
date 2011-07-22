@@ -5,7 +5,6 @@ path = require 'path'
 $lib = path.join __dirname, 'lib/'
 $src = path.join __dirname, 'src/'
 
-CoffeeScript           = require 'coffee-script'
 {exec, spawn}          = require 'child_process'
 {puts, print, inspect} = require 'util'
 
