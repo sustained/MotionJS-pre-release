@@ -1,3 +1,3 @@
 wiki
 node_modules
-.sublime-project
+*.sublime-project
