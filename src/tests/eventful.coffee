@@ -1,71 +1,110 @@
 define ['shared/core'], ->
-	module 'Eventful'
+	{isArray} = _
+	{Event} = Motion
 
-	test "Motion.Event?", -> ok Motion.Event?
+	module 'Eventful',
+		setup:    ->
+			@e     = new Event 'evt'
+			@is    = (event) => @e.isEvent event
+			@add   = (name, opts) => @e.add name, opts
+			@bind  = (bind) => @e.binding = bind
+			@call  = @e.on.bind    @e, 'evt'
+			@after = @e.after.bind @e, 'evt'
+			@fire  = @e.fire.bind  @e, 'evt'
+			@clear = @e.clear.bind @e, 'evt', true
 
-	_defBinding = one: 1, two: 2
-	_newBinding = foo: 1, bar: 2
-	_event      = new Motion.Event 'evt', binding: _defBinding
+		teardown: -> @clear() ; @e = null
 
-	# shortcuts
-	event = _event.on.bind    _event, 'evt'
-	after = _event.after.bind _event, 'evt'
-	fire  = _event.fire.bind  _event, 'evt'
-	clear = _event.clear.bind _event, 'evt'
+	test "Sanity", ->
+		ok Motion.Event?, 'Motion.Event should be defined'
 
-	test "Callback args from on() & fire() should work both independently and simultaneously.", ->
-		event ( (foo) ->
-			equal foo, 'foo', 'the callbacks argument should be foo'
-		), args: ['foo']
-		fire()
-		clear()
+	test "Constructing and adding events", ->
+		ok true, 'testing new Event(arg1, ..., argN, options)'
 
-		event (bar) -> equal bar, 'bar', 'the callbacks argument should be bar'
-		fire ['bar']
-		clear()
+		@e = null
+		@e = new Event 'evt1', 'evt2', {}
 
-		event ( (a, b) ->
-			equal a, 42,  'the callbacks 1st argument should be 42'
-			equal b, 420, 'the callbacks 2nd argument should be 420'
-		), args: [42]
-		fire [420]
-		clear()
+		ok @e.events.evt1?, 'events.evt1 should exist'
+		ok @e.events.evt2?, 'events.evt2 should exist'
+		ok @e.eventOptions.evt1?, 'eventOptions.evt1 should exist'
+		ok @e.eventOptions.evt2?, 'eventOptions.evt2 should exist'
+
+		equal @e.eventNames.length, 2, 'eventNames.length should be 2'
+
+		@e = null
+		@e = new Event ['evt1', 'evt2'], {}
+
+		ok true, 'testing new Event([arg1, ..., argN], options)'
+
+		ok @e.events.evt1?, 'events.evt1 should exist'
+		ok @e.events.evt2?, 'events.evt2 should exist'
+		ok @e.eventOptions.evt1?, 'eventOptions.evt1 should exist'
+		ok @e.eventOptions.evt2?, 'eventOptions.evt2 should exist'
+
+		equal @e.eventNames.length, 2, 'eventNames.length should be 2'
+
+	test "Callback arguments", ->
+		ok true, 'testing independently'
+
+		@call (a) ->
+			equal a, 'foo', 'args[0] from on() should be foo'
+		, args: ['foo']
+		@fire()
+
+		@clear()
+
+		@call (a) -> equal a, 'bar', 'args[0] from fire() should be bar'
+		@fire ['bar']
+
+		@clear()
+
+		ok true, 'testing together'
+
+		@call (a, b) ->
+			equal a, 42,  'args[0] from on() should be 42 ...'
+			equal b, 420, 'and args[1] from fire() should be 420'
+		, args: [42]
+		@fire [420]
 
 	test "Callback binding.", ->
-		event ->
-			strictEqual @, _defBinding, "the callback should be bound to _defBinding"
-		fire()
-		clear()
+		_defBinding = one: 1, two: 2
+		_newBinding = foo: 1, bar: 2
 
-		event ( ->
-			strictEqual @, _newBinding, "the callback should be bound to _newBinding"
-		), bind: _newBinding
-		fire()
-		clear()
+		@bind _defBinding
+		@clear()
+		@add 'evt'
+
+		@call -> strictEqual @, _defBinding, "callback should be bound to default"
+		@fire()
+
+		@clear()
+
+		@call ->
+			strictEqual @, _newBinding, "callback should be bound to binding from on()"
+		, bind: _newBinding
+		@fire()
+
+		@bind null
 
 	test "One-time callbacks.", ->
 		increments = 0
 
-		event (-> increments++), once: true
-		fire() for i in [0...5]
+		@call (-> increments++), once: true
+		@fire() for i in [0...5]
 
-		equal increments, 1, "the callback should have been called just once"
-		equal _event.events.evt.length, 0, "the callback should be gone now"
-
-		clear()
+		equal increments, 1, "callback should only fire once"
+		equal @e.events.evt.length, 0, "and it should have been removed after"
 
 	test "Event limits.", ->
 		increments = 0
 
-		_event.setOptions 'evt', limit: 3
-		equal _event.eventOptions.evt.limit, 3, "the fire limit for the event should be 3"
+		@e.setOptions 'evt', limit: 3
+		equal @e.eventOptions.evt.limit, 3, "the fire limit for the event should be 3"
 
-		event -> increments++
+		@call -> increments++
 		#after -> equal increments, 3, "event should not fire more times than the limit"
-		fire() for i in [0...5]
+		@fire() for i in [0...5]
 
 		equal increments, 3, "the event should not have fired more than the limit"
-		equal _event.isEvent('evt'), false, "does the event still exist"
-		equal _event.isEvent('after_evt'), false, "does the after_event exist"
-
-		clear()
+		equal @is('evt'), false, "event should not exist anymore"
+		equal @is('after_evt'), false, "nor should after_event"
