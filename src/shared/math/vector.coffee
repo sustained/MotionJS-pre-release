@@ -260,4 +260,4 @@ define ->
 		#	@i = Math.cos(theta) * length
 		#	@j = Math.sin(theta) * length
 	
-	Math.Vector = Vector if not Math.Vector?
+	Vector

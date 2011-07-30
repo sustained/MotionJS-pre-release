@@ -9,7 +9,7 @@ define [
 		transitionIn:  null
 		transitionOut: null
 
-		constructor: (name, game) ->
+		constructor: ->
 			super
 
 			@zIndex = ++_zIndex

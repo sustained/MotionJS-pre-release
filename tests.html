@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="vendor/qunit/qunit.css" />
 
 	<script src="vendor/jquery/jquery.js"></script>
+	<script src="vendor/underscore/underscore.js"></script>
 
 	<style>
 body {
@@ -18,26 +19,13 @@ body {
 
 	<script>
 var require = {
-	baseUrl: 'http://192.168.0.2/Private/JS/MotionJS/lib/'
+	baseUrl: 'http://192.168.0.5/Private/JS/MotionJS/lib/'
 ,	deps: [ // tests:
 		'vendor/qunit/qunit.js'
-		
 	,	'tests/eventful'
 	]
-,	paths: {
-		'fs':     'client/node/fs'
-	,	'path':   'client/node/path'
-	,	'vendor': '../vendor'
-	}
 ,	priority: [
-	,	'natives/array'
-	,	'natives/function'
-	,	'natives/math'
-	,	'natives/number'
-	,	'natives/object'
-	,	'natives/regexp'
-	,	'natives/string'
-	,	'core/core'
+		'shared/core'
 	]
 ,	urlArgs: "nocache=" +  (new Date()).getTime()
 };

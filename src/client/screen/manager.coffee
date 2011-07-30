@@ -5,23 +5,18 @@ define [
 		focus: false
 		autopause: true
 
-		constructor: (game) ->
+		constructor: ->
 			super
-		
-		setup: ->
-			@game.event.on 'ready', (->
-				jQuery(window).focus =>
-					@focus = true ; @play() if @autopause is true
-				), bind: @
 
-			@game.event.on 'ready', (->
-				jQuery(window).blur =>
-					@focus = false ; @pause() if @autopause is true
-				), bind: @
-		
+		setup: ->
+			win = jQuery window
+			jQuery =>
+				win.blur  => @focus = false ; @pause() if @autopause is true
+				win.focus => @focus = true  ; @play()  if @autopause is true
+
 		sort: ->
 			return
 			@enabled = @enabled.sort (a, b) =>
 				if @states[a].zIndex > @states[b].zIndex then 1 else -1
-			
+
 			@

@@ -1,7 +1,9 @@
-define ->
-	{Class, Eventful} = Motion
+define [
+	'shared/utilities/eventful'
+], (Event) ->
+	{isFunction} = _
 
-	class State extends Class
+	class State
 		tick: 0
 
 		active:     false
@@ -13,12 +15,8 @@ define ->
 		focus:  null
 		blur:   null
 
-		constructor: (name) ->
-			super()
-
-			@name  = name
-			@event = new Eventful ['load', 'unload', 'focus', 'blur'], binding: @
-			@game  = require('client/game').instance()
+		constructor: (@name, @manager) ->
+			@event = new Event ['load', 'unload', 'focus', 'blur'], binding: @
 
 			@event.on 'focus', (-> @event.fire 'load'), once: true
 
@@ -27,32 +25,27 @@ define ->
 			@event.on 'focus',  -> @log 'focused'  ; @active = true
 			@event.on 'blur',   -> @log 'blurred'  ; @active = false
 
-			if Function.isFunction @load
+			###if isFunction @load
 				@event.on 'load', @load
-			
-			if Function.isFunction @unload
+
+			if isFunction @unload
 				@event.on 'unload', @unload
-			
-			if Function.isFunction @focus
+
+			if isFunction @focus
 				@event.on 'focus', @focus
 
-			if Function.isFunction @blur
+			if isFunction @blur
 				@event.on 'blur', @blur
 
-			if Function.isFunction @input
-				@input = @input.bind @, @game.keyboard, @game.mouse
-
-			###
 			@Event.on 'beforeIn', ->
 				@screenLayer.fadeIn @fadeIn,
 				=> @Event.fire 'afterIn'
-			
+
 			@Event.on 'beforeOut', ->
 				@screenLayer.fadeOut @fadeOut,
 				=> @Event.fire 'afterOut'
-			###
 
-			###@elements = {}
+			@elements = {}
 			@screenLayer = jQuery('<div />')
 				.attr('id', @_name + 'Screen')
 				.css('z-index', @zIndex)
@@ -60,12 +53,12 @@ define ->
 				.appendTo('body')###
 
 		log: (log) ->
-			console.log "#{@game.loop.tick.toFixed 2} [State:#{@name}/#{@constructor.name}] #{log}"
-		
+			console.log "#{@manager.loop.tick.toFixed 2} [State:#{@name}/#{@constructor.name}] #{log}"
+
 		update: ->
 		render: ->
 
-		enable:  -> @game.state.enable  @_name
-		disable: -> @game.state.disable @_name
+		enable:  -> @manager.enable  @name
+		disable: -> @manager.disable @name
 
-		toggle: (name) -> @game.state.toggle @_name, name
+		toggle: (name) -> @manager.toggle @name, name

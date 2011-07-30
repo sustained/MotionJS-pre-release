@@ -1,11 +1,11 @@
-define ['core/core'], ->
+define ['shared/core'], ->
 	module 'Eventful'
 
-	test "Sanity.", -> ok Motion.Eventful?, 'Motion.Eventful should exist'
+	test "Motion.Event?", -> ok Motion.Event?
 
 	_defBinding = one: 1, two: 2
 	_newBinding = foo: 1, bar: 2
-	_event      = new Motion.Eventful 'evt', binding: _defBinding
+	_event      = new Motion.Event 'evt', binding: _defBinding
 
 	# shortcuts
 	event = _event.on.bind    _event, 'evt'
@@ -42,7 +42,7 @@ define ['core/core'], ->
 		), bind: _newBinding
 		fire()
 		clear()
-	
+
 	test "One-time callbacks.", ->
 		increments = 0
 
@@ -53,7 +53,7 @@ define ['core/core'], ->
 		equal _event.events.evt.length, 0, "the callback should be gone now"
 
 		clear()
-	
+
 	test "Event limits.", ->
 		increments = 0
 

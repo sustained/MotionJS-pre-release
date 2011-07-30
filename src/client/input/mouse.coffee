@@ -54,7 +54,7 @@ define ->
 			#	@right  = button is 'right'
 			#	@middle = button is 'middle'
 			
-			Motion.ready =>
+			jQuery =>
 				$el = jQuery document
 				$el.mouseup   _onMouseUp  .bind @
 				$el.mousedown _onMouseDown.bind @

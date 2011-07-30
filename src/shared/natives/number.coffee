@@ -1,28 +1,8 @@
-Number.isNumber = (object) -> object? and Object::toString.call(object) is '[object Number]'
+define ->
+	isNumber = (object) -> object? and Object::toString.call(object) is '[object Number]'
 
-Number::abs = -> Math.abs @
-Number::chr = -> String.fromCharCode @
+	chr = (number) -> String.fromCharCode number
 
-Number::odd  = ->     @ & 1
-Number::even = -> not @ & 1
+	random = (number) -> Math.round Math.random() * number
 
-Number::ceil  = -> Math.ceil  @
-Number::floor = -> Math.floor @
-Number::round = -> Math.round @
-
-Number::times = (iter) ->
-	i = 0
-	n = this.abs()
-	while i < n then iter(i++)
-
-Number::upto = (to, iter) ->
-	return false if to < @
-	item = @; index = to - @
-	while index-- then iter(item++)
-
-Number::downto = (to, iter) ->
-	return false if to > @
-	item = @; index = @ - to
-	while index-- then iter(item--)
-
-Number::random = -> (rand * @).round()
+	{isNumber, chr, random, rand: random}

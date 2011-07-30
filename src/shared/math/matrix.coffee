@@ -17,7 +17,7 @@ define ->
 		isSquare: ->
 			@height() is @width()
 
-	class Matrix2x2 extends Matrix
+	class Matrix2 extends Matrix
 		@Identity = new @ [
 			[1, 0]
 			[0, 1]
@@ -49,7 +49,7 @@ define ->
 			@m
 
 
-	class Matrix3x3 extends Matrix
+	class Matrix3 extends Matrix
 		@Identity = new @ [
 			[1, 0, 0]
 			[0, 1, 0]
@@ -66,3 +66,5 @@ define ->
 			super()
 	
 	Math.Matrix = Matrix if not Math.Matrix?
+
+	{Matrix, Matrix2, Matrix3}

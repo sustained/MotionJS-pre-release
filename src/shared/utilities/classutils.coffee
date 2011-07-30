@@ -1,12 +1,14 @@
 define ->
+	{defaults, extend} = _
+
 	Utils =
 		Accessors:
 			set: (name, set, options = {}) ->
-				options = Object.extend {enumerable: true, configurable: true}, options
-				Object.defineProperty @::, name, Object.extend options, {set: set}
-			
+				options = defaults options, enumerable: true, configurable: true
+				Object.defineProperty @::, name, extend options, {set: set}
+
 			get: (name, get, options = {}) ->
-				options = Object.extend {enumerable: true, configurable: true}, options
-				Object.defineProperty @::, name, Object.extend options, {get: get}
-	
+				options = defaults options, enumerable: true, configurable: true
+				Object.defineProperty @::, name, extend options, {get: get}
+
 	Utils

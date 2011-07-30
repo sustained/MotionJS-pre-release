@@ -3,7 +3,7 @@
 ,	"version": "0.1.0alpha"
 ,	"private": true
 ,	"dependencies": {
-		"jquery": ">=1.5"
+		"jquery": ">=1.6"
 	,	"socket.io": ">=0.7"
 	,	"underscore": ">=1.1"
 	}

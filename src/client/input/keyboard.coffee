@@ -99,7 +99,7 @@ define ->
 					life: 0
 				}
 
-			Motion.ready =>
+			jQuery =>
 				$el = jQuery document
 				$el.keyup   _onKeyUp.bind   @
 				$el.keydown _onKeyDown.bind @

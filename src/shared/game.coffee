@@ -7,15 +7,15 @@ define [
 
 	class Game
 		_instance = null ; @instance: (options) -> _instance ? new @ options
-		
+
 		_defaultOptions =
 			url:   null
 			delta: 1.0 / 60
-		
+
 		log: (log...) ->
 			console.log "[Game]:"
 			console.log i for i in log
-		
+
 		data: null
 
 		constructor: (options = {}) ->
@@ -45,7 +45,7 @@ define [
 			@event.after 'loadModules', ->
 				@event.fire 'setup'
 				Motion.ready (-> @event.fire 'ready'), @
-			
+
 			if @config.states
 				states = @config.states.map (state) -> "app/states/#{state}"
 				require states, (modules...) =>
@@ -55,12 +55,12 @@ define [
 							name = name.replace /Screen|State/g, ''
 						@state.add name.toLowerCase(), state, enable: false
 					@event.fire 'loadModules'
-			
+
 			if @config.entities
 				entities = @config.entities.map (entity) -> "app/entities/#{entity}"
 				require entities, (modules...) =>
 					@entities = modules
 					@event.fire 'loadModules'
-		
+
 		setup: (fn = ->) -> @event.on 'setup', fn
 		ready: (fn = ->) -> @event.on 'ready', fn

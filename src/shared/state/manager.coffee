@@ -1,81 +1,76 @@
-define [
+define "shared/state/manager", [
 	'shared/state/state'
 ], (State) ->
-	{Class} = Motion
+	{extend, defaults, isObject, isFunction} = _
 
-	class StateManager extends Class
+	class StateManager
 		focus:     false
 		paused:    false
 		pauseloop: true
-		
-		register: ->
-			@game.loop._update = @update.bind @
-			@game.loop._leave  = @render.bind @
-		
-		constructor: () ->
-			super()
-			
-			@game = require('client/game').instance()
 
+		register: (@loop) ->
+			@loop._update = @update.bind @
+			@loop._leave  = @render.bind @
+
+		constructor: ->
 			@states  = {}
 			@enabled = []
 			@_active = {}
-		
+
+		forEach: (fn, iterateDisabled = false) ->
+			for name, state of @states
+				continue if not iterateDisabled and @enabled.indexOf(name) is -1
+				fn.call fn, state
+
 		pause: ->
 			console.log 'StateManager pausing'
 			@paused = true
-			@game.loop.pause() if @pauseloop is true
+			@loop.pause() if @pauseloop is true
 			@
-		
+
 		play: ->
 			console.log 'StateManager resuming'
 			@paused = false
-			@game.loop.play() if @pauseloop is true
+			@loop.play() if @pauseloop is true
 			@
-		
+
 		get: (name) ->
 			@states[name] or false
 
 		$: @::get
-		
+
 		isState:   (name) -> @get(name) isnt false
 		isEnabled: (name) -> @enabled.indexOf(name) > -1
 
-		add: (name, state, options = {}) ->
-			options = Object.extend {
-				enable:     true
-				persistent: false
-			}, options
-
-			if Function.isFunction state
-				state = new state name#, @game
+		add: (name, klass, options = {}) ->
+			options = defaults options, enable: false, persistent: false
+			if isFunction klass
+				console.log "adding state #{name}"
+				console.log klass
+				state = new klass name, @
 				return false if not state instanceof State
-			else
-				extend = state
-				state  = new State name#, @game
+			###else
+				methods = klass
+				state   = new State name, @
 
-				if Object.isObject extend
-					state.update = extend.update if Function.isFunction extend.update
-					state.render = extend.render if Function.isFunction extend.render
-			
-			#state.bind 'update', null, [@game.loop.delta]
-			#state.bind 'render', null, [@game.loop.context]
-			
+				if isObject methods
+					state.update = methods.update if isFunction methods.update
+					state.render = methods.render if isFunction methods.render###
+
 			@states[name] = state
 			state.persistent = options.persistent
-			
+
 			@enable(name) if options.enable
-			
+
 			@
-		
+
 		toggle: (disable, enable) ->
 			@disable disable
 			@enable  enable
-		
+
 		enable: (name) ->
-			return if not @isState(name)
+			return if not @isState(name) or @isEnabled(name)
 			state = @get name
-			return if @isEnabled(name)
 
 			#if Array.isArray name then return @enable i for i in name
 			#return false if not state or @_active[name]?
@@ -86,14 +81,10 @@ define [
 			state.event.fire 'focus'
 
 			@
-		
-		disable: (name, remove = false) ->
-			return if not @isState(name)
-			state = @get name
-			return if not @isEnabled(name)
 
-			#if Array.isArray name then return @disable i, remove for i in name
-			#return false if not state or not @_active[name]?
+		disable: (name, remove = false) ->
+			return if not @isState(name) or not @isEnabled(name)
+			state = @get name
 
 			state.tick = 0
 
@@ -103,21 +94,19 @@ define [
 			#		console.log 'deleting state ' + name
 			#		delete @states[name]
 			#	), 1
-
-			Array.remove @enabled, name
+			@enabled.splice @enabled.indexOf name, 1
 			state.event.fire 'blur'
-			#@enabled = @enabled.remove name
-			#debugger
+
 			@
 
 		update: ->
 			for name in @enabled
 				state = @get name
 				continue if @paused is true and state.persistent is false
-				state.update  @game.loop.tick
-				state.tick += @game.loop.delta
+				state.update  @loop.tick
+				state.tick += @loop.delta
 			return
-		
+
 		render: ->
 			for name in @enabled
 				state = @get name
