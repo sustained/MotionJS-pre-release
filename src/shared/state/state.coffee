@@ -32,21 +32,6 @@ define [
 			@event.on('focus', @focus) if isFunction @focus
 			@event.on('blur', @blur)   if isFunction @blur
 
-			###@event.on 'beforeIn', ->
-				@screenLayer.fadeIn @fadeIn,
-				=> @event.fire 'afterIn'
-
-			@event.on 'beforeOut', ->
-				@screenLayer.fadeOut @fadeOut,
-				=> @event.fire 'afterOut'
-
-			@elements = {}
-			@screenLayer = jQuery('<div />')
-				.attr('id', @_name + 'Screen')
-				.css('z-index', @zIndex)
-				.addClass('mjsScreenLayer')
-				.appendTo('body')###
-
 		log: (log) ->
 			console.log "#{@manager.loop.tick.toFixed 2} [State:#{@name}/#{@constructor.name}] #{log}"
 

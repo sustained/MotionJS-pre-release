@@ -13,6 +13,23 @@ define [
 			super
 			@zIndex = ++_zIndex
 
+			###
+			@event.on 'beforeIn', ->
+				@screenLayer.fadeIn @fadeIn,
+				=> @event.fire 'afterIn'
+
+			@event.on 'beforeOut', ->
+				@screenLayer.fadeOut @fadeOut,
+				=> @event.fire 'afterOut'
+
+			@elements = {}
+			@screenLayer = jQuery('<div />')
+				.attr('id', @_name + 'Screen')
+				.css('z-index', @zIndex)
+				.addClass('mjsScreenLayer')
+				.appendTo('body')
+			###
+
 		toTop: ->
 			high = 0
 			@manager.forEach (state, name) =>
