@@ -6,9 +6,9 @@ define [
 	class State
 		tick: 0
 
-		active:     false
-		loaded:     false
-		persistent: false
+		_active:     false
+		_loaded:     false
+		_persistent: false
 
 		load:   null
 		unload: null
@@ -20,30 +20,25 @@ define [
 
 			@event.on 'focus', (-> @event.fire 'load'), once: true
 
-			@event.on 'load',   -> @log 'loaded'   ; @loaded = true
-			@event.on 'unload', -> @log 'unloaded' ; @loaded = false
-			@event.on 'focus',  -> @log 'focused'  ; @active = true
-			@event.on 'blur',   -> @log 'blurred'  ; @active = false
+			@event.on 'load',   -> @log 'loaded'   ; @_loaded = true
+			@event.on 'unload', -> @log 'unloaded' ; @_loaded = false
 
-			###if isFunction @load
-				@event.on 'load', @load
+			@event.on 'focus',  -> @log 'focused'  ; @_active = true
+			@event.on 'blur',   -> @log 'blurred'  ; @_active = false
 
-			if isFunction @unload
-				@event.on 'unload', @unload
+			@event.on('load',   @load)   if isFunction @load
+			@event.on('unload', @unload) if isFunction @unload
 
-			if isFunction @focus
-				@event.on 'focus', @focus
+			@event.on('focus', @focus) if isFunction @focus
+			@event.on('blur', @blur)   if isFunction @blur
 
-			if isFunction @blur
-				@event.on 'blur', @blur
-
-			@Event.on 'beforeIn', ->
+			###@event.on 'beforeIn', ->
 				@screenLayer.fadeIn @fadeIn,
-				=> @Event.fire 'afterIn'
+				=> @event.fire 'afterIn'
 
-			@Event.on 'beforeOut', ->
+			@event.on 'beforeOut', ->
 				@screenLayer.fadeOut @fadeOut,
-				=> @Event.fire 'afterOut'
+				=> @event.fire 'afterOut'
 
 			@elements = {}
 			@screenLayer = jQuery('<div />')
