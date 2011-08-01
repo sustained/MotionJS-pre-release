@@ -1,4 +1,4 @@
-define "shared/state/manager", [
+define [
 	'shared/state/state'
 ], (State) ->
 	{extend, defaults, isObject, isFunction} = _
@@ -7,6 +7,9 @@ define "shared/state/manager", [
 		focus:     false
 		paused:    false
 		pauseloop: true
+
+		log: (log) ->
+			console.log "#{@loop.tick.toFixed 2} [StateManager] #{log}"
 
 		register: (@loop) ->
 			@loop._update = @update.bind @
@@ -20,16 +23,16 @@ define "shared/state/manager", [
 		forEach: (fn, iterateDisabled = false) ->
 			for name, state of @states
 				continue if not iterateDisabled and @enabled.indexOf(name) is -1
-				fn.call fn, state
+				fn.call fn, state, name
 
 		pause: ->
-			console.log 'StateManager pausing'
+			@log 'pausing'
 			@paused = true
 			@loop.pause() if @pauseloop is true
 			@
 
 		play: ->
-			console.log 'StateManager resuming'
+			@log 'playing'
 			@paused = false
 			@loop.play() if @pauseloop is true
 			@
@@ -45,21 +48,21 @@ define "shared/state/manager", [
 		add: (name, klass, options = {}) ->
 			options = defaults options, enable: false, persistent: false
 			if isFunction klass
-				console.log "adding state #{name}"
-				console.log klass
+				@log "added #{name}/#{klass.name}"
 				state = new klass name, @
-				return false if not state instanceof State
-			###else
+				if not state instanceof State
+					console.log "state is not an instance of State"
+					return false
+			else
 				methods = klass
 				state   = new State name, @
 
 				if isObject methods
 					state.update = methods.update if isFunction methods.update
-					state.render = methods.render if isFunction methods.render###
+					state.render = methods.render if isFunction methods.render
 
 			@states[name] = state
 			state.persistent = options.persistent
-
 			@enable(name) if options.enable
 
 			@
@@ -103,7 +106,7 @@ define "shared/state/manager", [
 			for name in @enabled
 				state = @get name
 				continue if @paused is true and state.persistent is false
-				state.update  @loop.tick
+				state.update @loop.delta, @loop.tick
 				state.tick += @loop.delta
 			return
 
