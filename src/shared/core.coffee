@@ -12,19 +12,12 @@ define [
 	isBrowser = window? and document? and navigator?
 	root      = if isBrowser then window else global
 
-	if root.Motion?
-		if root.Motion._fake?
-			extend = root.Motion
-			delete root.Motion._fake
-			delete root.Motion._init
-		else
-			return root.Motion
-	else
-		extend = {}
+	return root.Motion if root.Motion?
 
-	Math[k] = v for k,v of _Math
-	Math[k] = v for k,v of {Vector, Matrix, Random}
-	Motion  = _(extend).extend {
+	root.Math[k] = v for k,v of _Math
+	root.Math[k] = v for k,v of {Vector, Matrix, Random}
+	
+	Motion  = {
 		Event, Class
 
 		READY:   false
@@ -35,23 +28,11 @@ define [
 		root: root
 	}
 
-	###Motion.event = new Eventful ['dom', 'load'], binding: Motion
+	#Motion.event = new Eventful ['dom', 'load'], binding: Motion
 
 	if Motion.env is 'client'
-		root.jQuery = $.noConflict()
-
-		jQuery(document).ready -> Motion.READY  = true ; Motion.event.fire 'dom'
-		jQuery(window).load    -> Motion.LOADED = true ; Motion.event.fire 'load'
-
-		Motion.ready = (fn, bind) ->
-			if Motion.READY then fn() else Motion.event.on 'dom', fn, bind: bind
-
-		Motion.loaded = (fn, bind) ->
-			if Motion.LOADED then fn() else Motion.event.on 'load', fn, bind: bind
-
-	Motion.require = (modules, callback = ->) ->
-		modules = [modules] if not Array.isArray modules
-		require modules, -> callback Array::slice.call arguments###
+		jQuery(document).ready -> Motion.READY  = true
+		jQuery(window).load    -> Motion.LOADED = true
 
 	if not root.console?
 		root.console = {}
