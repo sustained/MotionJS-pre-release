@@ -11,8 +11,6 @@ define ['shared/utilities/string'], (StringUtils) ->
 		group:  'default'
 
 		constructor: (events, options = {}) ->
-			console.log events, options
-
 			if events? and not isArray events
 				events  = Array::slice.call arguments
 				options = if isObject events[events.length - 1]
@@ -172,6 +170,8 @@ define ['shared/utilities/string'], (StringUtils) ->
 					@eventNames.splice @eventNames.indexOf(name), 1
 				else
 					@events[name] = []
+			else if name is true
+				@clear name, remove for name in @eventNames
 
 		removeCallback: (name, index) ->
 			if @isEvent(name) and index >= 0 and index < @events[name].length
