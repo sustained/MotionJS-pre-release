@@ -1,10 +1,8 @@
 isBrowser = window? and document? and navigator?
 root      = if isBrowser then window else global
 
-root.Motion      = _fake: true
-root.Motion.init = (sysDir, apps = {}) ->
-	return console.error '[Motion.init] Missing required sysDir.' if not sysDir
-	root.Motion.sysDir = sysDir
+root.motionInit = (sysDir, apps = {}) ->
+	return console.error '[Motion:init] Missing required sysDir.' if not sysDir
 
 	reqOps =
 		#context: "motion"
