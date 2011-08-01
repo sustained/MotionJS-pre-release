@@ -34,7 +34,7 @@ define ->
 		ret
 
 	deg = (radians) ->
-		radians * (180 / Math.PI)	
+		radians * (180 / Math.PI)
 
 	rad = (degrees) ->
 		degrees * (Math.PI / 180)
@@ -46,25 +46,25 @@ define ->
 
 	norm = (n, range) ->
 		range = range.array() if isVector range
-		
+
 		(n - range[0]) / (range[1] - range[0])
 
 	wrap = (n, min, max) ->
 		return (n - min) + max if n < min
 		return (n - max) + min if n > max
-		
+
 		n
 
 	clamp = (n, min, max) ->
 		return min if n < min
 		return max if n > max
-		
+
 		n
 
 	remap = (n, current, target) ->
 		current = current.array() if isVector current
 		target  = target.array()  if isVector target
-		
+
 		(target[0] + (target[1] - target[0])) * ((n - current[0]) / (current[1] - current[0]))
-	
+
 	{C, G, K, HALFPI, TWOPI, rand, nearest, deg, rad, sq, lerp, norm, wrap, clamp, remap, TAU: TWOPI, degrees: deg, radians: rad}
