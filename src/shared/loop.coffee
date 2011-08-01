@@ -1,4 +1,6 @@
 define ->
+	{throttle} = _
+
 	class Loop
 		@INTERVAL_WAIT: 5
 
@@ -24,6 +26,7 @@ define ->
 		constructor: (options = {}) ->
 			@[k] = v for k,v of options
 
+			@fps    = throttle @frameRate, 1000
 			@time   = Date.now()
 			@deltas = []
 
@@ -31,7 +34,7 @@ define ->
 			return if @_running is true
 			@time        = Date.now()
 			@_running    = true
-			@_intervalId = Motion.root.setInterval @loop.bind(@), Loop.INTERVAL_WAIT
+			@_intervalId = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
 
 		stop: ->
 			return if @_running is false
