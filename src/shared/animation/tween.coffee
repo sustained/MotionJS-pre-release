@@ -19,16 +19,17 @@ define [
 
 	class Tween
 		@SUPPORT:
-			Number: lerp: Math.lerp
+			Number:
+				lerp: Math.lerp
 			Vector:
 				lerp: Vector.lerp
 				set: (v) -> @object[@property].copy v
 				change:  -> Vector.subtract @end, @start
 
 		@LOOP:
-			none:    0
-			cycle:   1
-			restart: 2
+			none:   0 # tween will only run once
+			cycle:  1 # tween will cycle between start and end
+			repeat: 2 # tween will go from start to end, over and over
 
 		start:     null
 		end:       null
@@ -80,18 +81,7 @@ define [
 		constructor: (opts = {}) ->
 			@setObject opts.object, opts.property
 
-			ref  = @getReference()
-			type = ref.constructor.name
-			if Tween.SUPPORT[type]
-				console.log "Tween class supports #{type}"
-
-				ctype = Motion.global[type]
-				tween = ctype.tween
-
-				if not tween
-					console.log "type #{type} does not have a tween method"
-			else
-				console.log "Tween class doesn't support #{type}"
+			ref = @getReference()
 
 			if (ref = @getReference())?
 				extend @, if isVector(ref) then VectorTween else NumberTween
@@ -104,10 +94,11 @@ define [
 
 			@setDuration opts.duration
 			@active = opts.active or @active
-			console.log 'Tween', @
+			#console.log 'Tween', @
 
-		play:  -> @active = true
-		pause: -> @active = false ; @time = 0
+		play:    -> @active = true
+		pause:   -> @active = false
+		restart: -> @pause() ; @time = 0 ; @play()
 
 		doTick: ->
 			l = @time / @duration
@@ -129,9 +120,10 @@ define [
 				@listener(@) if @listener?
 
 				if @loop isnt Tween.LOOP.none
-					@play()
-
 					if @loop is Tween.LOOP.cycle
 						@setKeyFrames @end, @start
+						@restart()
+					else if @loop is Tween.LOOP.repeat
+						@restart()
 			else
 				@tick()
