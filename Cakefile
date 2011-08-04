@@ -2,14 +2,18 @@ fs   = require 'fs'
 sys  = require 'sys'
 path = require 'path'
 
-$lib = path.join __dirname, 'lib/'
-$src = path.join __dirname, 'src/'
+code =
+	lib: path.join __dirname, 'lib/'
+	src: path.join __dirname, 'src/'
+spec =
+	lib: path.join __dirname, 'test/lib/'
+	src: path.join __dirname, 'test/src/'
 
 {exec, spawn}          = require 'child_process'
 {puts, print, inspect} = require 'util'
 
 brew = (options, callbacks = {}) ->
-	coffee = spawn "coffee", options.split(' '), cwd: __dirname
+	coffee = spawn 'coffee', options.split(' '), cwd: __dirname
 	
 	coffee.stdout.setEncoding 'utf8'
 	coffee.stderr.setEncoding 'utf8'
@@ -19,16 +23,34 @@ brew = (options, callbacks = {}) ->
 	
 	coffee
 
-task 'build', 'Build...', ->
-	puts '[Building]'
-	puts "$lib = #{$lib}"
-	puts "$src = #{$src}\n"
-	print "Cleaning  lib directory... "
+task 'spec:run', 'Run the tests.', ->
+	print 'Opening Web Browser... '
+	exec 'open "http://localhost/Private/JS/MotionJS/test/runner.html"', -> puts 'done!'
 
-	exec "rm -rf #{$lib}*", ->
+task 'spec:build', 'Build the tests.', ->
+	puts '[Building spec]'
+	puts "$lib = #{spec.lib}"
+	puts "$src = #{spec.src}\n"
+	print 'Cleaning lib directory... '
+
+	exec "rm -rf #{spec.lib}*", ->
+		puts 'done!'
+		print 'Compiling src directory... '
+		brew '--compile --bare --output test/lib/ test/src/', onexit: -> puts 'done!'
+
+task 'spec:watch', 'Auto-compile the tests.', ->
+	brew '--compile --bare --watch --output test/lib/ test/src/'
+
+task 'code:build', 'Build the code.', ->
+	puts '[Building code]'
+	puts "$lib = #{code.lib}"
+	puts "$src = #{code.src}\n"
+	print 'Cleaning lib directory... '
+
+	exec "rm -rf #{code.lib}*", ->
 		puts "done!"
 		print "Compiling src directory... "
 		brew '--compile --bare --output lib/ src/', onexit: -> puts "done!"
 
-task 'watch', 'Auto-compile...', ->
+task 'code:watch', 'Auto-compile the code.', ->
 	brew '--compile --bare --watch --output lib/ src/'
