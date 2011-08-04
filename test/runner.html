@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MotionJS Spec Runner</title>
+
+	<script src="../vendor/jquery/jquery.js"></script>
+	<script src="../vendor/underscore/underscore.js"></script>
+
+	<script type="text/javascript" src="../vendor/jasmine/lib/jasmine.js"></script>
+	<script type="text/javascript" src="../vendor/jasmine/src/html/TrivialReporter.js"></script>
+	<script type="text/javascript" src="../vendor/jasmine/src/console/TrivialConsoleReporter.js"></script>
+
+	<script src="../lib/shared/init.js"></script>
+
+	<script>
+var requireOptions = motionInit('/Private/JS/MotionJS/');
+requireOptions.paths.test = '/Private/JS/MotionJS/test/lib/';
+this.require = requireOptions;
+	</script>
+
+	<script src="../vendor/requirejs/require.js" data-main="test/run"></script> <!-- data-main="app/game" -->
+
+	<link href="../vendor/jasmine/src/html/jasmine.css" rel="stylesheet"/>
+</head>
+<body>
+</body>
+</html>
