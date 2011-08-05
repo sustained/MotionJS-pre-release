@@ -1,6 +1,6 @@
 define ->
 	{defaults, extend} = _
-
+	
 	Utils =
 		Accessors:
 			set: (name, set, options = {}) ->
@@ -10,5 +10,5 @@ define ->
 			get: (name, get, options = {}) ->
 				options = defaults options, enumerable: true, configurable: true
 				Object.defineProperty @::, name, extend options, {get: get}
-
+	
 	Utils
