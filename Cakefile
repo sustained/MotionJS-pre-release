@@ -27,7 +27,7 @@ task 'spec:run', 'Run the tests.', ->
 	print 'Opening Web Browser... '
 	exec 'open "http://localhost/Private/JS/MotionJS/test/runner.html"', -> puts 'done!'
 
-task 'spec:build', 'Build the tests.', ->
+task 'spec:compile', 'Compile the tests.', ->
 	puts '[Building spec]'
 	puts "$lib = #{spec.lib}"
 	puts "$src = #{spec.src}\n"
@@ -41,7 +41,7 @@ task 'spec:build', 'Build the tests.', ->
 task 'spec:watch', 'Auto-compile the tests.', ->
 	brew '--compile --bare --watch --output test/lib/ test/src/'
 
-task 'code:build', 'Build the code.', ->
+task 'code:compile', 'Compile the code.', ->
 	puts '[Building code]'
 	puts "$lib = #{code.lib}"
 	puts "$src = #{code.src}\n"
@@ -54,3 +54,6 @@ task 'code:build', 'Build the code.', ->
 
 task 'code:watch', 'Auto-compile the code.', ->
 	brew '--compile --bare --watch --output lib/ src/'
+
+task 'code:build', 'Build the code.', ->
+	
