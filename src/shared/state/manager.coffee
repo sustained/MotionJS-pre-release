@@ -42,8 +42,9 @@ define [
 
 		$: @::get
 
-		isState:   (name) -> @get(name) isnt false
-		isEnabled: (name) -> @enabled.indexOf(name) > -1
+		isState:    (name) -> @get(name) isnt false
+		isEnabled:  (name) -> @enabled.indexOf(name) > -1
+		isDisabled: (name) -> not @isEnabled name
 
 		add: (name, klass, options = {}) ->
 			options = defaults options, enable: false, persistent: false
@@ -79,7 +80,7 @@ define [
 			#return false if not state or @_active[name]?
 			#@_active[name] = state
 			#debugger
-
+			
 			@enabled.push name
 			state.event.fire 'focus'
 
