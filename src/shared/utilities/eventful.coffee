@@ -11,21 +11,21 @@ define ['shared/utilities/string'], (StringUtils) ->
 		group:  'default'
 
 		constructor: (events, options = {}) ->
-			if events? and not isArray events
-				events  = Array::slice.call arguments
-				options = if isObject events[events.length - 1]
-					events.pop()
-				else
-					{}
-
-			@aliases = options.aliases ? false
-			@binding = options.binding ? null
-
 			@events       = {} # name: [callbacks]
 			@eventNames   = []
 			@eventOptions = {} # event specific options
 
-			@add events
+		#@setup Array::slice.call arguments
+		#setup: (events, options = {}) ->
+			if events?
+				if not isArray events
+					events  = Array::slice.call arguments
+					options = if isObject(events[events.length - 1]) then events.pop() else {}
+				
+				@add events
+
+			@aliases = options.aliases or false
+			@binding = options.binding or null
 
 		###
 		hashKey: (key) ->
@@ -169,6 +169,7 @@ define ['shared/utilities/string'], (StringUtils) ->
 					delete @eventOptions[name]
 					@eventNames.splice @eventNames.indexOf(name), 1
 				else
+					delete @events[name]
 					@events[name] = []
 			else if name is true
 				@clear name, remove for name in @eventNames
