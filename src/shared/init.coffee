@@ -1,17 +1,19 @@
 isBrowser = window? and document? and navigator?
 root      = if isBrowser then window else global
 
-root.motionInit = (sysDir, apps = {}) ->
+root.motion = (sysDir, paths = {}, readyFn) ->
 	return console.error '[Motion:init] Missing required sysDir.' if not sysDir
 
+	readyFn = paths if _.isFunction paths
 	reqOps =
 		#context: "motion"
 		baseUrl: "#{sysDir}lib/"
 		deps: ['shared/core']
 		paths:
 			dep: "#{sysDir}vendor"
+		ready: readyFn
 
-	reqOps.paths[k] = "#{v}lib/" for k,v of apps
+	reqOps.paths[k] = v for k,v of paths
 
 	if isBrowser
 		reqOps.paths.fs   = 'client/node/fs'
