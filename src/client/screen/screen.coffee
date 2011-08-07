@@ -43,7 +43,7 @@ define [
 			low = 0
 			@manager.forEach (state, name) =>
 				if name isnt @name
-					low = state.zIndex if state.zIndex < high
+					low = state.zIndex if state.zIndex < low
 				return if @zIndex < low
 			@zIndex = low - 1
 			@el.css 'z-index', @zIndex

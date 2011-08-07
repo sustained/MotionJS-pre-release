@@ -2,7 +2,7 @@ define [
 	'shared/state/manager'
 ], (StateManager) ->
 	class ScreenManager extends StateManager
-		autoPause: false
+		autoPause: true
 
 		_focus: false
 		zIndex: null
