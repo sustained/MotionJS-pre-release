@@ -135,32 +135,26 @@ define ['shared/utilities/string'], (StringUtils) ->
 				@deleteAliases name if @aliases is on
 
 		fire: (name, args = []) ->
-			#return console.log "non-existant event #{name}" if not @isEvent name
 			return false if not @isEvent(name)
-
-			removes = []
+			toRemove = []
 
 			for i in @events[name]
 				call  = i[0]
 				opts  = i[1]
 
 				call.apply false, args
-
-				if opts.once is true
-					removes.push _i
+				toRemove.push _i if opts.once is true
 
 			if removes.length > 0
 				@removeCallback name, remove for remove in removes
 
-			opts = @eventOptions[name]
-			if opts.limit isnt false
-				#console.log "#{opts.count + 1} / #{opts.limit}"
-				if ++opts.count is opts.limit
-					@fire "after_#{name}"
-					@clear name, true
-					@clear "after_#{name}", true
-
-			return true
+			#opts = @eventOptions[name]
+			#if opts.limit isnt false
+			#	console.log "#{opts.count + 1} / #{opts.limit}"
+			#	if ++opts.count is opts.limit
+			#		@fire "after_#{name}"
+			#		@clear name, true
+			#		@clear "after_#{name}", true
 
 		clear: (name, remove = false) ->
 			if @isEvent(name)
@@ -169,7 +163,6 @@ define ['shared/utilities/string'], (StringUtils) ->
 					delete @eventOptions[name]
 					@eventNames.splice @eventNames.indexOf(name), 1
 				else
-					delete @events[name]
 					@events[name] = []
 			else if name is true
 				@clear name, remove for name in @eventNames

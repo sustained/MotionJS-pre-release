@@ -12,8 +12,9 @@ define [
 			console.log "#{@loop.tick.toFixed 2} [StateManager] #{log}"
 
 		register: (@loop) ->
+			@loop._enter  = @enter.bind  @
+			@loop._leave  = @leave.bind  @
 			@loop._update = @update.bind @
-			@loop._leave  = @render.bind @
 
 		constructor: ->
 			@states  = {}
@@ -102,6 +103,12 @@ define [
 			state.event.fire 'blur'
 
 			@
+		
+		enter: ->
+			for name in @enabled
+				state = @get name
+				continue if @paused is true and state.persistent is false
+				state.enter()
 
 		update: ->
 			for name in @enabled
@@ -111,7 +118,7 @@ define [
 				state.tick += @loop.delta
 			return
 
-		render: ->
+		leave: ->
 			for name in @enabled
 				state = @get name
 				continue if @paused is true and state.persistent is false
