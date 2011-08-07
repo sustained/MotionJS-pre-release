@@ -5,7 +5,10 @@ define [
 	'shared/math/random'
 	'shared/utilities/eventful'
 	'shared/utilities/class'
-], (_Math, Vector, Matrix, Random, Event, Class) ->
+	'shared/utilities/string'
+	'shared/utilities/object'
+], (_Math, Vector, Matrix, Random, Event, Class, StrUtils, ObjUtils) ->
+	console.log 'core'
 	{clone, isObject} = _
 
 	toString  = Object::toString
@@ -20,6 +23,7 @@ define [
 	Motion  = {
 		Event, Class
 
+		Utils: {String:StrUtils, Object:ObjUtils}
 		READY:   false
 		LOADED:  false
 		VERSION: '0.1'
