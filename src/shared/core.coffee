@@ -8,7 +8,6 @@ define [
 	'shared/utilities/string'
 	'shared/utilities/object'
 ], (_Math, Vector, Matrix, Random, Event, Class, StrUtils, ObjUtils) ->
-	console.log 'core'
 	{clone, isObject} = _
 
 	toString  = Object::toString
