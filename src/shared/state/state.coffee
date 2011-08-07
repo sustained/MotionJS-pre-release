@@ -46,6 +46,9 @@ define [
 		log: (log) ->
 			console.log "#{@manager.loop.tick.toFixed 2} [State:#{@name}/#{@constructor.name}] #{log}"
 
+		enter: ->
+		leave: ->
+
 		update: ->
 		render: ->
 
