@@ -145,8 +145,8 @@ define ['shared/utilities/string'], (StringUtils) ->
 				call.apply false, args
 				toRemove.push _i if opts.once is true
 
-			if removes.length > 0
-				@removeCallback name, remove for remove in removes
+			if toRemove.length > 0
+				@removeCallback name, remove for remove in toRemove
 
 			#opts = @eventOptions[name]
 			#if opts.limit isnt false
