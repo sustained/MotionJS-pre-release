@@ -1,4 +1,5 @@
 define ->
+	{Event} = Motion
 	{throttle} = _
 
 	class Loop
@@ -29,6 +30,7 @@ define ->
 			@fps    = throttle @frameRate, 1000
 			@time   = Date.now()
 			@deltas = []
+			@event  = new Event ['enterFrame', 'leaveFrame'], binding: @
 
 		start: ->
 			return if @_running is true
@@ -61,6 +63,7 @@ define ->
 			#@updateRate = 1.0 / @delta
 
 		loop: ->
+			@event.fire 'enterFrame'
 			@_enter()
 
 			time    = Date.now()
@@ -80,5 +83,6 @@ define ->
 				@tick  += @delta
 				@accum -= @delta
 
-			@alpha = @accum / @delta
+			#@alpha = @accum / @delta
+			@event.fire 'leaveFrame'
 			@_leave()
