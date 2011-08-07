@@ -1,18 +1,39 @@
-define ->
+define ['shared/utilities/object'], (ObjUtils) ->
+	{merge} = ObjUtils
 	{Vector} = Math
+	{isString} = _
 
 	class Canvas
+		@_canvases = {}
+
+		_defaultOptions =
+			show: true
+			size: [1024, 768]
+		
+		@create: (name, options = {}) ->
+			return @get name if @isCanvas name
+			return @_canvases[name] = options if options instanceof Canvas
+
+			options = merge _defaultOptions, options
+			return @_canvases[name] = new @ name, options
+		
+		@isCanvas: (name) ->
+			@_canvases[name]?
+
+		@get: (name) ->
+			return @_canvases[name] if @isCanvas name
+
 		@DEFAULT_DIMENSIONS: [1024, 768]
 
-		_canvasId = 0
+		_id = 0
 
 		name: null
-		size: Canvas.DefaultDimensions
-		show: true
+		size: null
+		show: null
 
-		fill:   'white'
-		width:  1.0
-		stroke: 'white'
+		fill:   null
+		width:  null
+		stroke: null
 
 		canvas:  null # DOM Object
 		$canvas: null # jQuery Object
@@ -21,9 +42,15 @@ define ->
 		created: false
 
 		create: ->
-			#jQuery =>
-			@$canvas = jQuery('<canvas>').attr id: @name, width: @size[0], height: @size[1]
-			@$canvas.css
+			if not Motion.READY
+				jQuery =>
+					console.log 'creating canvas'
+					@create()
+				return
+			
+			@$canvas = jQuery('<canvas>')
+				.attr(id: @name, width: @size[0], height: @size[1])
+				.css(
 					top:  if @show then '0px' else '-10000px'
 					left: if @show then '0px' else '-10000px'
 					width:  @size[0] + 'px'
@@ -31,48 +58,23 @@ define ->
 					zIndex: @id
 					position: 'absolute'
 					backgroundColor: '#000000'
-			@$canvas.appendTo 'body'
+				)
+				.appendTo('body')
 
 			@canvas  = @$canvas.get 0
 			@context = @canvas.getContext '2d'
 			@created = true
 			console.log 'canvas created'
 
-		constructor: (@size = Canvas.DEFAULT_DIMENSIONS) ->
-			@id   = ++_canvasId
+		constructor: (name = 'default', options = {}) ->
+			return Canvas.get name if Canvas.isCanvas name
+			options = merge _defaultOptions, options
+
+			@id = ++_id
 			@name = "motionCanvas#{@id}"
+			{@size, @show} = options
 
-			###
-			resizeMap = {
-				 800:  600
-				1024:  768
-				1280: 1024
-				1680: 1050
-			}
-
-			lastResize = 0
-
-			$w.resize (e) =>
-				return if Date.now() - lastResize < 4000
-				w = $w.width()
-				h = $w.height()
-				for size in DIMENSIONS
-					if w is size[0] and h is size[1]
-						@setSize w, h
-						console.log "#{new Date} resizing canvas to supported resolution #{w}x#{h}"
-					else
-						ww = Math.nearest w, 800, 1024, 1280, 1680
-						continue if not ww of resizeMap
-
-						hh = resizeMap[ww]
-
-						return if ww is w or hh is h
-						@setSize ww, hh
-						console.log "#{new Date} resizing canvas to nearest supported resolution #{ww}x#{hh}"
-						break
-				lastResize = Date.now()
-				false
-			###
+			Canvas.create name, @
 
 		draw: (style = {}) ->
 			if style.fill
@@ -104,6 +106,8 @@ define ->
 			@rectangle position, [1, 1], style
 
 		@CIRC_MODE: 'center'
+		@RECT_MODE: 'center'
+		@DEFAULT_FONT: 'Deja Vu Sans Mono'
 
 		circle: (position, radius, style)->
 			position = position.clone().round()
@@ -117,10 +121,6 @@ define ->
 			@context.closePath()
 
 			@draw style
-
-		@RECT_MODE: 'center'
-
-		@DEFAULT_FONT: 'Deja Vu Sans Mono'
 
 		text: (position, text, style = {}) ->
 			position = position.clone().round()
