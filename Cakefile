@@ -14,12 +14,12 @@ spec =
 
 brew = (options, callbacks = {}) ->
 	coffee = spawn 'coffee', options.split(' '), cwd: __dirname
-	
+
 	coffee.stdout.setEncoding 'utf8'
 	coffee.stderr.setEncoding 'utf8'
-	coffee.stdout.on 'data', callbacks.stdout ? (data) -> puts data.trim()
-	coffee.stderr.on 'data', callbacks.stderr ? (data) -> puts "stderr: #{data.trim()}"
-	coffee.on 'exit',        callbacks.onexit ? -> null
+	coffee.stdout.on 'data', callbacks.stdout or (data) -> puts data.trim()
+	coffee.stderr.on 'data', callbacks.stderr or (data) -> puts "stderr: #{data.trim()}"
+	coffee.on 'exit',        callbacks.onexit or -> null
 	
 	coffee
 
@@ -53,7 +53,12 @@ task 'code:compile', 'Compile the code.', ->
 		brew '--compile --bare --output lib/ src/', onexit: -> puts "done!"
 
 task 'code:watch', 'Auto-compile the code.', ->
-	brew '--compile --bare --watch --output lib/ src/'
+	brew '--compile --bare --watch --output lib/ src/',
+		stdout: (data) ->
+			data = data.trim()
+			if data.indexOf('In') is 0
+				exec "growlnotify -a 'iTerm2' -m '#{data}' -t 'Compile Error'"
+			puts data
 
 task 'code:build', 'Build the code.', ->
 	
