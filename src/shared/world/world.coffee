@@ -15,6 +15,8 @@ define ->
 			@types   = {}
 			@classes = {}
 
+			@bounds = [1024, 768]
+			
 			#@createCamera 'main'
 		
 		update: ->
