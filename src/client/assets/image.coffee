@@ -19,7 +19,9 @@ define [
 
 		@getUrl: -> @_url
 
-		_instances = {} ; @get: (name) -> _instances[name]
+		_instances = {}
+
+		@get: (name) -> _instances[name]
 
 		image:  null
 		status: null
@@ -33,7 +35,8 @@ define [
 		toString: -> @constructor.getUrl() + @path + '.' + @extname()
 
 		constructor: (name, path, options = {}) ->
-			instance = @constructor.get name ; if instance? then return instance
+			instance = Image.get name
+			return instance if instance
 
 			super name, path
 
@@ -43,7 +46,7 @@ define [
 			#console.log "Create Image: #{@basename()}.#{@extname()}"
 
 			if Image.AUTOLOAD is true and Motion.env is 'client'
-				Motion.event.on 'dom', => @load()
+				jQuery => @load()
 
 			_instances[name] = @
 
@@ -51,7 +54,9 @@ define [
 			if @status is Image.STATUS.LOADED or @status is Image.STATUS.ERROR
 				return false
 
-			@asset = jQuery '<img>'
+			@asset = jQuery('<img>')
+				.attr('src', Image.getUrl() + @path + '.' + @extname())
+				.appendTo 'body'
 			@domOb = @asset[0]
 
 			loadAsset = =>
@@ -64,10 +69,9 @@ define [
 				if @batch isnt null
 					@batch.event.fire 'load', [@]
 
-			@asset.css  'display', 'none'
-			@asset.attr 'src', Image.getUrl() + @path + '.' + @extname()
-			@asset.appendTo 'body'
+			#@asset.css  'display', 'none'
 
+			#console.log @asset
 			if @domOb.complete is true
 				@log 'image is cached'
 				loadAsset()
