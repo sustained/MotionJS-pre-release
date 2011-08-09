@@ -27,17 +27,19 @@ define ->
 			
 			dot   = @path.lastIndexOf '.'
 			slash = @path.lastIndexOf '/'
-			
+
 			if dot > -1
-				@_extname = path.substr dot ; path = path.slice dot
+				@_extname = @path.substr dot + 1
 			else
 				@_extname = @constructor.DEFAULT_EXTENSION
 			
+			@path = @path.replace /\.[a-z]+$/, ''
+
 			if slash > -1
-				@_basename = path.substr slash + 1
+				@_basename = @path.substr slash + 1
 			else
-				@_basename = path
-		
+				@_basename = @path
+
 		log: (log) ->
 			console.log "[#{@constructor.name}:#{@name}.#{@extname()}] #{log}"
 		
