@@ -1,12 +1,13 @@
 define ->
-	{Eventful} = Motion
+	{throttle} = _
+	{Event} = Motion
 	
 	class Keyboard
-		_setup     = false
-		_singleton = null
+		_setup = false
+		_instance = null
 		
 		@instance: ->
-			return if _singleton then _singleton else new @
+			return if _instance then _instance else new @()
 		
 		# Maps event codes to key names.
 		_KEYMAP =
@@ -88,9 +89,9 @@ define ->
 					data.life = 0
 		
 		constructor: ->
-			return _singleton if _singleton?
+			return _instance if _instance?
 			
-			@event = new Eventful ['up', 'down'], binding: @
+			@event = new Event ['up', 'down'], binding: @
 			
 			@keys = {}
 			for code, key of _KEYMAP
@@ -101,9 +102,9 @@ define ->
 
 			jQuery =>
 				$el = jQuery document
-				$el.keyup   _onKeyUp.bind   @
-				$el.keydown _onKeyDown.bind @
+				$el.keyup   _.throttle _onKeyUp.bind(@), 16
+				$el.keydown _.throttle _onKeyDown.bind(@), 16
 				
-				$el.bind 'contextmenu', (e) -> e.preventDefault() ;; e.stopPropagation()
+				$el.bind 'contextmenu', (e) -> e.preventDefault() ; e.stopPropagation()
 			
 			_singleton = @
