@@ -1,8 +1,7 @@
 define [
 	'shared/loop'
-	'shared/utilities/string'
-], (Loop, StringUtils) ->
-	{pad} = StringUtils
+], (Loop) ->
+	{pad} = Motion.Utils.String
 
 	class ClientLoop extends Loop
 		constructor: (options) ->
