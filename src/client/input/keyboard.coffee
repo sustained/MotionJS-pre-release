@@ -102,8 +102,8 @@ define ->
 
 			jQuery =>
 				$el = jQuery document
-				$el.keyup   _.throttle _onKeyUp.bind(@), 16
-				$el.keydown _.throttle _onKeyDown.bind(@), 16
+				$el.keyup   _onKeyUp.bind(@)
+				$el.keydown _onKeyDown.bind(@)
 				
 				$el.bind 'contextmenu', (e) -> e.preventDefault() ; e.stopPropagation()
 			
