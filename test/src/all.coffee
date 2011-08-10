@@ -1,1 +1,6 @@
-define -> ['core', 'event', 'binaryheap']
+define -> [
+	'core'
+	'event'
+	'binaryheap'
+	'astar'
+]
