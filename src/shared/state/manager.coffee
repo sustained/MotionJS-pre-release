@@ -49,19 +49,28 @@ define [
 
 		add: (name, klass, options = {}) ->
 			options = defaults options, enable: false, persistent: false
-			if isFunction klass
-				@log "added #{name}/#{klass.name}"
+
+			@log "adding #{name}/#{klass.name}"
+
+			state = null
+
+			if klass instanceof State
+				state = klass
+				state.name = name
+				state.manager = @
+			else if isFunction klass
 				state = new klass name, @
 				if not state instanceof State
-					console.log "state is not an instance of State"
+					@log "state #{name}/#{klass.name} is not an instance of State"
 					return false
-			else
+			else if isObject klass
+				state = new State name, @
 				methods = klass
-				state   = new State name, @
 
-				if isObject methods
-					state.update = methods.update if isFunction methods.update
-					state.render = methods.render if isFunction methods.render
+				state.update = methods.update if isFunction methods.update
+				state.render = methods.render if isFunction methods.render
+			
+			return false if not state?
 
 			@states[name] = state
 			state.persistent = options.persistent

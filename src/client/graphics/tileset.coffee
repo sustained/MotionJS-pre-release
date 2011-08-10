@@ -7,15 +7,16 @@ define [
 		_options = {
 			size: 16
 		}
-		_instances = {}
 
+		_instances = {}
 		@get: (name) -> _instances[name]
 
 		size:  null
 		image: null
 
 		constructor: (name, options = {}) ->
-			instance = @constructor.get name ;; if instance? then return instance
+			instance = @constructor.get name
+			if instance? then return instance
 
 			@name  = name
 			@image = Image.get name
@@ -29,8 +30,6 @@ define [
 			else if isNumber @size
 				@cellsX = Math.round @image.width  / @size
 				@cellsY = Math.round @image.height / @size
-
-			#console.log @image, @image.width, @image.height, @cellsX, @cellsY
 
 			_instances[name] = @
 

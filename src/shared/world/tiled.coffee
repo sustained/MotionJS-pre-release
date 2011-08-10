@@ -4,7 +4,7 @@ define [
 	class TiledWorld extends World
 		layers: null
 		
-		constructor: (@size = [16000, 16000]) ->
+		constructor: ->
 			super
 			
 			@layers = []
