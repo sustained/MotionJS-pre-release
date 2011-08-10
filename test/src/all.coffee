@@ -1,1 +1,1 @@
-define -> ['core', 'event']
+define -> ['core', 'event', 'binaryheap']
