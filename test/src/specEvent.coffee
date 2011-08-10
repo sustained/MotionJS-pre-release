@@ -80,7 +80,7 @@ define ->
 				expect(increments).toEqual 1
 				expect(e.events.evt.length).toEqual 0
 
-			it 'should correctly limit events with a "fire limit", then remove them', ->
+			xit 'should correctly limit events with a "fire limit", then remove them', ->
 				increments = 0
 
 				e.add 'evt', limit: 3
