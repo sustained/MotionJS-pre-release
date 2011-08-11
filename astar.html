@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AStar</title>
+
+	<link rel="stylesheet" href="assets/style/motion.css" />
+
+	<style>
+table#aStarTable {
+	margin:190px auto 0 auto;
+}
+	table#aStarTable tr {
+		
+	}
+		table#aStarTable td {
+			font-size:9px;
+			background-color:#202020;
+			width:64px;
+			height:64px;
+			text-align:center;
+		}
+		table#aStarTable td.impassableCell {
+			background-color:#050505;
+		}
+
+		.fromCell {
+			background-color:blue !important;
+		}
+
+		.goalCell {
+			color: black;
+			background-color:green !important;
+		}
+
+		.routeCell {
+			color: white;
+			border:2px solid purple;
+		}
+	</style>
+<body>
+	<script src="vendor/jquery/jquery.min.js"></script>
+	<script src="vendor/underscore/underscore.min.js"></script>
+	<script src="vendor/modernizr/modernizr.js"></script>
+
+	<script src="lib/shared/init.js"></script>
+
+	<script>
+this.require = window.motion('/Private/JS/MotionJS/', function() {
+	require(['astar']);
+});
+window.motion = null
+	</script>
+
+	<script src="vendor/requirejs/require.js"></script>
+</body>
+</html>
