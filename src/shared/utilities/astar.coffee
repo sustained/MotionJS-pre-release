@@ -61,8 +61,8 @@ define [
 			two: (nValid, eValid, sValid, wValid, n, e, s, w, results) ->
 				nValid = n > -1
 				wValid = w > -1
-				sValid = s < @rows
-				eValid = e < @cols
+				sValid = s < @grid.rows
+				eValid = e < @grid.cols
 
 				if eValid
 					results.push [e, n] if nValid and @grid.isPassable e, n
@@ -104,7 +104,7 @@ define [
 		heuristicFn: null
 		directionFn: null
 
-		constructor: (@grid, heuristic = 'euclidean', direction = 'diagonal') ->
+		constructor: (@grid, heuristic = 'diagonal', direction = 'diagonalFree') ->
 			@open = new BinaryHeap (node) =>
   				if not node.score?
   					node.score = @heuristicMethod(node.position, @goal) + node.length
@@ -153,6 +153,6 @@ define [
 
 					if not known or known.length > length
 						if known
-							open.remove known
+							@open.remove known
 						@addOpenNode new Node direction, node, length
 			return
