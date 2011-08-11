@@ -1,100 +1,117 @@
 define [
 	'shared/utilities/binaryheap'
 ], (BinaryHeap) ->
+	{isArray} = _
 	{resolveDotPath} = Motion.Utils.String
 	{abs, max, pow, sqrt, Vector} = Math
 	{isVector} = Vector
 
 	V = (i, j) -> new Vector i, j
 
+	diagonal = (pA, pB) -> pA[0] is pB[0] or pA[1] is pB[1]
+
 	class Node
+		_id = 0
+
 		id: null
+		score: null
+		length: null
 		parent: null
 		position: null
 
-		f: null
-		g: null
-		h: null
+		constructor: (@position, @parent = null, @length = 0) ->
+			@id = _id++
 
-		constructor: (@parent, @position, @g = 0, @h = 0) ->
-			if @parent isnt null and @parent.i? and @parent.j?
-				[@position, @g, @h] = [@parent, @position, @g]
-				@parent = null
+	class Grid
+		@SIZE: 16
 
-			@f = @g + @h
+		constructor: (@_grid, @size = Grid.SIZE) ->
+			@rows = @_grid[0].length
+			@cols = @_grid.length
+			@total = @rows * @cols
 
-		getId: ->
-			return @id if @id?
-			@id = [@position.i, '-', @position.j].join ''
+		isPassable: (x, y) ->
+			(y > -1 and y < @cols) and (x > -1 and x < @rows) and @_grid[y][x] is 0
 
 	class AStar
 		@Node: Node
+		@Grid: Grid
 
 		@heuristic:
-			diagonal: (point, goal) ->
-				max abs(point.i - goal.i), abs(point.j - goal.j)
-			euclidean: (point, goal) ->
-				sqrt pow(point.i - goal.i, 2) + pow(point.j - goal.j, 2)
-			manhattan: (point, goal) ->
-				abs(point.i - goal.i) + abs(point.j - point.j)
-		
-		@direction:
-			one: (north, east, south, west, n, e, s, w, result) ->
-				if north
-					result.push V e, n if east and grid[n][e]
-					result.push V w, n if west and grid[n][w]
-				if south
-					result.push V e, s if east and grid[s][e]
-					result.push V w, s if west and grid[s][w]
-			two: (north, east, south, west, n, e, s, w, result) ->
-				north = n > -1
-				west  = w > -1
-				south = s < @rows
-				east  = e < @cols
+			diagonal: (a, b) ->
+				max abs(a[0] - b[0]), abs(a[1] - b[1])
+			euclidean: (a, b) ->
+				sqrt pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2)
+			manhattan: (a, b) ->
+				abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-				if east
-					result.push V e, n if north and grid[n][e] is 0
-					result.push V e, s if south and grid[s][e] is 0
-				if west
-					result.push V w, n if north and grid[n][w] is 0
-					result.push V w, s if south and grid[s][w] is 0
+		@direction:
+			one: (nValid, eValid, sValid, wValid, n, e, s, w, results) ->
+				if nValid
+					if eValid and @grid.isPassable e, n
+						results.push [e, n]
+					if wValid and @grid.isPassable w, n
+						results.push [w, n]
+				if sValid
+					 if eValid and @grid.isPassable e, s
+					 	results.push [e, s]
+					 if wValid and @grid.isPassable w, s
+					 	results.push [w, s]
+
+			two: (nValid, eValid, sValid, wValid, n, e, s, w, results) ->
+				nValid = n > -1
+				wValid = w > -1
+				sValid = s < @rows
+				eValid = e < @cols
+
+				if eValid
+					results.push [e, n] if nValid and @grid.isPassable e, n
+					results.push [e, s] if sValid and @grid.isPassable e, s
+				if wValid
+					results.push [w, n] if nValid and @grid.isPassable w, n
+					results.push [w, s] if sValid and @grid.isPassable w, s
 
 		getDirections: (point) ->
-			[x, y] = [point.i, point.j]
+			[x, y] = point
 			result = []
 
 			n = y - 1
-			s = y + 1
 			w = x - 1
+			s = y + 1
 			e = x + 1
 
-			$n = n > -1   and @grid[n][x] is 0
-			$w = w > -1   and @grid[w][y] is 0
-			$s = s < rows and @grid[s][x] is 0
-			$e = e < cols and @grid[e][y] is 0
+			_n = n > -1 and @grid.isPassable x, n
+			_w = w > -1 and @grid.isPassable w, y
+			_s = s < @grid.cols and @grid.isPassable x, s
+			_e = e < @grid.rows and @grid.isPassable e, y
 
-			result.push V x, n if $n
-			result.push V w, y if $w
-			result.push V x, s if $s
-			result.push V e, y if $e
+			result.push [x, n] if _n
+			result.push [x, s] if _s
+			result.push [w, y] if _w
+			result.push [e, y] if _e
 
-			@directionMethod $n, $e, $s, $w, n, e, s, w, result
+			@directionMethod _n, _e, _s, _w, n, e, s, w, result
 
 			result
 
 		open:   null
 		closed: null
+		closedCount: null
+
+		from: null
+		goal: null
 
 		heuristicFn: null
 		directionFn: null
 
-		constructor: (@grid, heuristic = 'manhattan', direction = 'diagonal') ->
-			@open = new BinaryHeap()
+		constructor: (@grid, heuristic = 'euclidean', direction = 'diagonalFree') ->
+			@open = new BinaryHeap (node) =>
+  				if not node.score?
+  					node.score = @heuristicMethod(node.position, @goal) + node.length
+  				node.score
 			@closed = {}
 
-			@cols = @grid[0].length
-			@rows = @grid.length
-			@limit = @cols * @rows
+			@grid = new Grid @grid if isArray @grid
 
 			@heuristicMethod = resolveDotPath heuristic, AStar.heuristic
 			@directionMethod = {
@@ -102,31 +119,40 @@ define [
 				euclidean: AStar.direction.one, euclideanFree: AStar.direction.two
 			}[direction].bind @
 
-		addNode: (node) ->
+		pointId: (point) ->
+			[point[0], '-', point[1]].join ''
+
+		storeReached: (point, node) ->
+			@closed[@pointId(point)] = node
+
+		findReached: (point) ->
+			@closed[@pointId(point)]
+
+		addOpenNode: (node) ->
 			@open.push node
-			@closed[[node.position.i, '-', node.position.j].join ''] = node
+			@storeReached node.position, node
 
-		isKnown: (vec) ->
-			@closed[[vec.i, '-', vec.j].join '']?
+		weightedDistance: (uno, dos) ->
+			return if diagonal(uno, dos) then 10 else 14
 
-		getKnown: (node) ->
-			@closed[node.getId()] or false
-
-		search: (from, goal) ->
-			from = V from if isArray from
-			goal = V from if isArray goal
-
-			@addNode new Node from
+		search: (@from, @goal) ->
+			@addOpenNode new Node from
 
 			while @open.size() > 0
 				node = @open.pop()
-				return node if Vector.equal node.position, goal
 
-				directions = @getDirections node.point
-				debugger
+				if node.position[0] is goal[0] and node.position[1] is goal[1]
+					return node
+
+				directions = @getDirections node.position
+
 				for direction in directions
-					known = @isKnown direction
-					length = node.length + @heuristicMethod node.position, direction
-					if not known or known.length > newLength
-						@open.remove known if known
-						@addNode new Node node, direction, length
+					known = @findReached direction
+
+					length = node.length + @weightedDistance(node.position, direction)
+
+					if not known or known.length > length
+						if known
+							open.remove known
+						@addOpenNode new Node direction, node, length
+			return
