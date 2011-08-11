@@ -6,29 +6,36 @@ define [
 		[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 		[0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0]
 		[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
-		[0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1]
-		[0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0]
+		[1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1]
+		[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]
 		[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0]
 		[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		[0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
 		[0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 		[0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0]
 		[0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0]
-		[0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0]
+		[0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0]
 		[0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0]
 		[0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
 		[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 	]
 
-	from = [0, 0]
-	goal = [15, 15]
-
 	console.log grid = new AStar.Grid $grid
 	console.log astar = new AStar grid
 
+	randomPoint = ->
+		loop
+			x = Math.floor Math.random() * grid.rows
+			y = Math.floor Math.random() * grid.cols
+			break if $grid[y][x] is 0
+		[x, y]
+
+	from = randomPoint()
+	goal = randomPoint()
+
 	jQuery ->
 		table = jQuery('<table><thead></thead><tbody></tbody></table>')
-			.attr(id: 'aStarTable', cellSpacing: 2)
+			.attr(id: 'aStarTable', cellSpacing: 1)
 		tbody = jQuery('tbody', table)
 
 		j = 0 
@@ -49,8 +56,11 @@ define [
 		jQuery("td[data-x=#{from[0]}][data-y=#{from[1]}]").addClass 'fromCell'
 		jQuery("td[data-x=#{goal[0]}][data-y=#{goal[1]}]").addClass 'goalCell'
 
+		sTime = Date.now()
 		search = astar.search from, goal
+		fTime = Date.now()
 
+		console.log "finished in #{fTime - sTime} ms"
 		if search?
 			path = []
 			path.push search.position
