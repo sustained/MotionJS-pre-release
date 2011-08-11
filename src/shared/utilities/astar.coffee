@@ -104,7 +104,7 @@ define [
 		heuristicFn: null
 		directionFn: null
 
-		constructor: (@grid, heuristic = 'euclidean', direction = 'diagonalFree') ->
+		constructor: (@grid, heuristic = 'euclidean', direction = 'diagonal') ->
 			@open = new BinaryHeap (node) =>
   				if not node.score?
   					node.score = @heuristicMethod(node.position, @goal) + node.length
