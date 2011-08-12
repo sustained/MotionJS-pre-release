@@ -60,7 +60,8 @@ define [
 		search = astar.search from, goal
 		fTime = Date.now()
 
-		console.log "finished in #{fTime - sTime} ms"
+		console.log "search took #{fTime - sTime} ms"
+
 		if search?
 			path = []
 			path.push search.position
