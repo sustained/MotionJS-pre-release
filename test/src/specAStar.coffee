@@ -6,21 +6,19 @@ define [
 	return ->
 		describe 'AStar', ->
 			grid = new AStar.Grid [
-				[0, 0, 0, 0, 0, 0, 0]
 				[0, 0, 0, 1, 0, 0, 0]
-				[0, 0, 0, 1, 0, 0, 0]
-				[0, 0, 0, 1, 0, 0, 0]
-				[0, 0, 0, 0, 0, 0, 0]
+				[0, 1, 0, 1, 0, 1, 0]
+				[0, 1, 0, 1, 0, 1, 0]
+				[0, 1, 0, 1, 0, 1, 0]
+				[0, 1, 0, 1, 0, 1, 0]
+				[0, 1, 0, 1, 0, 1, 0]
+				[0, 1, 0, 0, 0, 1, 0]
 			]
+
+			from = [0, 6]
+			goal = [6, 6]
+
 			astar = new AStar grid
+			search = astar.search from, goal
 
-			console.log grid, astar
-
-			console.log astar.heuristicMethod
-			console.log astar.directionMethod
-
-			try
-				console.log astar.search [0, 0], [6, 4]
-			catch e
-				console.log 'ut oh'
-				console.error e
+			it '', ->
