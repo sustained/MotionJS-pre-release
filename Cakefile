@@ -62,3 +62,5 @@ task 'code:watch', 'Auto-compile the code.', ->
 
 task 'code:build', 'Build the code.', ->
 	
+
+task 'sbuild', 'For building from Sublime', -> invoke 'code:compile'
