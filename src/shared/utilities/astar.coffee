@@ -12,8 +12,8 @@ define [
 
 	class Node
 		_id = 0
-
 		id: null
+
 		score: null
 		length: null
 		parent: null
@@ -23,15 +23,31 @@ define [
 			@id = _id++
 
 	class Grid
-		@SIZE: 16
+		@options:
+			width: null
+		
+		dimensions: null
 
-		constructor: (@_grid, @size = Grid.SIZE) ->
-			@rows = @_grid[0].length
-			@cols = @_grid.length
-			@total = @rows * @cols
+		constructor: (@_grid, options = {}) ->
+			if isArray @_grid[0]
+				@rows = @_grid[0].length
+				@cols = @_grid.length
+				@dimensions = 2
+			else
+				@rows = options.width
+				@cols = Math.floor @_grid.length / @rows
+				@dimensions = 1
+
+			@size = @rows * @cols
+		
+		getCell: (x, y) ->
+			if @dimensions is 1
+				@_grid[(@rows * x) + y]
+			else
+				@_grid[y][x]
 
 		isPassable: (x, y) ->
-			(y > -1 and y < @cols) and (x > -1 and x < @rows) and @_grid[y][x] is 0
+			(y > -1 and y < @cols) and (x > -1 and x < @rows) and @getCell(x, y) is 0
 
 	class AStar
 		@Node: Node
