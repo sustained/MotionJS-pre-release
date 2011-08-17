@@ -1,7 +1,7 @@
 define [
 	'shared/utilities/binaryheap'
 ], (BinaryHeap) ->
-	{isArray} = _
+	{flatten, isArray} = _
 	{resolveDotPath} = Motion.Utils.String
 	{abs, max, pow, sqrt, Vector} = Math
 	{isVector} = Vector
@@ -12,8 +12,8 @@ define [
 
 	class Node
 		_id = 0
-		id: null
 
+		id: null
 		score: null
 		length: null
 		parent: null
@@ -23,31 +23,30 @@ define [
 			@id = _id++
 
 	class Grid
-		@options:
-			width: null
-		
-		dimensions: null
+		_grid: null
+
+		rows: null
+		cols: null
+		size: null
 
 		constructor: (@_grid, options = {}) ->
 			if isArray @_grid[0]
-				@rows = @_grid[0].length
-				@cols = @_grid.length
-				@dimensions = 2
+				@rows  = @_grid[0].length
+				@cols  = @_grid.length
+				@_grid = flatten @_grid
 			else
 				@rows = options.width
 				@cols = Math.floor @_grid.length / @rows
-				@dimensions = 1
 
 			@size = @rows * @cols
-		
+
 		getCell: (x, y) ->
-			if @dimensions is 1
-				@_grid[(@rows * x) + y]
-			else
-				@_grid[y][x]
+			index = (@rows * y) + x
+			return false if index < 0 or index > @size
+			return @_grid[index]
 
 		isPassable: (x, y) ->
-			(y > -1 and y < @cols) and (x > -1 and x < @rows) and @getCell(x, y) is 0
+			(x > -1 and x < @rows) and (y > -1 and y < @cols) and @getCell(x, y) is 0
 
 	class AStar
 		@Node: Node
