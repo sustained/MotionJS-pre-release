@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/binaryheap'
+	'utilities/binaryheap'
 ], (BinaryHeap) ->
 	{flatten, isArray} = _
 	{resolveDotPath} = Motion.Utils.String

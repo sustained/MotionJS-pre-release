@@ -1,5 +1,5 @@
 define [
-	'shared/state/state'
+	'state/state'
 ], (State) ->
 	{extend, defaults, isObject, isFunction} = _
 

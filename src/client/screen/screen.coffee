@@ -1,5 +1,5 @@
 define [
-	'shared/state/state'
+	'state/state'
 ], (State) ->
 	class Screen extends State
 		_zIndex = 0

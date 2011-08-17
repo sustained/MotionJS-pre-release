@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/binaryheap'
+	'utilities/binaryheap'
 ], (BinaryHeap) ->
 	return ->
 		describe 'BinaryHeap', ->

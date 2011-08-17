@@ -1,5 +1,5 @@
 define [
-	'shared/state/manager'
+	'state/manager'
 ], (StateManager) ->
 	class ScreenManager extends StateManager
 		autoPause: true

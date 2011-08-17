@@ -1,4 +1,4 @@
-require ['shared/core', 'test/all'], (Motion, testList) ->
+require ['core', 'test/all'], (Motion, testList) ->
 	jasmineEnv = jasmine.getEnv()
 	jasmineEnv.updateInterval = 1000
 

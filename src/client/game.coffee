@@ -14,7 +14,7 @@ define [
 
 	'client/screen/manager'
 
-	'shared/game'
+	'game'
 
 	#'world/tiled'
 	#'world/rigid'

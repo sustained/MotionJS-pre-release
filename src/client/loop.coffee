@@ -1,5 +1,5 @@
 define [
-	'shared/loop'
+	'loop'
 ], (Loop) ->
 	{pad} = Motion.Utils.String
 

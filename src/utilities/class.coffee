@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/classutils'
+	'utilities/classutils'
 ], (ClassUtils) ->
 	{extend} = _
 

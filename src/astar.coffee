@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/astar'
+	'utilities/astar'
 ], (AStar) ->
 	$grid = [
 		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]

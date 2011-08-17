@@ -1,6 +1,6 @@
 define [
-	'shared/utilities/string'
-	'shared/animation/easing'
+	'utilities/string'
+	'animation/easing'
 ], (StringUtils, Easing) ->
 	{resolveDotPath} = StringUtils
 	{Vector} = Math

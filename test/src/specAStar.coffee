@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/astar'
+	'utilities/astar'
 ], (AStar) ->
 	{Grid} = AStar
 	{Vector} = Math

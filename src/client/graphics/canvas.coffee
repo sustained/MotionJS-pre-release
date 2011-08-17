@@ -1,4 +1,4 @@
-define ['shared/utilities/object'], (ObjUtils) ->
+define ['utilities/object'], (ObjUtils) ->
 	{merge} = ObjUtils
 	{Vector} = Math
 	{isString} = _

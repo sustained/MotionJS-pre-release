@@ -1,4 +1,4 @@
-define ['shared/utilities/string'], (StringUtils) ->
+define ['utilities/string'], (StringUtils) ->
 	{extend, isArray, isObject, isFunction} = _
 	{capitalize} = StringUtils
 

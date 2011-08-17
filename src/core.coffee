@@ -1,12 +1,12 @@
 define [
-	'shared/natives/math'
-	'shared/math/vector'
-	'shared/math/matrix'
-	'shared/math/random'
-	'shared/utilities/eventful'
-	'shared/utilities/class'
-	'shared/utilities/string'
-	'shared/utilities/object'
+	'natives/math'
+	'math/vector'
+	'math/matrix'
+	'math/random'
+	'utilities/eventful'
+	'utilities/class'
+	'utilities/string'
+	'utilities/object'
 ], (_Math, Vector, Matrix, Random, Event, Class, StrUtils, ObjUtils) ->
 	{clone, isObject} = _
 

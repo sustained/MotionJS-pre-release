@@ -1,5 +1,5 @@
 define [
-	'shared/game'
+	'game'
 ], (Game) ->
 	class ServerGame extends Game
 		@DEFAULT_OPTIONS: {

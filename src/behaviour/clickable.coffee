@@ -1,5 +1,5 @@
 define [
-	'behaviours/behaviour'
+	'behaviour/behaviour'
 ], (Behaviour) ->
 	###
 		parent   is an AABB

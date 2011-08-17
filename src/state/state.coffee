@@ -1,5 +1,5 @@
 define [
-	'shared/utilities/eventful'
+	'utilities/eventful'
 ], (Event) ->
 	{isFunction} = _
 

@@ -8,7 +8,7 @@ root.motion = (sysDir, paths = {}, readyFn) ->
 	reqOps =
 		#context: "motion"
 		baseUrl: "#{sysDir}lib/"
-		deps: ['shared/core']
+		deps: ['core']
 		paths:
 			dep: "#{sysDir}vendor"
 		ready: readyFn
