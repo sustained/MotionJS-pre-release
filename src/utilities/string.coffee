@@ -1,5 +1,5 @@
 define ->
-		# Given a string - "foo.bar.baz", returns object['foo']['bar']['baz']
+	# Given a string - "foo.bar.baz", returns object['foo']['bar']['baz']
 	resolveDotPath = (string, object) ->
 		string   = string.split '.'
 		resolved = object
