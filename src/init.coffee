@@ -1,7 +1,7 @@
 isBrowser = window? and document? and navigator?
 root      = if isBrowser then window else global
 
-root.motion = (sysDir, paths = {}, readyFn) ->
+root.motion = (sysDir, paths = {}, readyFn = ->) ->
 	return console.error '[Motion:init] Missing required sysDir.' if not sysDir
 
 	readyFn = paths if _.isFunction paths
