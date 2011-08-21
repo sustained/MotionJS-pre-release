@@ -4,7 +4,7 @@ define ->
 			@
 		
 		constructor: (i, j) ->
-			if not j? and i.length
+			if not j? and i?.length
 				@set i[0], i[1]
 			else
 				@set i, j
