@@ -13,7 +13,7 @@ root.motion = (sysDir, paths = {}, readyFn = ->) ->
 			dep: "#{sysDir}vendor"
 		ready: readyFn
 
-	reqOps.paths[k] = v for k,v of paths
+	reqOps.paths[k] = "#{v}/lib" for k,v of paths
 
 	if isBrowser
 		reqOps.paths.fs   = 'client/node/fs'
