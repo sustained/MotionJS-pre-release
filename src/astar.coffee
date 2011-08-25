@@ -35,7 +35,9 @@ define [
 
 	jQuery ->
 		table = jQuery('<table><thead></thead><tbody></tbody></table>')
-			.attr(id: 'aStarTable', cellSpacing: 1)
+			.attr({
+				id: 'aStarTable'#, cellSpacing: 1
+			})
 		tbody = jQuery('tbody', table)
 
 		j = 0 
@@ -44,7 +46,7 @@ define [
 
 			i = 0 
 			while i < $grid[0].length
-				td = jQuery("<td data-x='#{i}' data-y='#{j}'></td>").html("#{i},#{j}")
+				td = jQuery("<td data-x='#{i}' data-y='#{j}'></td>")#.html("#{i},#{j}")
 				td.addClass 'impassableCell' if $grid[j][i] is 1
 				tr.append td
 				i++
