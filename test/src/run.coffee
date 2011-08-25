@@ -7,7 +7,7 @@ require ['core', 'test/all'], (Motion, testList) ->
 
 	jasmineEnv.specFilter = (spec) -> trivialReporter.specFilter spec
 
-	testList = _.map(testList, (test) -> "test/spec#{test.charAt(0).toUpperCase()}#{test.slice 1}")
+	testList = _.map(testList, (test) -> "test/#{test}.spec")
+
 	require testList, ->
-		defineTest() for defineTest in Array::slice.call arguments
 		jQuery -> jasmineEnv.execute()
