@@ -2,9 +2,11 @@ define ->
 	{Vector} = Math
 
 	class TileSetAnimation
-		frame: null
+		static: false
 		paused: true
 		time:null
+		frame: null
+
 		constructor: (options = {}) ->
 			@time = 0
 			@tileset  = options.tileset  or null
@@ -14,14 +16,19 @@ define ->
 			@posRender = new Vector
 			@frameIndex = -1
 			@totalFrames = 0
+
 			if @tileset
 				@w = @tileset.size[0]
 				@h = @tileset.size[1]
-			
+
 			if @sequence.length >= 1
 				@frame      = @sequence[0]
 				@frameIndex = 0
-			
+
+			if @duration is 0
+				@static = true
+				@reset()
+
 			@frameTime = 0
 		
 		play: () ->
@@ -35,7 +42,7 @@ define ->
 			@frameTime = 0
 		
 		update: (dt, t) ->
-			return if @paused is true
+			return if @paused is true or @static is true
 			@time += dt
 
 			if @time > @frameTime + @duration
@@ -61,5 +68,5 @@ define ->
 				((@frame - 1) % @tileset.cellsX) * @w,
 				Math.floor((@frame - 1) / @tileset.cellsX) * @h,
 				@w, @h,
-				@posRender.i, @posRender.j - 4, @w, @h)
+				@posRender.i, @posRender.j, @w, @h)
 			g.closePath()
