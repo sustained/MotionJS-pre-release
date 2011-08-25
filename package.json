@@ -2,10 +2,16 @@
 	"name": "MotionJS"
 ,	"version": "0.1.0alpha"
 ,	"private": true
+,	"scripts": {
+		"test": "jasmine-node --verbose --color test/lib"
+	}
 ,	"dependencies": {
 		"jquery": ">=1.6"
 	,	"requirejs": ">=0.2"
 	,	"socket.io": ">=0.7"
 	,	"underscore": ">=1.1"
+	}
+,	"devDependencies": {
+		"jasmine-node": ">=1.0"
 	}
 }
