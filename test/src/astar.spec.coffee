@@ -1,4 +1,4 @@
-!define ['utilities/astar'], (AStar) ->
+define ['utilities/astar'], (AStar) ->
 	{Grid} = AStar
 	{Vector} = Math
 
