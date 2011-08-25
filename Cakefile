@@ -23,9 +23,15 @@ brew = (options, callbacks = {}) ->
 	
 	coffee
 
-task 'spec:run', 'Run the tests.', ->
-	print 'Opening Web Browser... '
-	exec 'open "http://localhost/Private/JS/MotionJS/test/runner.html"', -> puts 'done!'
+task 'spec:web', 'Run the tests in a browser.', ->
+	exec 'open "http://localhost/Private/JS/MotionJS/test/runner.html"'
+
+task 'spec:cli', 'Run the tests on the command-line.', ->
+	test = spawn 'npm', ['test'], cwd: __dirname
+	test.stderr.setEncoding 'utf8'
+	test.stdout.setEncoding 'utf8'
+	test.stdout.on 'data', (data) -> puts data.trim()
+	test.stderr.on 'data', (data) -> puts data.trim()
 
 task 'spec:compile', 'Compile the tests.', ->
 	puts '[Building spec]'
