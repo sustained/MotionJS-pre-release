@@ -1,4 +1,3 @@
 define ->
-	return ->
-		describe 'Image', ->
+	describe 'Image', ->
 			
