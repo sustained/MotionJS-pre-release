@@ -1,5 +1,4 @@
 define ->
-	# Given a string - "foo.bar.baz", returns object['foo']['bar']['baz']
 	resolveDotPath = (string, object) ->
 		string   = string.split '.'
 		resolved = object
@@ -7,7 +6,8 @@ define ->
 			if resolved[part]? then resolved = resolved[part] else break
 		resolved
 
-	pad = (string, length, padding = ' ') ->
+	_padString = ' '
+	pad = (string, length, padding = _padString) ->
 		string = "#{string}"
 		string = padding + string while string.length < length
 		string
@@ -18,4 +18,6 @@ define ->
 	capitalize = (string) ->
 		string = string.charAt(0).toUpperCase() + string.slice 1
 
-	{resolveDotPath, pad, ord, ordinal:ord, capitalize}
+	obj = {resolveDotPath, pad, ord, ordinal:ord, capitalize}
+	obj.__defineSetter__ 'PAD_STRING', (char) -> _padString = char
+	obj
