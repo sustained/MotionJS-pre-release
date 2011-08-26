@@ -1,15 +1,15 @@
 define ->
-	{Event}   = Motion
+	{Event} = Motion
 	{isArray} = _
 
-	describe 'Event', ->
+	describe 'Utilities - Eventful', ->
 		e = new Event()
 
 		afterEach ->
 			e.clear true, true
 			e.binding = null
 
-		describe 'constructor', ->
+		describe '#constructor()', ->
 			it 'should accept an array of event names', ->
 				e = new Event ['evt1', 'evt2'], binding:'test1'
 
@@ -79,7 +79,7 @@ define ->
 			expect(increments).toEqual 1
 			expect(e.events.evt.length).toEqual 0
 
-		xit 'should correctly limit events with a "fire limit", then remove them', ->
+		it 'should correctly limit events with a "fire limit", then remove them', ->
 			increments = 0
 
 			e.add 'evt', limit: 3

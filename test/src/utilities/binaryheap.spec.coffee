@@ -1,7 +1,7 @@
 define [
 	'utilities/binaryheap'
 ], (BinaryHeap) ->
-	describe 'BinaryHeap', ->
+	describe 'Utilities - BinaryHeap', ->
 		it 'should work', ->
 			incr = 0
 			heap = new BinaryHeap()
