@@ -1,6 +1,8 @@
 define -> [
 	'core'
-	'event'
-	'binaryheap'
-	'astar'
+	'image'
+
+	'utilities/astar'
+	'utilities/binaryheap'
+	'utilities/event'
 ]
