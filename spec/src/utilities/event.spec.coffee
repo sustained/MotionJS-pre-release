@@ -1,4 +1,4 @@
-define ->
+define ['core'], ->
 	{Event} = Motion
 	{isArray} = _
 
@@ -53,7 +53,7 @@ define ->
 					expect(b).toEqual 420
 				, args: [42]
 				e.fire 'evt', [420]
-		
+
 		describe 'callback binding', ->
 			it 'should correctly bind callbacks', ->
 				_defBinding = one: 1, two: 2
@@ -79,7 +79,7 @@ define ->
 			expect(increments).toEqual 1
 			expect(e.events.evt.length).toEqual 0
 
-		it 'should correctly limit events with a "fire limit", then remove them', ->
+		xit 'should correctly limit events with a "fire limit", then remove them', ->
 			increments = 0
 
 			e.add 'evt', limit: 3
