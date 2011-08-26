@@ -2,6 +2,40 @@ define ['utilities/string'], (StringUtils) ->
 	{extend, isArray, isObject, isFunction} = _
 	{capitalize} = StringUtils
 
+	###class Group
+		group: null
+		groups: null
+
+		constructor: ->
+			@group = 'default'
+			@groups = {}
+			@groupNames = []
+
+			@createGroup 'default', true
+
+		createGroup: (name, enable = false) ->
+			name = name.hash() if not isString name and 'hash' of name
+
+			if not @isGroup name
+				@groups[name] = enable
+				@groupNames.push name
+
+		openGroup: (name) ->
+			name = name.hash() if not isString name and 'hash' of name
+
+		closeGroup: ->
+			@group = 'default'
+			@
+
+		enableGroup: (name) ->
+			@groups[name] = true if @isGroup name
+
+		disableGroup: (name) ->
+			@groups[name] = false if @isGroup name
+
+		isGroup: (name) ->
+			@groupNames.indexOf(name) > -1###
+
 	class Eventful
 		binding: null
 		runOnce: null
@@ -26,34 +60,6 @@ define ['utilities/string'], (StringUtils) ->
 
 			@aliases = options.aliases or false
 			@binding = options.binding or null
-
-		###
-		hashKey: (key) ->
-
-		createGroup: (name, enable = false) ->
-			name = name.hash() if not isString name and 'hash' of name
-
-			if not @isGroup name
-				@groups[name] = enable
-				@groupNames.push name
-
-		openGroup: (name) ->
-			name = name.hash() if not isString name and 'hash' of name
-
-		closeGroup: ->
-			@group = 'default'
-			@
-
-		enableGroup: (name) ->
-			@groups[name] = on if @isGroup name
-
-		disableGroup: (name) ->
-			return false if name is 'default'
-			@groups[name] = off if @isGroup name
-
-		isGroup: (name) ->
-			@groups.hasOwnProperty name
-			###
 
 		isEvent: (name) ->
 			@eventNames.indexOf(name) > -1
@@ -81,9 +87,6 @@ define ['utilities/string'], (StringUtils) ->
 
 			@
 
-		###
-			Create an event
-		###
 		add: (name, options = {}) ->
 			if isArray(name)
 				@add i for i in name
