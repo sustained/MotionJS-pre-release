@@ -3,7 +3,7 @@
 ,	"version": "0.1.0alpha"
 ,	"private": true
 ,	"scripts": {
-		"test": "jasmine-node --verbose --color test/lib"
+		"test": "jasmine-node --verbose --color spec/lib/"
 	}
 ,	"dependencies": {
 		"jquery": ">=1.6"
