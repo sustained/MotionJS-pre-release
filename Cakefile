@@ -6,8 +6,8 @@ code =
 	lib: path.join __dirname, 'lib/'
 	src: path.join __dirname, 'src/'
 spec =
-	lib: path.join __dirname, 'test/lib/'
-	src: path.join __dirname, 'test/src/'
+	lib: path.join __dirname, 'spec/lib/'
+	src: path.join __dirname, 'spec/src/'
 
 {exec, spawn}          = require 'child_process'
 {puts, print, inspect} = require 'util'
@@ -23,8 +23,11 @@ brew = (options, callbacks = {}) ->
 	
 	coffee
 
+growl = (error) ->
+	exec "growlnotify -m '#{error}' -t 'Compile Error'"
+
 task 'spec:web', 'Run the tests in a browser.', ->
-	exec 'open "http://localhost/Private/JS/MotionJS/test/runner.html"'
+	exec 'open "http://localhost/Private/JS/MotionJS/spec/runner.html"'
 
 task 'spec:cli', 'Run the tests on the command-line.', ->
 	test = spawn 'npm', ['test'], cwd: __dirname
@@ -42,10 +45,13 @@ task 'spec:compile', 'Compile the tests.', ->
 	exec "rm -rf #{spec.lib}*", ->
 		puts 'done!'
 		print 'Compiling src directory... '
-		brew '--compile --bare --output test/lib/ test/src/', onexit: -> puts 'done!'
+		brew '--compile --bare --output spec/lib/ spec/src/', onexit: -> puts 'done!'
 
 task 'spec:watch', 'Auto-compile the tests.', ->
-	brew '--compile --bare --watch --output test/lib/ test/src/'
+	brew '--compile --bare --watch --output spec/lib/ spec/src/',
+		stdout: (data) ->
+			puts data = data.trim()
+			growl(data) if data.indexOf('In') is 0
 
 task 'code:compile', 'Compile the code.', ->
 	puts '[Building code]'
@@ -61,10 +67,8 @@ task 'code:compile', 'Compile the code.', ->
 task 'code:watch', 'Auto-compile the code.', ->
 	brew '--compile --bare --watch --output lib/ src/',
 		stdout: (data) ->
-			data = data.trim()
-			if data.indexOf('In') is 0
-				exec "growlnotify -a 'iTerm2' -m '#{data}' -t 'Compile Error'"
-			puts data
+			puts data = data.trim()
+			growl(data) if data.indexOf('In') is 0
 
 task 'code:build', 'Build the code.', ->
 	
