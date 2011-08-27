@@ -3,24 +3,27 @@
 <head>
 	<title>MotionJS Spec Runner</title>
 
+	<link href="../vendor/jasmine/src/html/jasmine.css" rel="stylesheet"/>
+
 	<script src="../vendor/jquery/jquery.js"></script>
 	<script src="../vendor/underscore/underscore.js"></script>
 
 	<script type="text/javascript" src="../vendor/jasmine/lib/jasmine.js"></script>
 	<script type="text/javascript" src="../vendor/jasmine/src/html/TrivialReporter.js"></script>
 	<script type="text/javascript" src="../vendor/jasmine/src/console/TrivialConsoleReporter.js"></script>
+	<script type="text/javascript" src="../vendor/jasmine-jquery/lib/jasmine-jquery.js"></script>
 
 	<script src="../lib/init.js"></script>
 
 	<script>
+jasmine.getFixtures().fixturesPath = 'spec/fixtures';
+
 var requireOptions = motion('/Private/JS/MotionJS/');
 requireOptions.paths.test = '/Private/JS/MotionJS/test/lib/';
 this.require = requireOptions;
 	</script>
 
-	<script src="../vendor/requirejs/require.js" data-main="test/run"></script> <!-- data-main="app/game" -->
-
-	<link href="../vendor/jasmine/src/html/jasmine.css" rel="stylesheet"/>
+	<script src="../vendor/requirejs/require.js" data-main="test/run"></script>
 </head>
 <body>
 </body>
