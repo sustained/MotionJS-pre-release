@@ -57,7 +57,7 @@ define ['utilities/object'], (ObjUtils) ->
 					height: @size[1] + 'px'
 					zIndex: @id
 					position: 'absolute'
-					backgroundColor: '#000000'
+					backgroundColor: 'transparent'
 				)
 				.appendTo('body')
 
