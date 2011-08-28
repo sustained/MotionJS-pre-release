@@ -1,6 +1,10 @@
 define [
 	'client/assets/asset'
 ], (Asset) ->
+	{Event} = Motion
+
+	ImageEvents = new Event()
+
 	class Image extends Asset
 		@STATUS:
 			NONE:    0 # Not loaded yet
@@ -11,6 +15,7 @@ define [
 		@DEFAULT_EXTENSION: 'png'
 
 		@Batch: null
+		@event: ImageEvents
 
 		@_url: null
 
@@ -34,6 +39,9 @@ define [
 
 		toString: -> @constructor.getUrl() + @path + '.' + @extname()
 
+		isLoaded: ->
+			@status is Image.STATUS.LOADED
+
 		constructor: (name, path, options = {}) ->
 			instance = Image.get name
 			return instance if instance
@@ -42,6 +50,8 @@ define [
 
 			@batch  = options.batch ? null
 			@status = Image.STATUS.NONE
+			if not @batch?
+				Image.event.add "load:#{name}" #, once: true
 
 			#console.log "Create Image: #{@basename()}.#{@extname()}"
 
@@ -49,6 +59,9 @@ define [
 				jQuery => @load()
 
 			_instances[name] = @
+		
+		loaded: (fn = ->) ->
+			@_loaded = fn.bind @
 
 		load: ->
 			if @status is Image.STATUS.LOADED or @status is Image.STATUS.ERROR
@@ -61,15 +74,14 @@ define [
 
 			loadAsset = =>
 				@log "load success"
-
-				@status = Image.STATUS.LOADED
 				@width  = @domOb.width
 				@height = @domOb.height
-
+				@status = Image.STATUS.LOADED
 				if @batch isnt null
 					@batch.event.fire 'load', [@]
-
-			#@asset.css  'display', 'none'
+				else
+					Image.event.fire "load:#{@name}"
+				#@asset.css 'display', 'none'
 
 			#console.log @asset
 			if @domOb.complete is true
@@ -81,7 +93,7 @@ define [
 				@asset.error =>
 					@log "load failure"
 					@status = Image.STATUS.ERROR
-
+			@
 
 	###Image.Batch = class ImageBatch extends Batch
 		constructor: (batch, options = {}) ->
