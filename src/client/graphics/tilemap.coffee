@@ -1,32 +1,30 @@
 define ->
 	class Tile
-	
+		
+
 	class TileMap
 		constructor: (@tileset, @tilemap) ->
-			@screenTilesX = 1024 / @tileset.size
-			@screenTilesY =  768 / @tileset.size
+			@screenTilesX = 1024 / @tileset.size[0]
+			@screenTilesY =  768 / @tileset.size[1]
 			
 			@mapTilesX = @tilemap[0].length
 			@mapTilesY = @tilemap.length
 			
-			@width  = @mapTilesX * @tileset.size
-			@height = @mapTilesY * @tileset.size
+			@width  = @mapTilesX * @tileset.size[0]
+			@height = @mapTilesY * @tileset.size[1]
 			
 			@prerendered = null
-		
-		get: (number) ->
-			###{
-				x: number % @mapTilesX
-				y:
-			}
-			@tilemap[Math.round number / @cellsY][number % @cellsX]###
-		
+
 		prerender: () ->
+			###
+			tmp = Canvas.createBuffer([@width, @height])
+			tmp.clear()
+			###
 			#console.log @tileset
 			canvas = jQuery('<canvas>').attr width: @width, height: @height
 			canvas.css
-					top:  '-10000px'
-					left: '-10000px'
+					top: '0px'#  '-10000px'
+					left: '0px'# '-10000px'
 					width:  @width + 'px'
 					height: @height + 'px'
 					position: 'absolute'
@@ -36,8 +34,8 @@ define ->
 			
 			cx.clearRect 0, 0, 1024, 768
 			
-			cellsX = @tileset.image.width  / @tileset.size
-			cellsY = @tileset.image.height / @tileset.size
+			cellsX = @tileset.image.width  / @tileset.size[0]
+			cellsY = @tileset.image.height / @tileset.size[1]
 			
 			j = 0 ;; while j < @mapTilesY
 				i = 0 ;; while i < @mapTilesX
@@ -53,6 +51,6 @@ define ->
 					i++
 				j++
 			
-			canvas.css 'display', 'none'
+			#canvas.css 'display', 'none'
 			
 			@prerendered = canvas.get 0
