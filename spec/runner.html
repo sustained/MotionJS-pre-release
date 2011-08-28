@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="../vendor/jasmine/lib/jasmine.js"></script>
 	<script type="text/javascript" src="../vendor/jasmine/src/html/TrivialReporter.js"></script>
 	<script type="text/javascript" src="../vendor/jasmine/src/console/TrivialConsoleReporter.js"></script>
-	<script type="text/javascript" src="../vendor/jasmine-jquery/lib/jasmine-jquery.js"></script>
+	<script type="text/javascript" src="../vendor/jasmine-jquery/jasmine-jquery.js"></script>
 
 	<script src="../lib/init.js"></script>
 
@@ -19,7 +19,7 @@
 jasmine.getFixtures().fixturesPath = 'spec/fixtures';
 
 var requireOptions = motion('/Private/JS/MotionJS/');
-requireOptions.paths.test = '/Private/JS/MotionJS/test/lib/';
+requireOptions.paths.test = '/Private/JS/MotionJS/spec/lib/';
 this.require = requireOptions;
 	</script>
 
