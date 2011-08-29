@@ -107,4 +107,4 @@ define ->
 				
 				$el.bind 'contextmenu', (e) -> e.preventDefault() ; e.stopPropagation()
 			
-			_singleton = @
+			_instance = @
