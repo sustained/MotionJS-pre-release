@@ -37,6 +37,9 @@ define ['utilities/string'], (StringUtils) ->
 			@groupNames.indexOf(name) > -1###
 
 	class Eventful
+		forward: (object, forward = ['on', 'fire']) ->
+			object[i] = @[i].bind @ for i in forward
+
 		binding: null
 		runOnce: null
 		aliases: false
@@ -49,8 +52,6 @@ define ['utilities/string'], (StringUtils) ->
 			@eventNames   = []
 			@eventOptions = {} # event specific options
 
-		#@setup Array::slice.call arguments
-		#setup: (events, options = {}) ->
 			if events?
 				if not isArray events
 					events  = Array::slice.call arguments
