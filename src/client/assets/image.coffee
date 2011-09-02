@@ -3,9 +3,9 @@ define [
 ], (Asset) ->
 	{Event} = Motion
 
-	ImageEvents = new Event()
-
 	class Image extends Asset
+		@event = new Event()
+
 		@STATUS:
 			NONE:    0 # Not loaded yet
 			ERROR:   1 # Error loading
@@ -15,7 +15,6 @@ define [
 		@DEFAULT_EXTENSION: 'png'
 
 		@Batch: null
-		@event: ImageEvents
 
 		@_url: null
 
@@ -37,7 +36,8 @@ define [
 		width:  0
 		height: 0
 
-		toString: -> @constructor.getUrl() + @path + '.' + @extname()
+		toString: ->
+			@constructor.getUrl() + @path + '.' + @extname()
 
 		isLoaded: ->
 			@status is Image.STATUS.LOADED
@@ -81,7 +81,7 @@ define [
 					@batch.event.fire 'load', [@]
 				else
 					Image.event.fire "load:#{@name}"
-				#@asset.css 'display', 'none'
+				@asset.css 'display', 'none'
 
 			#console.log @asset
 			if @domOb.complete is true
