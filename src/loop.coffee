@@ -9,8 +9,8 @@ define ->
 		_running:    false
 
 		_enter:  -> undefined
-		_update: -> undefined
 		_leave:  -> undefined
+		_update: -> undefined
 
 		time:  0
 		tick:  0
@@ -23,6 +23,11 @@ define ->
 
 		loopCount:   0
 		updateCount: 0
+
+		register: (object) ->
+			@_enter  = object.enter
+			@_leave  = object.leave
+			@_update = object.update
 
 		constructor: (options = {}) ->
 			@[k] = v for k,v of options
