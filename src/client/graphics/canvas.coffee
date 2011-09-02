@@ -4,24 +4,31 @@ define ['utilities/object'], (ObjUtils) ->
 	{isString} = _
 
 	class Canvas
-		@_canvases = {}
+		_canvases = {}
+		_bufferId = 0
 
 		_defaultOptions =
 			show: true
 			size: [1024, 768]
-		
-		@create: (name, options = {}) ->
-			return @get name if @isCanvas name
-			return @_canvases[name] = options if options instanceof Canvas
 
-			options = merge _defaultOptions, options
-			return @_canvases[name] = new @ name, options
-		
+		@_create: (name, canvas) ->
+			return _canvases[name] = canvas
+		@log: -> _canvases
+		@buffer: (image) ->
+			if image.isLoaded()
+				name = "motionBuffer#{_bufferId++}"
+				console.log buffer = @_create name, new Canvas name, {
+					size: [image.width, image.height]}
+				buffer.create()
+				if buffer.created
+					buffer.context.drawImage image.domOb, 0, 0
+				buffer
+
 		@isCanvas: (name) ->
-			@_canvases[name]?
+			_canvases[name]?
 
 		@get: (name) ->
-			return @_canvases[name] if @isCanvas name
+			return _canvases[name] if @isCanvas name
 
 		@DEFAULT_DIMENSIONS: [1024, 768]
 
@@ -31,23 +38,26 @@ define ['utilities/object'], (ObjUtils) ->
 		size: null
 		show: null
 
-		fill:   null
-		width:  null
-		stroke: null
+		#fill:   null
+		#width:  null
+		#stroke: null
 
 		canvas:  null # DOM Object
 		$canvas: null # jQuery Object
 		context: null
 
 		created: false
+		queued: false
+
+		getImageData: ->
+			@context.getImageData 0, 0, @size[0], @size[1]
 
 		create: ->
 			if not Motion.READY
-				jQuery =>
-					console.log 'creating canvas'
-					@create()
-				return
-			
+				return if @queued
+				@queued = true
+				return jQuery => @create()
+
 			@$canvas = jQuery('<canvas>')
 				.attr(id: @name, width: @size[0], height: @size[1])
 				.css(
@@ -67,16 +77,18 @@ define ['utilities/object'], (ObjUtils) ->
 			console.log 'canvas created'
 
 		constructor: (name = 'default', options = {}) ->
-			return Canvas.get name if Canvas.isCanvas name
-			options = merge _defaultOptions, options
+			return Canvas.get(name) if Canvas.isCanvas name
+
+			console.log options
+			console.log options = _.defaults _defaultOptions, options
 
 			@id = ++_id
 			@name = "motionCanvas#{@id}"
 			{@size, @show} = options
 
-			Canvas.create name, @
+			Canvas._create name, @
 
-		draw: (style = {}) ->
+		###draw: (style = {}) ->
 			if style.fill
 				@context.fillStyle = style.fill
 				@context.fill()
@@ -160,7 +172,7 @@ define ['utilities/object'], (ObjUtils) ->
 			@context.lineTo vertices[0].i.round(), vertices[0].j.round()
 			@context.closePath()
 
-			@draw style
+			@draw style###
 
 		setSize: (width, height) ->
 			return false if not @created
