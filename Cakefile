@@ -90,7 +90,7 @@ task 'watch:code', 'Toggle code watching.', ->
 	stopWatcher 'code' if false is startWatcher 'code'
 
 task 'watch:spec', 'Toggle spec watching.', ->
-	stopWatcher 'spec' if false is startWatcher 'spec'
+	stopWatcher 'spec' if false is startWatcher 'spec', lib: 'spec/lib/', src: 'spec/src/'
 
 task 'spec:web', 'Run the tests in a browser.', ->
 	exec 'open "http://localhost/Private/JS/MotionJS/spec/runner.html"'
