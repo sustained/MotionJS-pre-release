@@ -1,5 +1,7 @@
+log
+.pid
 wiki
 node_modules
 *.sublime-project
 *.sublime-workspace
-*.log
+npm-debug.log
