@@ -15,10 +15,10 @@ define [
 	root      = if isBrowser then window else global
 
 	return root.Motion if root.Motion?
-
+ 
 	root.Math[k] = v for k,v of _Math
 	root.Math[k] = v for k,v of {Vector, Matrix, Random}
-	
+
 	Motion  = {
 		Event, Class
 
