@@ -1,7 +1,7 @@
 define [
 	'state/state'
 ], (State) ->
-	{extend, defaults, isObject, isFunction} = _
+	{defaults, isArray, isObject, isFunction} = _
 
 	class StateManager
 		focus:     false
@@ -11,12 +11,15 @@ define [
 		log: (log) ->
 			console.log "#{@loop.tick.toFixed 2} [StateManager] #{log}"
 
-		register: (@loop) ->
-			@loop._enter  = @enter.bind  @
-			@loop._leave  = @leave.bind  @
-			@loop._update = @update.bind @
+		register: (_loop) ->
+			return if not isObject _loop
+			_loop._enter  = @enter.bind @
+			_loop._leave  = @leave.bind @
+			_loop._update = @update.bind @
+			@loop = _loop
 
-		constructor: ->
+		constructor: (_loop) ->
+			@register _loop
 			@states  = {}
 			@enabled = []
 			@_active = {}
@@ -47,11 +50,15 @@ define [
 		isEnabled:  (name) -> @enabled.indexOf(name) > -1
 		isDisabled: (name) -> not @isEnabled name
 
+		addAll: (states = [], options = {}) ->
+			for i in states
+				continue if not (isFunction(i) and isObject(i))
+				@add i.name.toLowerCase(), i, options
+			@
+
 		add: (name, klass, options = {}) ->
 			options = defaults options, enable: false, persistent: false
-
 			@log "adding #{name}/#{klass.name}"
-
 			state = null
 
 			if klass instanceof State
