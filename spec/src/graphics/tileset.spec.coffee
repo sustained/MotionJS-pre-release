@@ -2,6 +2,8 @@ define [
 	'client/assets/image'
 	'client/graphics/tileset'
 ], (Image, TileSet) ->
+	return if Motion.env is 'server'
+
 	Image.setUrl '../assets/spec/image/'
 	image = new Image('foo', '3x3_8px_rbg.png').load()
 
