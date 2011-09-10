@@ -78,6 +78,17 @@ stopWatcher = (name) ->
 			removePidFile name
 			cleanLogFile name
 
+listWatcher = (name) ->
+	if isPidFile name
+		pid = parseInt readPidFile name
+		exec "ps -x | grep #{pid} | grep -v grep", (error, stdout, stderr) ->
+			puts stderr if error
+			out = stdout.split /\s+/
+			print "#{name}\t\t#{pid}\t\t#{out[2]}\t\t"
+			puts out.slice(3).join ' '
+	else
+		puts "#{name}\t\toffline\t\t----\t\t----"
+
 task 'watch:start', 'Watch all the things.', ->
 	startWatcher 'code'
 	startWatcher 'spec', lib: 'spec/lib/', src: 'spec/src/'
@@ -86,11 +97,17 @@ task 'watch:stop', 'Un-watch all the things.', ->
 	stopWatcher 'code'
 	stopWatcher 'spec'
 
+task 'watch:list', 'List running watchers.', ->
+	puts "NAME\t\tPROCESS\t\tUPTIME\t\tCOMMAND"
+	listWatcher 'code'
+	listWatcher 'spec'
+
 task 'watch:code', 'Toggle code watching.', ->
 	stopWatcher 'code' if false is startWatcher 'code'
 
 task 'watch:spec', 'Toggle spec watching.', ->
 	stopWatcher 'spec' if false is startWatcher 'spec', lib: 'spec/lib/', src: 'spec/src/'
+
 
 task 'spec:web', 'Run the tests in a browser.', ->
 	exec 'open "http://localhost/Private/JS/MotionJS/spec/runner.html"'
@@ -103,27 +120,24 @@ task 'spec:cli', 'Run the tests on the command-line.', ->
 	test.stderr.on 'data', (data) -> puts data.trim()
 
 
-task 'spec:compile', 'Compile the tests.', ->
-	puts '[Building spec]'
-	puts "$lib = #{spec.lib}"
-	puts "$src = #{spec.src}\n"
-	print 'Cleaning lib directory... '
-
+task 'compile:spec', 'Compile the tests.', ->
+	return if isPidFile 'spec'
+	print "Cleanup lib (#{spec.lib}) .."
 	exec "rm -rf #{spec.lib}*", ->
-		puts 'done!'
-		print 'Compiling src directory... '
-		brew '--compile --bare --output spec/lib/ spec/src/', onexit: -> puts 'done!'
+		puts '.done!'
+		print "Compile src (#{spec.src}) .."
+		brew '-c -b -o spec/lib/ spec/src/', onexit: ->
+			puts '.done!'
 
-task 'code:compile', 'Compile the code.', ->
-	puts '[Building code]'
-	puts "$lib = #{code.lib}"
-	puts "$src = #{code.src}\n"
-	print 'Cleaning lib directory... '
-
+task 'compile:code', 'Compile the code.', ->
+	return if isPidFile 'code'
+	print "Cleanup lib (#{code.lib}) .."
 	exec "rm -rf #{code.lib}*", ->
-		puts "done!"
-		print "Compiling src directory... "
-		brew '--compile --bare --output lib/ src/', onexit: -> puts "done!"
+		puts '.done!'
+		print "Compile src (#{code.src}) .."
+		brew '-c -b -o spec/lib/ spec/src/', onexit: ->
+			puts '.done!'
+
 
 task 'clean', 'Clean. EVERYTHING.', ->
 	invoke 'clean:logs'
@@ -135,4 +149,7 @@ task 'clean:logs', 'Clean log files.', ->
 task 'clean:pids', 'Clean pid files.', ->
 	exec "rm -rf #{pids}*.pid"
 
-task 'sbuild', 'For building from Sublime', -> invoke 'code:compile'
+
+task 'sbuild', 'For building from Sublime', ->
+	invoke 'compile:code'
+	invoke 'compile:spec'
