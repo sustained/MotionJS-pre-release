@@ -50,14 +50,17 @@ cleanLogFile = (name) ->
 
 startWatcher = (name, opts = {}) ->
 	return if not name?
+	return false if isPidFile name
+
 	opts.lib = opts.lib or 'lib/'
 	opts.src = opts.src or 'src/'
 	opts.log = opts.log or "#{name}.log"
+	opts.cmd = opts.cmd or "coffee -c -b -w -o #{opts.lib} #{opts.src}"
 
-	return false if isPidFile name
-
-	exec "coffee -c -b -w -o #{opts.lib} #{opts.src} >> #{logs}#{opts.log} 2>&1 & echo $!",
-	cwd: __dirname, (error, stdout, stderr) ->
+	opts.cmd += " >> #{logs}#{opts.log} 2>&1" if true #shouldLog
+	opts.cmd += " & echo $!"
+	console.log "command - #{opts.cmd}"
+	exec opts.cmd, cwd: __dirname, (error, stdout, stderr) ->
 		if error
 			console.log "Error running coffee: #{stderr}"
 		else
@@ -84,10 +87,10 @@ listWatcher = (name) ->
 		exec "ps -x | grep #{pid} | grep -v grep", (error, stdout, stderr) ->
 			puts stderr if error
 			out = stdout.split /\s+/
-			print "#{name}\t\t#{pid}\t\t#{out[2]}\t\t"
+			print "#{name}\t\t#{pid}\t\t"
 			puts out.slice(3).join ' '
 	else
-		puts "#{name}\t\toffline\t\t----\t\t----"
+		puts "#{name}\t\toffline\t\t-------"
 
 task 'watch:start', 'Watch all the things.', ->
 	startWatcher 'code'
@@ -98,7 +101,7 @@ task 'watch:stop', 'Un-watch all the things.', ->
 	stopWatcher 'spec'
 
 task 'watch:list', 'List running watchers.', ->
-	puts "NAME\t\tPROCESS\t\tUPTIME\t\tCOMMAND"
+	puts "NAME\t\tPROCESS\t\tCOMMAND"
 	listWatcher 'code'
 	listWatcher 'spec'
 
