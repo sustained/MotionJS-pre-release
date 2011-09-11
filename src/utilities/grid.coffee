@@ -15,16 +15,31 @@ define ->
 		cols: null
 		size: null
 
-		constructor: (@_grid, options = {}) ->
-			if isArray @_grid[0]
-				@rows  = @_grid[0].length
-				@cols  = @_grid.length
-				@_grid = flatten @_grid
+		set: (grid, options = {}) ->
+			if isArray grid[0]
+				@rows = grid[0].length
+				@cols = grid.length
+				grid = flatten grid
 			else
 				@rows = options.width
-				@cols = floor @_grid.length / @rows
+				@cols = floor grid.length / @rows
 
 			@size = @rows * @cols
+			@_grid = grid
+
+		constructor: (grid, options = {}) ->
+			@set grid, options if grid?
+
+		setRandom: (options = {}) ->
+			grid = []
+			size = options.rows*options.cols
+
+			i = 0
+			while i < size
+				grid.push Math.round Math.rand() * 9
+				i++
+
+			@set grid, width: options.rows
 
 		getCell: (x, y) ->
 			index = (@rows * y) + x
