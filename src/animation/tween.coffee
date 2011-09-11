@@ -78,8 +78,12 @@ define [
 			@start  = start if start?
 			@change = @calculateChange() if @start? and @end?
 
-		constructor: (opts = {}) ->
-			@setObject opts.object, opts.property
+		constructor: (opts = {}, opts2 = {}) ->
+			if isArray opts
+				@setObject opts[0], opts[1]
+				opts = opts2
+			else
+				@setObject opts.object, opts.property
 
 			ref = @getReference()
 
