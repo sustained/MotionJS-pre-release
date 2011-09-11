@@ -3,24 +3,19 @@ define ->
 		
 
 	class TileMap
+		prerendered: false
+
 		constructor: (@tileset, @tilemap) ->
-			@screenTilesX = 1024 / @tileset.size[0]
-			@screenTilesY =  768 / @tileset.size[1]
-			
-			@mapTilesX = @tilemap[0].length
-			@mapTilesY = @tilemap.length
-			
-			@width  = @mapTilesX * @tileset.size[0]
-			@height = @mapTilesY * @tileset.size[1]
-			
-			@prerendered = null
+			@rows   = @tilemap.rows
+			@cols   = @tilemap.cols
+			#@width  = @rows * @tileset.size[0]
+			#@height = @cols * @tileset.size[1]
+			@cellW  = @tileset.size[0]
+			@cellH  = @tileset.size[1]
+			@cellsX = @tileset.cellsX
+			@cellsY = @tileset.cellsY
 
 		prerender: () ->
-			###
-			tmp = Canvas.createBuffer([@width, @height])
-			tmp.clear()
-			###
-			#console.log @tileset
 			canvas = jQuery('<canvas>').attr width: @width, height: @height
 			canvas.css
 					top: '0px'#  '-10000px'
@@ -31,26 +26,28 @@ define ->
 			canvas.appendTo 'body'
 			
 			cx = canvas.get(0).getContext '2d'
-			
 			cx.clearRect 0, 0, 1024, 768
-			
-			cellsX = @tileset.image.width  / @tileset.size[0]
-			cellsY = @tileset.image.height / @tileset.size[1]
-			
-			j = 0 ;; while j < @mapTilesY
-				i = 0 ;; while i < @mapTilesX
-					tileNumber = @tilemap[j][i]
-					if tileNumber > 0
-						sX = ((tileNumber - 1) % cellsX) * 16
-						sY = Math.floor((tileNumber - 1) / cellsX) * 16
-						dX = i * 16
-						dY = j * 16
+
+			j = 0
+			while j < @cols
+				i = 0
+				while i < @rows
+					cell = @tilemap.getCell i, j
+
+					if cell isnt false and cell > 0
+						sX = ((cell - 1) % @cellsX) * @cellW
+						sY = Math.floor((cell - 1) / @cellsX) * @cellH
+						dX = i * @cellW
+						dY = j * @cellH
+
 						cx.beginPath()
-						cx.drawImage @tileset.image.domOb, sX, sY, 16, 16, dX, dY, 16, 16
+						cx.drawImage @tileset.image.domOb, \
+							sX, sY, @cellW, @cellH,
+							dX, dY, @cellW, @cellH
 						cx.closePath()
 					i++
 				j++
-			
+
 			#canvas.css 'display', 'none'
-			
+
 			@prerendered = canvas.get 0
