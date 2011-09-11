@@ -8,8 +8,8 @@ define ->
 		constructor: (@tileset, @tilemap) ->
 			@rows   = @tilemap.rows
 			@cols   = @tilemap.cols
-			#@width  = @rows * @tileset.size[0]
-			#@height = @cols * @tileset.size[1]
+			@width  = @rows * @tileset.size[0]
+			@height = @cols * @tileset.size[1]
 			@cellW  = @tileset.size[0]
 			@cellH  = @tileset.size[1]
 			@cellsX = @tileset.cellsX
