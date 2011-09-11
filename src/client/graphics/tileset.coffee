@@ -43,7 +43,7 @@ define [
 				if @image.isLoaded()
 					countCells()
 				else
-					#@image.event.on 'loaded', countCells
+					@image.event.on 'loaded', => countCells()
 			else
 				@cellsX = @cellsY = -1
 

@@ -13,7 +13,7 @@ define ['utilities/object'], (ObjUtils) ->
 
 		@_create: (name, canvas) ->
 			return _canvases[name] = canvas
-		@log: -> _canvases
+
 		@buffer: (image) ->
 			if image.isLoaded()
 				name = "motionBuffer#{_bufferId++}"
