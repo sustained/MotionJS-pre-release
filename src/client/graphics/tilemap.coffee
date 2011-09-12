@@ -15,6 +15,12 @@ define ->
 			@cellsX = @tileset.cellsX
 			@cellsY = @tileset.cellsY
 
+		render: (g) ->
+			if @prerendered
+				g.beginPath()
+				g.drawImage @prerendered, 0, 0
+				g.closePath()
+
 		prerender: () ->
 			canvas = jQuery('<canvas>').attr width: @width, height: @height
 			canvas.css
@@ -48,6 +54,6 @@ define ->
 					i++
 				j++
 
-			#canvas.css 'display', 'none'
+			canvas.css 'display', 'none'
 
 			@prerendered = canvas.get 0
