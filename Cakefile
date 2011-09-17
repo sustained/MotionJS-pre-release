@@ -119,8 +119,8 @@ task 'spec:cli', 'Run the tests on the command-line.', ->
 	test = spawn 'npm', ['test'], cwd: __dirname
 	test.stderr.setEncoding 'utf8'
 	test.stdout.setEncoding 'utf8'
-	test.stdout.on 'data', (data) -> puts data.trim()
-	test.stderr.on 'data', (data) -> puts data.trim()
+	test.stdout.on 'data', (data) -> print data
+	test.stderr.on 'data', (data) -> print data
 
 
 task 'compile:spec', 'Compile the tests.', ->
