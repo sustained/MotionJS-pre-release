@@ -1,6 +1,6 @@
 define ->
 	class Tile
-		
+
 
 	class TileMap
 		prerendered: false
@@ -30,9 +30,9 @@ define ->
 					height: @height + 'px'
 					position: 'absolute'
 			canvas.appendTo 'body'
-			
+
 			cx = canvas.get(0).getContext '2d'
-			cx.clearRect 0, 0, 1024, 768
+			cx.clearRect 0, 0, @width, @height
 
 			j = 0
 			while j < @cols
