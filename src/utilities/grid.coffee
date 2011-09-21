@@ -1,10 +1,13 @@
 define ->
-	{floor} = Math
-	{isArray, flatten} = _
+	{floor, round, random} = Math
+	{isArray, isObject, isNumber, flatten} = _
 
 	class Cell
-		constructor: ->
+		@TYPES:
+			OBJECT: 1 << 1
+			NUMBER: 1 << 2
 
+		constructor: ->
 
 	class Grid
 		@Cell: Cell
@@ -15,36 +18,64 @@ define ->
 		cols: null
 		size: null
 
-		set: (grid, options = {}) ->
-			if isArray grid[0]
-				@rows = grid[0].length
-				@cols = grid.length
+		setGrid: (grid = [], width = null) ->
+			return false if not isArray(grid)
+
+			if isArray(grid[0])
+				rows = grid.length
+				cols = grid[0].length
 				grid = flatten grid
 			else
-				@rows = options.width
-				@cols = floor grid.length / @rows
+				if not width
+					console.log 'Specify width for 1d grid'
+					return
+				rows = width
+				cols = if rows <= 0 then 0 else
+					floor grid.length / rows
 
-			@size = @rows * @cols
 			@_grid = grid
+			@setSize rows, cols
 
-		constructor: (grid, options = {}) ->
-			@set grid, options if grid?
+		setSize: (rows = null, cols = null) ->
+			@rows = rows if rows?
+			@cols = cols if cols?
+			@size = @rows * @cols
 
-		setRandom: (options = {}) ->
+		constructor: (options = {}) ->
+			if options.grid?
+				@setGrid options.grid, options.width
+			else
+				@setSize options.rows, options.cols
+
+			if options.fill
+				@setRandom options.fill
+
+		__randomCallback: -> round(random())
+
+		setRandom: (callback = @__randomCallback) ->
+			if not @size
+				console.log 'setSize first'
+				return
+
 			grid = []
-			size = options.rows*options.cols
 
 			i = 0
-			while i < size
-				grid.push Math.round Math.rand() * 9
+			while i < @size
+				grid.push callback()
 				i++
 
-			@set grid, width: options.rows
+			@setGrid grid, @rows
+
+		setCell: (x, y, value) ->
+			index = (@rows * y) + x
+			@_grid[index] = value
 
 		getCell: (x, y) ->
 			index = (@rows * y) + x
 			return false if index < 0 or index > @size
+
 			return @_grid[index]
 
 		isPassable: (x, y) ->
-			(x > -1 and x < @rows) and (y > -1 and y < @cols) and @getCell(x, y) is 0
+			# (x > -1 and x < @rows) and (y > -1 and y < @cols) and
+			@getCell(x, y) is 0
