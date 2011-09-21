@@ -1,7 +1,8 @@
 define [
 	'utilities/astar'
-], (AStar) ->
-	$grid = [
+	'utilities/grid'
+], (AStar, Grid) ->
+	map = [
 		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]
 		[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 		[0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0]
@@ -20,14 +21,14 @@ define [
 		[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 	]
 
-	console.log grid = new AStar.Grid $grid
+	console.log grid  = new Grid map
 	console.log astar = new AStar grid
 
 	randomPoint = ->
 		loop
 			x = Math.floor Math.random() * grid.rows
 			y = Math.floor Math.random() * grid.cols
-			break if $grid[y][x] is 0
+			break if map[y][x] is 0
 		[x, y]
 
 	from = randomPoint()
@@ -40,14 +41,14 @@ define [
 			})
 		tbody = jQuery('tbody', table)
 
-		j = 0 
-		while j < $grid.length
+		j = 0
+		while j < map.length
 			tr = jQuery('<tr></tr>')
 
-			i = 0 
-			while i < $grid[0].length
+			i = 0
+			while i < map[0].length
 				td = jQuery("<td data-x='#{i}' data-y='#{j}'></td>")#.html("#{i},#{j}")
-				td.addClass 'impassableCell' if $grid[j][i] is 1
+				td.addClass 'impassableCell' if map[j][i] is 1
 				tr.append td
 				i++
 			tbody.append tr
