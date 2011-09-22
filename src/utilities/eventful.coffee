@@ -56,9 +56,10 @@ define ['utilities/string'], (StringUtils) ->
 				if not isArray events
 					events  = Array::slice.call arguments
 					options = if isObject(events[events.length - 1]) then events.pop() else {}
-				
+
 				@add events
 
+			@runOnce = options.runOnce or false
 			@aliases = options.aliases or false
 			@binding = options.binding or null
 
@@ -87,6 +88,9 @@ define ['utilities/string'], (StringUtils) ->
 			group: @group###
 
 			@
+
+		once: (name, callback, args) ->
+			@on name, callback, once: true, args: args
 
 		add: (name, options = {}) ->
 			if isArray(name)
