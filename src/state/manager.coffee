@@ -4,9 +4,20 @@ define [
 	{defaults, isArray, isObject, isFunction} = _
 
 	class StateManager
+		_sharedData = {}
+
+		states:  null
+		enabled: null
+
 		focus:     false
 		paused:    false
-		pauseloop: true
+		pauseLoop: true
+
+		setData: (key, value) ->
+			_sharedData[key] = value
+
+		getData: (key) ->
+			_sharedData[key] or false
 
 		log: (log) ->
 			console.log "#{@loop.tick.toFixed 2} [StateManager] #{log}"
@@ -32,13 +43,13 @@ define [
 		pause: ->
 			@log 'pausing'
 			@paused = true
-			@loop.pause() if @pauseloop is true
+			@loop.pause() if @pauseLoop
 			@
 
 		play: ->
 			@log 'playing'
 			@paused = false
-			@loop.play() if @pauseloop is true
+			@loop.play() if @pauseLoop
 			@
 
 		get: (name) ->
@@ -48,7 +59,7 @@ define [
 
 		isState:    (name) -> @get(name) isnt false
 		isEnabled:  (name) -> @enabled.indexOf(name) > -1
-		isDisabled: (name) -> not @isEnabled name
+		isDisabled: (name) -> @enabled.indexOf(name) is -1
 
 		addAll: (states = [], options = {}) ->
 			for i in states
@@ -76,7 +87,7 @@ define [
 
 				state.update = methods.update if isFunction methods.update
 				state.render = methods.render if isFunction methods.render
-			
+
 			return false if not state?
 
 			@states[name] = state
@@ -97,7 +108,7 @@ define [
 			#return false if not state or @_active[name]?
 			#@_active[name] = state
 			#debugger
-			
+
 			@enabled.push name
 			state.event.fire 'focus'
 
@@ -119,7 +130,7 @@ define [
 			state.event.fire 'blur'
 
 			@
-		
+
 		enter: ->
 			for name in @enabled
 				state = @get name
