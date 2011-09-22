@@ -17,6 +17,9 @@ define ->
 				@down 0
 			first
 
+		clear: ->
+			@_heap = []
+
 		remove: (node) ->
 			length = @_heap.length
 			for i in @_heap
