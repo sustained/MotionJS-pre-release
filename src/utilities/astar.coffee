@@ -150,6 +150,14 @@ define [
 		weightedDistance: (uno, dos) ->
 			return if diagonal(uno, dos) then 10 else 14
 
+		nodeToPath: (node) ->
+			path = []
+			path.push node.position
+			path.push node.position while node = node.parent
+			path.reverse()
+			path.splice 0, 1
+			path
+
 		search: (@from, @goal) ->
 			@addOpenNode new Node from
 
@@ -157,6 +165,8 @@ define [
 				node = @open.pop()
 
 				if node.position[0] is goal[0] and node.position[1] is goal[1]
+					@open.clear()
+					@closed = {}
 					return node
 
 				directions = @getDirections node.position
@@ -170,4 +180,7 @@ define [
 						if known
 							@open.remove known
 						@addOpenNode new Node direction, node, length
+
+			@open.clear()
+			@closed = {}
 			return
