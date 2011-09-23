@@ -25,17 +25,17 @@ define ->
 		updateCount: 0
 
 		register: (object) ->
-			@_enter  = object.enter
-			@_leave  = object.leave
-			@_update = object.update
+			@_enter = object.enter
+			@_frame = object.update
+			@_leave = object.leave
 
 		constructor: (options = {}) ->
 			@[k] = v for k,v of options
 
-			@fps    = throttle @frameRate, 1000
+			@fps    = throttle @frameRate, 250
 			@time   = Date.now()
 			@deltas = []
-			@event  = new Event ['enterFrame', 'leaveFrame'], binding: @
+			@event  = new Event ['enter', 'frame', 'leave'], binding: @
 
 		start: ->
 			return if @_running is true
@@ -59,16 +59,15 @@ define ->
 		restart: ->
 			@stop() ; @reset() ; @start()
 
-		frameRate: ->
-			#length  = @deltas.length
-			#average = 0
-			#average += i for i in @deltas
-
-			#@loopRate   = (1 / (average / length)).toFixed 0
-			#@updateRate = 1.0 / @delta
+		###frameRate: ->
+			length  = @deltas.length
+			average = 0
+			average += i for i in @deltas
+			@loopRate   = (1 / (average / length)).toFixed 0
+			@updateRate = 1.0 / @delta###
 
 		loop: ->
-			@event.fire 'enterFrame'
+			@event.fire 'enter'
 			@_enter()
 
 			time    = Date.now()
@@ -83,11 +82,12 @@ define ->
 			@accum += delta
 
 			while @accum >= @delta
+				@event.fire 'frame', [@delta, @tick]
 				@_update()
 				@updateCount++
 				@tick  += @delta
 				@accum -= @delta
 
 			#@alpha = @accum / @delta
-			@event.fire 'leaveFrame'
+			@event.fire 'leave'
 			@_leave()
