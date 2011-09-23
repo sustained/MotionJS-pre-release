@@ -5,9 +5,9 @@ define ->
 	class TileMap
 		prerendered: false
 
-		constructor: (@tileset, @tilemap) ->
-			@rows   = @tilemap.rows
-			@cols   = @tilemap.cols
+		constructor: (@tileset, @grid) ->
+			@rows   = @grid.rows
+			@cols   = @grid.cols
 			@width  = @rows * @tileset.size[0]
 			@height = @cols * @tileset.size[1]
 			@cellW  = @tileset.size[0]
@@ -38,7 +38,7 @@ define ->
 			while j < @cols
 				i = 0
 				while i < @rows
-					cell = @tilemap.getCell i, j
+					cell = @grid.getCell i, j
 
 					if cell isnt false and cell > 0
 						sX = ((cell - 1) % @cellsX) * @cellW
