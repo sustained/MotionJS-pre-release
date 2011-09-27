@@ -15,7 +15,7 @@ define [
 	root      = if isBrowser then window else global
 
 	return root.Motion if root.Motion?
- 
+
 	root.Math[k] = v for k,v of _Math
 	root.Math[k] = v for k,v of {Vector, Matrix, Random}
 
@@ -32,6 +32,25 @@ define [
 	}
 
 	#Motion.event = new Eventful ['dom', 'load'], binding: Motion
+
+	_prefixes = ['webkit', 'moz', 'o', 'ms']
+
+	root.requestAnimFrame = (->
+		postfix = 'AnimationFrame'
+		_prefixes.unshift 'request'
+		for i in _prefixes
+			return root[i+postfix] if root[i+postfix]?
+		return (callback, element) -> root.setTimeout callback, 1000 / 60
+	)()
+
+	root.cancelAnimFrame = ((handle) ->
+		if root.cancelAnimationFrame?
+			return root.cancelAnimationFrame handle.value
+		postfix = 'CancelRequestAnimationFrame'
+		for i in _prefixes
+			return root[i+postfix] if root[i+postfix]?
+		return clearInterval handle
+	)()
 
 	if Motion.env is 'client'
 		jQuery(document).ready -> Motion.READY  = true
