@@ -3,8 +3,9 @@ define ->
 	{throttle} = _
 
 	class Loop
-		@INTERVAL_WAIT: 5
+		@INTERVAL_WAIT: 1000/60
 
+		_animFrame:  null
 		_intervalId: null
 		_running:    false
 
@@ -41,12 +42,13 @@ define ->
 			return if @_running is true
 			@time        = Date.now()
 			@_running    = true
-			@_intervalId = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
+			#@_intervalId = requestInterval @loop.bind(@), Loop.INTERVAL_WAIT
+			@_animFrame = requestAnimFrame @loop.bind @
 
 		stop: ->
 			return if @_running is false
 			@_running = false
-			Motion.root.clearInterval @_intervalId
+			cancelAnimFrame @_animFrame
 
 		play:  @::start
 		pause: @::stop
@@ -91,3 +93,5 @@ define ->
 			#@alpha = @accum / @delta
 			@event.fire 'leave'
 			@_leave()
+
+			@_animFrame = requestAnimFrame @loop.bind @
