@@ -1,3 +1,4 @@
+#
 define [
 	'game'
 ], (Game) ->
@@ -11,7 +12,7 @@ define [
 
 		constructor: (config = {}) ->
 			return _instance if _instance?
-			
+
 			super Object.merge ServerGame.DEFAULT_OPTIONS, config
-			
+
 			_instance = @

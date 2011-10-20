@@ -1,3 +1,4 @@
+#
 define [
 	'loop'
 ], (Loop) ->

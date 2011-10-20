@@ -1,3 +1,4 @@
+#
 define ->
 	###
 		BaseClass for Image, Audio, Video

@@ -1,3 +1,4 @@
+#
 define ->
 	class Renderer
 		bind: null
@@ -9,13 +10,13 @@ define ->
 		constructor: (options = {}) ->
 			@renderers = []
 			@setOptions options
-		
+
 		setOptions: (options = {}) ->
 			Object.extend @, Object.extend {bind: null, args: []}, options
-		
+
 		log: (log) ->
 			console.log "Renderer: #{log}"
-		
+
 		add: (callback, options = {}) ->
 			options = Object.extend {
 				bind: options.bind or @bind or null
@@ -24,7 +25,7 @@ define ->
 
 			@renderers.push callback.bind.apply(callback,
 				[options.bind or @binding].concat(options.args or []))
-		
+
 		remove: (index) ->
 			if @isRenderer index
 				@disable index
@@ -32,23 +33,23 @@ define ->
 
 		isRenderer: (index) ->
 			@renderers[index]?
-		
+
 		isEnabled: (index) ->
 			@enabled[index] or false
-		
+
 		isDisabled: ->
 			not @isEnabled()
-		
+
 		enable: (index) ->
 			if @isDisabled index
 				@log "enabling callback #{index}"
 				@enabled.push index
-			
+
 		disable: (index) ->
 			if @isEnabled index
 				@log "disabling callback #{index}"
 				@enabled.splice index, 1
-		
+
 		render: ->
 			i.apply false for i in @renderers
 			return

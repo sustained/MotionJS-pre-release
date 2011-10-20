@@ -1,3 +1,4 @@
+#
 isBrowser = window? and document? and navigator?
 root      = if isBrowser then window else global
 

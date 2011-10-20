@@ -1,3 +1,4 @@
+#
 define ->
 	resolveDotPath = (string, object) ->
 		string   = string.split '.'

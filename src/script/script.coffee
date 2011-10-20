@@ -1,3 +1,4 @@
+#
 define ->
 	class Script
 		constructor: ->
@@ -5,7 +6,7 @@ define ->
 		update: ->
 
 		render: ->
-		
+
 		enqueue: ->
 
 		dequeue: ->

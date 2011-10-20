@@ -1,7 +1,8 @@
+#
 define ->
 	return null
-	
-	class Matrix			
+
+	class Matrix
 		height: ->
 			@m.length
 
@@ -22,7 +23,7 @@ define ->
 			[1, 0]
 			[0, 1]
 		]
-		
+
 		@Zero = new @ [
 			[0, 0]
 			[0, 0]
@@ -32,14 +33,14 @@ define ->
 			super()
 
 		add: ->
-			
+
 
 		subtract: ->
-			
+
 
 		multiply: (x) ->
 			if isArray x
-				
+
 			else
 				@m = [
 					[@m[0][0] * s, @m[0][1] * s]
@@ -64,7 +65,7 @@ define ->
 
 		constructor: (@m = @Identity) ->
 			super()
-	
+
 	Math.Matrix = Matrix if not Math.Matrix?
 
 	{Matrix, Matrix2, Matrix3}

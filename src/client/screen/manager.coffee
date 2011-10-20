@@ -1,3 +1,4 @@
+#
 define [
 	'state/manager'
 ], (StateManager) ->
@@ -6,7 +7,7 @@ define [
 
 		_focus: false
 		zIndex: null
-		
+
 		constructor: ->
 			super
 
@@ -14,9 +15,9 @@ define [
 				low:  0
 				high: 0
 				curr: 0
-			
+
 			@setup()
-		
+
 		###
 		add: (name, klass, options = {}) ->
 			super name, klass, options

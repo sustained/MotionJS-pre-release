@@ -1,3 +1,4 @@
+#
 define ->
 	isString = (object) -> object? and Object::toString.call(object) is '[object String]'
 
@@ -5,7 +6,7 @@ define ->
 			string = "#{string}"
 			string = padding + string while string.length < length
 			string
-		
+
 	ord = (char) ->
 		char.charCodeAt 0
 

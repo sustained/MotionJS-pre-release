@@ -1,3 +1,4 @@
+#
 define [
 	'client/assets/image'
 	'client/graphics/tileset'
@@ -30,9 +31,9 @@ define [
 				tileset = new TileSet('baz')
 				expect(tileset.size[0]).toEqual 16
 				expect(tileset.size[1]).toEqual 16
-			
+
 			xit 'should also accept an array (width/height) for size', ->
 				tileset = new TileSet('quux', size:[16, 24])
 
 	describe 'drawTile', ->
-		
+

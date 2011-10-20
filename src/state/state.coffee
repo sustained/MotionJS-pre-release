@@ -1,3 +1,4 @@
+#
 define [
 	'utilities/eventful'
 ], (Event) ->

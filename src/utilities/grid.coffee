@@ -1,3 +1,4 @@
+#
 define ->
 	{floor, round, random} = Math
 	{isArray, isObject, isNumber, flatten} = _

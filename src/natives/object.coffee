@@ -1,3 +1,4 @@
+#
 define ->
 	isObject = (object) -> object? and Object::toString.call(object) is '[object Object]'
 
@@ -6,7 +7,7 @@ define ->
 		for key, val of objectB
 			continue if overwrite is off and key of objectA
 			objectA[key] = val
-		
+
 		objectA
 
 	# Extend a constructor's prototype with an object
@@ -21,7 +22,7 @@ define ->
 				cloned[k] = clone object[k]
 			else
 				cloned[k] = object[k]
-		
+
 		cloned
 
 	count = (object) ->
@@ -38,7 +39,7 @@ define ->
 				merged[k] = if Object.isObject b[k] then Object.merge a[k], b[k] else b[k]
 			catch e
 				merged[k] = b[k]
-		
+
 		merged
-	
+
 	{isObject, extend, include, clone, count, merge}

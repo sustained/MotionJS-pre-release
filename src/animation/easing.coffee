@@ -1,5 +1,6 @@
+#
 define ->
-	Easing = 
+	Easing =
 		linear: (t) -> t
 		smooth: (t) -> t*t * (3 - 2 * t)
 		average: (t, e, s = 5) -> # time, end (target), slowdown factor

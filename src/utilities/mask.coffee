@@ -1,3 +1,4 @@
+#
 define ->
 	class Mask
 		constructor: (mask) ->

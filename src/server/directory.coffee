@@ -1,3 +1,4 @@
+#
 define [
 	'path'
 	'server/file'
@@ -5,18 +6,18 @@ define [
 	class Directory
 		sync:  false
 		cache: null
-		
+
 		_exists: false
-		
+
 		setup: ->
-			
-		
+
+
 		toString: ->
 			@dir
-		
+
 		constructor: (dir) ->
 			@setDirectory dir
-		
+
 		setDirectory: (dir) ->
 			if @_exists = path.existsSync dir
 				dir += '/' if dir.substr -1 isnt '/'
@@ -24,7 +25,7 @@ define [
 				@setup()
 				@
 			false
-		
+
 		to: (dir, morph = false) ->
 			dir = path.resolve @dir, dir
 			console.log "moving from #{@dir} to #{dir}"
@@ -32,29 +33,29 @@ define [
 				return @setDirectory dir
 			else
 				return new Directory dir
-		
+
 		up: (morph = false) ->
 			@to '../', morph
-		
+
 		exists: ->
 			@_exists
-		
+
 		children: (options) ->
-			
-		
+
+
 		files: (options) ->
 			return false if not @exists()
-			
+
 			options = $M.extend {
 				recursive: false
 			}, options
-			
+
 			fs.readdirSync @dir
-		
+
 		directories: (options) ->
-			
-		
-	
+
+
+
 	Directory
 
 ###

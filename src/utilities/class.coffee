@@ -1,3 +1,4 @@
+#
 define [
 	'utilities/classutils'
 ], (ClassUtils) ->

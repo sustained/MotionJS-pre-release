@@ -1,3 +1,4 @@
+#
 define ['core'], ->
 	describe 'Core - Sanity Checks', ->
 		it 'Motion should exist', -> expect(Motion).toBeDefined()

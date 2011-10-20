@@ -1,3 +1,4 @@
+#
 define ->
 	class BinaryHeap
 		_defaultScore = (v) -> v

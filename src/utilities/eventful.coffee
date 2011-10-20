@@ -1,3 +1,4 @@
+#
 define ['utilities/string'], (StringUtils) ->
 	{extend, isArray, isObject, isFunction} = _
 	{capitalize} = StringUtils

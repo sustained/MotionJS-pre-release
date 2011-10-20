@@ -1,3 +1,4 @@
+#
 define ->
 	{Vector} = Math
 
@@ -30,17 +31,17 @@ define ->
 				@reset()
 
 			@frameTime = 0
-		
+
 		play: () ->
 			@paused = false
-		
+
 		pause: ->
 			@paused = true
-		
+
 		reset: ->
 			@setFrame @sequence[0]
 			@frameTime = 0
-		
+
 		update: (dt, t) ->
 			return if @paused is true or @static is true
 			@time += dt
@@ -48,18 +49,18 @@ define ->
 			if @time > @frameTime + @duration
 				newFrame   = @frameIndex + 1
 				@frameTime = @time
-				
+
 				if newFrame > @sequence.length - 1
 					@frame      = @sequence[0]
 					@frameIndex = 0
 				else
 					@frame      = @sequence[newFrame]
 					@frameIndex = newFrame
-		
+
 		setFrame: (frame) ->
 			@frame      = frame
 			@frameIndex = @sequence.indexOf frame
-		
+
 		render: (g) ->
 			@posRender.copy(@position).floor()
 

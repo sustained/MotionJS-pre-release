@@ -1,3 +1,4 @@
+#
 define [
 	'client/screen/screen'
 	'client/assets/batch'
@@ -38,18 +39,18 @@ define [
 				@textLoaded  = spans.eq 0
 				@textToLoad  = spans.eq 1
 				@textLoading = spans.eq 2
-			
+
 			@batch = new Batch()
 
 			#@setAssets @assets if isObject @assets
-		
+
 		setAssets: (assets = {}) ->
 			@batch.add(assets.image, 'image')
 			#@batch.add @assets.audio, 'audio' if isObject @assets.audio
 			#@batch.add @assets.video, 'video' if isObject @assets.video
 			@batch.event.on 'load', =>
 				@textLoaded.text @batch.isLoad
-			
+
 			@batch.event.on 'loaded', =>
 				@loaded()
 
@@ -60,15 +61,15 @@ define [
 
 		focus: ->
 			@_loadText.show()
-		
+
 		blur: ->
 			@_loadText.hide()
-		
+
 		load: ->
 			@batch.load()
-		
+
 		loaded: ->
-		
+
 		update: (delta) ->
 			@manager.loop.fps()
 

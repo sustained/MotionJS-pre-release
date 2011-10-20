@@ -1,3 +1,4 @@
+#
 define ->
 	# speed of light
 	C = 299792458.0
