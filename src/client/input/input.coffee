@@ -1,4 +1,3 @@
-#
 ###
 InputDevice -
 	Keyboard
@@ -44,7 +43,7 @@ class StateMain extends Screen
 	disable: -> Input.disable 'main'
 
 	input: (Input) ->
-		if Input.action
+		if Input.action 
 if Input.key('a', [])
 
 ###
@@ -75,7 +74,7 @@ define [
 			group of @_actions and name of @_actions[group]
 
 		addDevice: (device) ->
-
+			
 
 		enableDevice:  (device) ->
 		disableDevice: (device) ->
@@ -85,7 +84,7 @@ define [
 				group = 'default'
 			else
 				[name, group] = name.split '.'
-
+			
 			actions = [actions] if not _.isArray actions
 
 			@_actions[group][name] = [] if not isAction name, group

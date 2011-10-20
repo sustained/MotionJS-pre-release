@@ -1,4 +1,3 @@
-#
 define ['utilities/object'], (ObjUtils) ->
 	{merge} = ObjUtils
 	{Vector} = Math

@@ -1,4 +1,3 @@
-#
 define ->
 	{Event} = Motion
 	{throttle} = _

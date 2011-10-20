@@ -1,4 +1,3 @@
-#
 define [
 	'client/assets/image'
 	'client/graphics/tileset'
@@ -15,4 +14,4 @@ define [
 		describe 'construction', ->
 			it 'should fall back to sensible defaults for missing options', ->
 				anim = new TSAnim()
-
+ 

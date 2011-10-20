@@ -1,6 +1,5 @@
-#
 define ->
 	class File
-
-
+		
+	
 	File

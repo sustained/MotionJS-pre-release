@@ -1,4 +1,3 @@
-#
 define [
 	'utilities/binaryheap'
 ], (BinaryHeap) ->

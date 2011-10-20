@@ -1,4 +1,3 @@
-#
 define [
 	'client/assets/image'
 ], (Image) ->
@@ -20,7 +19,7 @@ define [
 				_instances[name] = null
 				return true
 			return false
-
+		
 		cellsX: null
 		cellsY: null
 

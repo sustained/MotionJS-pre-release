@@ -1,4 +1,3 @@
-#
 fs   = require 'fs'
 sys  = require 'sys'
 path = require 'path'

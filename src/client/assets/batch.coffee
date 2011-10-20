@@ -1,4 +1,3 @@
-#
 define [
 	'client/assets/audio'
 	'client/assets/image'

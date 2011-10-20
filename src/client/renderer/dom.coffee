@@ -1,4 +1,3 @@
-#
 define [
 	'client/renderer/renderer'
 ], (Renderer) ->

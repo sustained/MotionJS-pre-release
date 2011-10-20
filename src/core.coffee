@@ -1,4 +1,3 @@
-#
 define [
 	'natives/math'
 	'math/vector'

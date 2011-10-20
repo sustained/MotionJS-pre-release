@@ -1,4 +1,3 @@
-#
 define ->
 	{isArray, isObject} = _
 

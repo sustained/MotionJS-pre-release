@@ -1,4 +1,3 @@
-#
 define [
 	'state/state'
 ], (State) ->
@@ -9,7 +8,7 @@ define [
 
 		transitionIn:  null
 		transitionOut: null
-
+		
 		constructor: ->
 			super
 			@zIndex = ++_zIndex
@@ -39,7 +38,7 @@ define [
 			return if @zIndex > high
 			@zIndex = high + 1
 			@el.css 'z-index', @zIndex
-
+		
 		toBottom: ->
 			low = 0
 			@manager.forEach (state, name) =>

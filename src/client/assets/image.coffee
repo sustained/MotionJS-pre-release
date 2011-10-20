@@ -1,4 +1,3 @@
-#
 define [
 	'client/assets/asset'
 ], (Asset) ->
@@ -60,7 +59,7 @@ define [
 				jQuery => @load()
 
 			_instances[name] = @
-
+		
 		loaded: (fn = ->) ->
 			@_loaded = fn.bind @
 

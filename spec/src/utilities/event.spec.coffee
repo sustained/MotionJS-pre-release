@@ -1,4 +1,3 @@
-#
 define ['core'], ->
 	{Event} = Motion
 	{isArray} = _
@@ -23,7 +22,7 @@ define ['core'], ->
 
 				expect(names.length).toEqual 2
 				expect(e.binding).toEqual 'test1'
-
+		
 			it 'should accept n strings of event names', ->
 				e = new Event ['evt1', 'evt2'], binding:'test2'
 
@@ -36,14 +35,14 @@ define ['core'], ->
 
 				expect(names.length).toEqual 2
 				expect(e.binding).toEqual 'test2'
-
+		
 		describe 'callback arguments', ->
 			e.add 'evt'
 
 			it 'on() should pass args to callbacks', ->
 				e.on   'evt', ((a) -> expect(a).toEqual 'foo'), args: ['foo']
 				e.fire 'evt'
-
+		
 			it 'fire() should pass args to callbacks', ->
 				e.on   'evt', (a) -> expect(a).toEqual 'bar'
 				e.fire 'evt', ['bar']

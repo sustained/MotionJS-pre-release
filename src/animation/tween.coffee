@@ -1,4 +1,3 @@
-#
 define [
 	'utilities/string'
 	'animation/easing'

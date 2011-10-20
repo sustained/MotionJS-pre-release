@@ -1,4 +1,3 @@
-#
 define [
 	'client/renderer/renderer'
 
@@ -15,7 +14,7 @@ define [
 				@setCanvas canvas
 
 			super options
-
+		
 		setCanvas: (canvas) ->
 			@canvas  = canvas
 			@context = canvas?.context

@@ -1,4 +1,3 @@
-#
 define ->
 	isArray = (object) -> object? and Object::toString.call(object) is '[object Array]'
 
@@ -26,18 +25,18 @@ define ->
 	remove = (array, remove, all = false) ->
 		index = array.indexOf remove
 		return @ if index is -1
-
+		
 		if all is false
 			array.splice index, 1
 			return array
-
+		
 		while index > -1
 			array.splice index, 1
 			index = array.indexOf remove
-
+		
 		array
 
 	random = (array) ->
 		array[Math.rand 0, array.length - 1]
-
+	
 	{isArray, sum, unique, compact, remove, random}

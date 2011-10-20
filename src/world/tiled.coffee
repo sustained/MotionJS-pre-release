@@ -1,4 +1,3 @@
-#
 define [
 	'world/world'
 

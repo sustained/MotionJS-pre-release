@@ -1,4 +1,3 @@
-#
 define [
 	'state/state'
 ], (State) ->

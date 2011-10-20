@@ -1,4 +1,3 @@
-#
 define ['utilities/astar'], (AStar) ->
 	{Grid} = AStar
 	{Vector} = Math

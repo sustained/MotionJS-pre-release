@@ -1,4 +1,3 @@
-#
 require ['core', 'test/all'], (Motion, testList) ->
 	jasmineEnv = jasmine.getEnv()
 	jasmineEnv.updateInterval = 1000

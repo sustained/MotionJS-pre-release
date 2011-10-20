@@ -1,4 +1,3 @@
-#
 define [
 	'utilities/astar'
 	'utilities/grid'
