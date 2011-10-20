@@ -36,20 +36,22 @@ define [
 	_prefixes = ['webkit', 'moz', 'o', 'ms']
 
 	root.requestAnimFrame = (->
-		postfix = 'AnimationFrame'
+		if root.requestAnimationFrame?
+			return root.requestAnimationFrame
+		postfix = 'RequestAnimationFrame'
 		_prefixes.unshift 'request'
 		for i in _prefixes
 			return root[i+postfix] if root[i+postfix]?
 		return (callback, element) -> root.setTimeout callback, 1000 / 60
 	)()
 
-	root.cancelAnimFrame = ((handle) ->
+	root.cancelAnimFrame = (->
 		if root.cancelAnimationFrame?
 			return root.cancelAnimationFrame handle.value
 		postfix = 'CancelRequestAnimationFrame'
 		for i in _prefixes
 			return root[i+postfix] if root[i+postfix]?
-		return clearInterval handle
+		return clearInterval
 	)()
 
 	if Motion.env is 'client'
