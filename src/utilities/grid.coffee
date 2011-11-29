@@ -37,7 +37,12 @@ define ->
 		setSize: (rows = null, cols = null) ->
 			@rows = rows if rows?
 			@cols = cols if cols?
-			@size = @rows * @cols
+			@size = (@rows or 0)*(@cols or 0)
+
+		constructor: (grid, opts = {}) ->
+			if not isArray grid
+				opts = grid
+				grid = null
 
 			if (g = grid or opts.grid)?
 				@setGrid g, opts.width
