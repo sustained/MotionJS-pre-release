@@ -18,9 +18,9 @@
 	<script>
 jasmine.getFixtures().fixturesPath = 'spec/fixtures';
 
-var requireOptions = motion('/Private/JS/MotionJS/');
-requireOptions.paths.test = '/Private/JS/MotionJS/spec/lib/';
-this.require = requireOptions;
+var opts        = motion('/Private/JS/MotionJS/');
+opts.paths.test = '/Private/JS/MotionJS/spec/lib/';
+this.require    = opts;
 	</script>
 
 	<script src="../vendor/requirejs/require.js" data-main="test/run"></script>

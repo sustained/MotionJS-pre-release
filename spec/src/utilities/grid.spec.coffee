@@ -20,10 +20,10 @@ define ['utilities/grid'], (Grid) ->
 		[0, 1, 0, 0, 0, 1, 0]
 	]
 
-	describe 'Utilities - Grid()', ->
-		grid1 = new Grid array1d, width: 7
-		grid2 = new Grid array2d
+	grid1 = new Grid array1d, width: 7
+	grid2 = new Grid array2d
 
+	describe 'Utilities - Grid()', ->
 		describe '#constructor()', ->
 			it 'should accept a 1d grid and a width', ->
 				expect(grid1.rows).toEqual(7)

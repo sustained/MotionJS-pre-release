@@ -19,19 +19,19 @@ define [
 				_instances[name] = null
 				return true
 			return false
-		
+
 		cellsX: null
 		cellsY: null
 
 		size:  null
 		image: null
 
-		constructor: (name, opts) ->
+		constructor: (name, opts = null) ->
 			instance = TileSet.get name
 			if instance? then return instance
 
 			@name = name
-			@size = (opts or _defaults).size
+			@size = (if opts? then opts else _defaults).size
 			@size = [@size, @size] if isNumber @size
 			@image = Image.get name
 

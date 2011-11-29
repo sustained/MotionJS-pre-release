@@ -55,5 +55,4 @@ define ->
 				j++
 
 			canvas.css 'display', 'none'
-
 			@prerendered = canvas.get 0
