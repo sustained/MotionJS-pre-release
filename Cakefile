@@ -59,7 +59,7 @@ startWatcher = (name, opts = {}) ->
 
 	opts.cmd += " >> #{logs}#{opts.log} 2>&1" if true #shouldLog
 	opts.cmd += " & echo $!"
-	console.log "command - #{opts.cmd}"
+
 	exec opts.cmd, cwd: __dirname, (error, stdout, stderr) ->
 		if error
 			console.log "Error running coffee: #{stderr}"
@@ -138,7 +138,7 @@ task 'compile:code', 'Compile the code.', ->
 	exec "rm -rf #{code.lib}*", ->
 		puts '.done!'
 		print "Compile src (#{code.src}) .."
-		brew '-c -b -o spec/lib/ spec/src/', onexit: ->
+		brew '-c -b -o lib/ src/', onexit: ->
 			puts '.done!'
 
 
