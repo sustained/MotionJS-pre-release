@@ -1,10 +1,11 @@
-isBrowser = window? and document? and navigator?
-root      = if isBrowser then window else global
+isBrowser    = window? and document? and navigator?
+{isFunction} = _
 
-root.motion = (sysDir, paths = {}, readyFn = ->) ->
+root  = if isBrowser then window else global
+setup = (sysDir, paths = {}, readyFn = ->) ->
 	return console.error '[Motion:init] Missing required sysDir.' if not sysDir
 
-	readyFn = paths if _.isFunction paths
+	readyFn = paths if isFunction paths
 	reqOps =
 		#context: "motion"
 		baseUrl: "#{sysDir}lib/"
