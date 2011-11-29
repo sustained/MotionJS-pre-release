@@ -1,8 +1,10 @@
-path = require 'path'
+path   = require 'path'
+{puts} = require 'util'
+
 motionDir = path.normalize path.resolve(__dirname, '../../') + '/'
-global._ = require(motionDir + 'vendor/underscore/underscore.min.js');
-require(motionDir + 'lib/init.js');
-requirejs = require 'requirejs'
-rjsConfig = global.motion motionDir
-requirejs.config rjsConfig
-global.define = requirejs
+global._  = require(motionDir + 'vendor/underscore/underscore.min.js');
+
+motion = require(motionDir + 'lib/init.js').motion
+
+global.define = requirejs = require 'requirejs'
+requirejs.config motion(motionDir)
