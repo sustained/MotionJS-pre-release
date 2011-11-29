@@ -23,3 +23,5 @@ setup = (sysDir, paths = {}, readyFn = ->) ->
 		reqOps.urlArgs = "nocache=#{(new Date()).getTime()}" #if options.cacheBust?
 
 	reqOps
+
+(if isBrowser then window else exports).motion = setup
