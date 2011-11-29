@@ -26,12 +26,10 @@ define ->
 				cols = grid[0].length
 				grid = flatten grid
 			else
-				if not width
-					console.log 'Specify width for 1d grid'
-					return
+				return console.log 'Specify width for 1d grid' if not width?
+
 				rows = width
-				cols = if rows <= 0 then 0 else
-					floor grid.length / rows
+				cols = if rows <= 0 then 0 else floor grid.length / rows
 
 			@_grid = grid
 			@setSize rows, cols
@@ -41,14 +39,12 @@ define ->
 			@cols = cols if cols?
 			@size = @rows * @cols
 
-		constructor: (options = {}) ->
-			if options.grid?
-				@setGrid options.grid, options.width
+			if (g = grid or opts.grid)?
+				@setGrid g, opts.width
 			else
-				@setSize options.rows, options.cols
+				@setSize opts.rows, opts.cols
 
-			if options.fill
-				@setRandom options.fill
+			@setRandom opts.fill if opts.fill
 
 		__randomCallback: -> round(random())
 
