@@ -4,6 +4,7 @@ define ->
 
 	class Loop
 		@INTERVAL_WAIT: 5
+		@USE_REQUESTANIMFRAME: true
 
 		_animFrame:  null
 		_intervalId: null
@@ -25,6 +26,8 @@ define ->
 		loopCount:   0
 		updateCount: 0
 
+		_timer: null
+
 		register: (object) ->
 			@_enter = object.enter
 			@_frame = object.update
@@ -38,6 +41,14 @@ define ->
 			@deltas = []
 			@event  = new Event ['enter', 'frame', 'leave'], binding: @
 
+			if @constructor.USE_REQUESTANIMFRAME
+				@_start = => @_timer = requestAnimFrame @loop.bind @
+				@_stop  = => cancelAnimFrame @_timer
+				@event.on 'enter', -> @_start()
+			else
+				@_start = => @_timer = setInterval @loop.bind(@), @constructor.INTERVAL_WAIT
+				@_stop  = => clearInterval @_timer
+
 			#@event.on 'leave', ->
 			#	@_animFrame = requestAnimFrame @_leave.bind @
 
@@ -46,13 +57,15 @@ define ->
 			@time        = Date.now()
 			@_running    = true
 			#@_intervalId = setInterval @loop.bind(@), Loop.INTERVAL_WAIT
-			@_animFrame = requestAnimFrame @loop.bind @
+			#@_animFrame = requestAnimFrame @loop.bind @
+			@_start()
 
 		stop: ->
 			return if @_running is false
 			@_running = false
 			#clearInterval @_intervalId
-			cancelAnimFrame @_animFrame
+			#cancelAnimFrame @_animFrame
+			@_stop()
 
 		play:  @::start
 		pause: @::stop
@@ -63,11 +76,11 @@ define ->
 			@deltas = []
 
 		restart: ->
-			@stop() ; @reset() ; @start()
+			@stop()
+			@reset()
+			@start()
 
 		loop: ->
-			@_animFrame = requestAnimFrame @loop.bind @
-
 			@event.fire 'enter'
 			@_enter()
 
@@ -90,6 +103,5 @@ define ->
 				@accum -= @delta
 
 			#@alpha = @accum / @delta
-			#@_animFrame = requestAnimFrame =>
 			@event.fire 'leave'
 			@_leave()
