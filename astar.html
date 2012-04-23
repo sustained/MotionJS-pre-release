@@ -31,17 +31,15 @@ table#aStarTable {}
 		}
 	</style>
 <body>
-	<script src="vendor/jquery/jquery.min.js"></script>
 	<script src="vendor/underscore/underscore.min.js"></script>
 	<script src="vendor/modernizr/modernizr.js"></script>
 
 	<script src="lib/init.js"></script>
 
-	<script>
-this.require = window.motion('/Private/JS/MotionJS/', function() {
+	<script>  
+var require = motion('/Private/JS/MotionJS/', function() {
 	require(['astar']);
 });
-window.motion = null
 	</script>
 
 	<script src="vendor/requirejs/require.js"></script>
