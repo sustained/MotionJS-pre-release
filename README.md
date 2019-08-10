@@ -8,6 +8,8 @@ Because it's something I can put on my portfolio/résumé, quite simply.
 
 No, sorry. I lost all of the source to my pre-MotionJS and post-MotionJS games due to HDD failure.
 
+Additionally, I never really did get all that far along with this project. It was far beyond my capabilities from the beginning. So it never really did get to a stage where it was even suitable for me to build games in it, I don't think.
+
 ## What are the origins of MotionJS?
 
 A long time ago I became quite interested in game development and indeed it's something I've experimented with on and off over the years, working with technologies such as Pygame (Python), LÖVE (LUA), SMFL (C++) and Unity (C#).
