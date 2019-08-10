@@ -1,6 +1,14 @@
 # MotionJS-pre-release
 
-## Origins
+## Why open-source an 8 year old project?
+
+Because it's something I can put on my portfolio/résumé, quite simply.
+
+## Are there any games you can release that are using this engine?
+
+No, sorry. I lost all of the source to my pre-MotionJS and post-MotionJS games due to HDD failure.
+
+## What are the origins of MotionJS?
 
 A long time ago I became quite interested in game development and indeed it's something I've experimented with on and off over the years, working with technologies such as Pygame (Python), LÖVE (LUA), SMFL (C++) and Unity (C#).
 
@@ -18,7 +26,9 @@ I had no idea what I was doing from the very beginning and I was absolutely not 
 
 Also note that some of the code is based on code or ideas I found elsewhere, just rewritten in my own at-the-time style and in CoffeeScript.
 
-## Future
+## What is the future of this project.
+
+Nothing, unless for some strange reason someone else decides to use it.
 
 ### Updates
 
